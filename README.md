@@ -4,3 +4,12 @@
 ## Introduction
 
 **Tracki** is a mobile app that enhances the process of discovering food trucks in Riyadh. With Tracki, users can effortlessly find, track, and rate their favorite food trucks, eliminating the difficulties of locating them. Our aim is to improve the food truck experience, making it more accessible and enjoyable for everyone.
+
+## Technology
+
+The Tracki application is developed using:
+- **Programming Language:** Dart
+- **Framework:** Flutter
+- **Chatbot:** Dialogflow
+- **Database:** Firebase
+- **Project Management:** Jira
