@@ -17,14 +17,14 @@ The Tracki application is developed using:
 - **API:** Google map API
     
 
-## Launching Instructions
+## Launching Instructions :rocket
 **1. Clone the repository:**
 ```bash
 https://github.com/GhalaAlotaibi/2024-25_GP_9.git
-
-**2. Install all the dependencies**
-**3. Run the application**
-**Make sure to have the following installed:**
+```
+**2.Make sure to have the following installed:**
 - Flutter 
 - Dart 
--Android Studio or a physical device 
+-Android Studio or a physical device **
+**3. Run the application :arrow_forward**
+
