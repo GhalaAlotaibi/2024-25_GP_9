@@ -8,8 +8,13 @@
 ## Technology
 
 The Tracki application is developed using:
-- **Programming Language:** Dart
+- **Programming Language:** Dart ,Python
 - **Framework:** Flutter
+- **Development Tools:** Visual Studio Code, Figma
 - **Chatbot:** Dialogflow
 - **Database:** Firebase
 - **Project Management:** Jira
+- **API:** Google map API
+    
+
+## Launching Instructions
