@@ -1,3 +1,3 @@
-<img src="https://github.com/user-attachments/assets/4b8096e8-0c97-448a-8c6e-8b01e234f376" alt="logo_Tracki" style="width: 100%; height: auto;"/>
+<img src="https://github.com/user-attachments/assets/9fc2ac7d-6e12-4620-9a34-a560e4813f37" alt="logo_Tracki" style="width: 100%; height: auto;"/>
 
 # Tracki
