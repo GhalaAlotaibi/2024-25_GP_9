@@ -3,4 +3,4 @@
 # Tracki
 ## Introduction
 
-**Tracki** aims to enhance the food truck industry with a mobile application that allows users to easily locate, track, and rate food trucks in Riyadh. Our goal is to improve user experience by making it convenient for customers to discover new food trucks and follow their favorites, ultimately supporting local food vendors.
+**Tracki** is a mobile app that enhances the process of discovering food trucks in Riyadh. With Tracki, users can effortlessly find, track, and rate their favorite food trucks, eliminating the difficulties of locating them. Our aim is to improve the food truck experience, making it more accessible and enjoyable for everyone.
