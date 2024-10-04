@@ -1,16 +1,35 @@
-# tracki
+<img src="https://github.com/user-attachments/assets/9fc2ac7d-6e12-4620-9a34-a560e4813f37" alt="logo_Tracki" style="width: 20%; height: auto;"/>
 
-A new Flutter project.
+# Tracki
 
-## Getting Started
+## Introduction :bulb:
 
-This project is a starting point for a Flutter application.
+**Tracki** is a mobile app that enhances the process of discovering food trucks in Riyadh. With Tracki, users can effortlessly find, track, and rate their favorite food trucks, eliminating the difficulties of locating them. Our aim is to improve the food truck experience, making it more accessible and enjoyable for everyone.
 
-A few resources to get you started if this is your first Flutter project:
+## Technology :computer:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+The Tracki application is developed using:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Programming Language:** Dart ,Python
+- **Framework:** Flutter
+- **Development Tools:** Visual Studio Code, Figma
+- **Chatbot:** Dialogflow
+- **Database:** Firebase
+- **Project Management:** Jira
+- **API:** Google map API
+
+## Launching Instructions :rocket:
+
+**1. Clone the repository :** :paperclips:
+
+```bash
+https://github.com/GhalaAlotaibi/2024-25_GP_9.git
+```
+
+**2. Make sure to have the following installed:** :wrench:
+
+- Flutter
+- Dart
+- Android Studio or a physical device :iphone:
+
+**3. Run the application :arrow_forward:**
