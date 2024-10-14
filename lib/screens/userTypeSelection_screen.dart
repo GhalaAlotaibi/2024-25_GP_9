@@ -9,41 +9,61 @@ class UserTypeSelectionPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('اختر نوع الحساب'), // Title in Arabic
         backgroundColor: const Color(0xFF674188),
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text(
-              'يرجى اختيار نوع حسابك', // Prompt in Arabic
-              style: TextStyle(fontSize: 24.0),
+            const Text('يرجى اختيار نوع الحساب', // Prompt in Arabic
+                style: TextStyle(
+                  fontSize: 25.0,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF674188),
+                )),
+            const SizedBox(height: 40.0),
+            SizedBox(
+              width: 200, // Fixed width for the button
+              height: 50, // Fixed height for the button
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const SignUpScreen(), // Navigate to Customer Sign Up
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFC8A1E0),
+                  foregroundColor: Colors.white, //
+                  textStyle: const TextStyle(fontSize: 20), // Text style
+                ),
+                child: const Text('زبون'), // Button text for Customer
+              ),
             ),
             const SizedBox(height: 40.0),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) =>
-                        const SignUpScreen(), // Navigate to Customer Sign Up
-                  ),
-                );
-              },
-              child: const Text('عميل'), // Button text for Customer
-            ),
-            const SizedBox(height: 20.0),
-            ElevatedButton(
-              onPressed: () {
-                // Navigator.push(
-                // context,
-                //MaterialPageRoute(
-                //  builder: (context) => const OwnerSignUpScreen(), // Navigate to Owner Sign Up
-                // ),
-                //);
-              },
-              child: const Text('مالك'), // Button text for Owner
+            SizedBox(
+              width: 200, // Fixed width for the button
+              height: 50, // Fixed height for the button
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) =>
+                          const SignUpScreen(), // Navigate to Owner Sign Up
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFC8A1E0),
+                  foregroundColor: Colors.white, //
+                  textStyle: const TextStyle(fontSize: 20), // Text style
+                ),
+                child: const Text('صاحب عربة'), // Button text for Owner
+              ),
             ),
           ],
         ),
