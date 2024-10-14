@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-// import your button and screen classes as needed
 import 'login_screen.dart';
-// import 'package:login_signup/theme/theme.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -18,19 +16,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Sign Up'),
-        backgroundColor: Colors.blue, // Change as needed
+        backgroundColor: Color(0xFF674188),
       ),
       body: Column(
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(height: 10),
+            child: SizedBox(height: 5), // Reduced height
           ),
           Expanded(
             flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(25.0, 50.0, 25.0, 20.0),
+              padding: const EdgeInsets.fromLTRB(25.0, 20.0, 25.0, 20.0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -42,29 +39,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    // Set text direction to RTL
                     children: [
                       // Get started text
                       const Text(
-                        'Get Started',
+                        'إنشاء حساب جديد',
                         style: TextStyle(
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.blue, // Replace with your desired color
+                          fontSize: 27.0,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF674188),
                         ),
+                        textAlign: TextAlign.center, // Align text to the right
                       ),
-                      const SizedBox(height: 40.0),
+                      const SizedBox(height: 20.0), // Adjusted space
                       // Full name
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Full name';
+                            return 'الرجاء إدخال اسم المستخدم';
                           }
                           return null;
                         },
+                        textAlign: TextAlign.right, // Align text to the right
                         decoration: InputDecoration(
-                          label: const Text('Full Name'),
-                          hintText: 'Enter Full Name',
+                          label: const Text('اسم المستخدم',
+                              textAlign:
+                                  TextAlign.center), // Right-aligned label
+                          hintText: 'ادخل اسم المستخدم',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.black12),
@@ -74,20 +75,23 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             borderSide: const BorderSide(color: Colors.black12),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          alignLabelWithHint: true, // Align label with hint
                         ),
                       ),
                       const SizedBox(height: 25.0),
-                      // Email
+// Email
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Email';
+                            return 'الرجاء إدخال البريد الإلكتروني';
                           }
                           return null;
                         },
+                        textAlign: TextAlign.right, // Align text to the right
                         decoration: InputDecoration(
-                          label: const Text('Email'),
-                          hintText: 'Enter Email',
+                          labelText:
+                              'البريد الإلكتروني', // Use labelText instead of label
+                          hintText: 'ادخل البريد الإلكتروني',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.black12),
@@ -97,22 +101,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             borderSide: const BorderSide(color: Colors.black12),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                              10, 15, 10, 15), // Adjust padding
                         ),
                       ),
-                      const SizedBox(height: 25.0),
-                      // Password
+                      const SizedBox(height: 25.0), // Password
                       TextFormField(
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
+                            return 'الرجاء إدخال الرمز السري';
                           }
                           return null;
                         },
+                        textAlign: TextAlign.right, // Align text to the right
                         decoration: InputDecoration(
-                          label: const Text('Password'),
-                          hintText: 'Enter Password',
+                          labelText:
+                              'الرمز السري', // Use labelText instead of label
+                          hintText: 'ادخل الرمز السري',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(color: Colors.black12),
@@ -122,11 +129,15 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             borderSide: const BorderSide(color: Colors.black12),
                             borderRadius: BorderRadius.circular(10),
                           ),
+                          contentPadding: const EdgeInsets.fromLTRB(
+                              10, 15, 10, 15), // Adjust padding
                         ),
                       ),
                       const SizedBox(height: 25.0),
                       // I agree to the processing
                       Row(
+                        textDirection:
+                            TextDirection.rtl, // Set text direction to RTL
                         children: [
                           Checkbox(
                             value: agreePersonalData,
@@ -135,18 +146,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 agreePersonalData = value!;
                               });
                             },
-                            activeColor: Colors.blue, // Change as needed
+                            activeColor:
+                                const Color.fromARGB(255, 105, 99, 197),
                           ),
                           const Text(
-                            'I agree to the processing of ',
+                            'أوافق على  السماح بمعالجة البيانات الشخصية',
                             style: TextStyle(color: Colors.black45),
-                          ),
-                          const Text(
-                            'Personal data',
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue, // Change as needed
-                            ),
                           ),
                         ],
                       ),
@@ -160,75 +165,55 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Processing Data'),
+                                  content: Text('جاري معالجة البيانات'),
                                 ),
                               );
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text(
-                                      'Please agree to the processing of personal data'),
+                                      'يرجى الموافقة على معالجة البيانات الشخصية'),
                                 ),
                               );
                             }
                           },
-                          child: const Text('Sign up'),
+                          child: const Text('انشاء حساب جديد'),
                         ),
                       ),
                       const SizedBox(height: 30.0),
-                      // Sign up divider
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                          const Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 10),
-                            child: Text(
-                              'Sign up with',
+                      Directionality(
+                        textDirection:
+                            TextDirection.rtl, // Set text direction to RTL
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'هل لديك حساب بالفعل؟ ',
                               style: TextStyle(color: Colors.black45),
                             ),
-                          ),
-                          Expanded(
-                            child: Divider(
-                              thickness: 0.7,
-                              color: Colors.grey.withOpacity(0.5),
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 30.0),
-                      // Already have an account
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Text(
-                            'Already have an account? ',
-                            style: TextStyle(color: Colors.black45),
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (e) => const LogInScreen(),
+                            const SizedBox(
+                                width: 5), // Add some space between the texts
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (e) => const LogInScreen(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'تسجيل الدخول',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromARGB(255, 139, 65, 174),
                                 ),
-                              );
-                            },
-                            child: const Text(
-                              'Sign in',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Colors.blue, // Change as needed
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
+
                       const SizedBox(height: 20.0),
                     ],
                   ),

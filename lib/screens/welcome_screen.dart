@@ -9,6 +9,9 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      // appBar: AppBar(
+      // backgroundColor:Color(0xFF674188),
+      //),
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
       //backgroundColor: const Color(0xFFF7EFE5),
