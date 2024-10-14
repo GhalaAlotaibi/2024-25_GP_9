@@ -111,6 +111,10 @@ class _LogInScreenState extends State<LogInScreen> {
                         children: [
                           Row(
                             children: [
+                              const Text(
+                                'تذكرني', // Changed to Arabic
+                                style: TextStyle(color: Colors.black45),
+                              ),
                               Checkbox(
                                 value: rememberPassword,
                                 onChanged: (bool? value) {
@@ -120,10 +124,6 @@ class _LogInScreenState extends State<LogInScreen> {
                                 },
                                 activeColor:
                                     const Color.fromARGB(255, 105, 99, 197),
-                              ),
-                              const Text(
-                                'تذكرني', // Changed to Arabic
-                                style: TextStyle(color: Colors.black45),
                               ),
                             ],
                           ),
