@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'customer_signup_screen.dart';
+import 'userTypeSelection_screen.dart';
 import '/widgets/welcome_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -9,12 +9,8 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      // backgroundColor:Color(0xFF674188),
-      //),
       extendBodyBehindAppBar: true,
       backgroundColor: Colors.white,
-      //backgroundColor: const Color(0xFFF7EFE5),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, // Center vertically
@@ -73,7 +69,7 @@ class WelcomeScreen extends StatelessWidget {
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  const SignUpScreen(), // Navigate to SignUpScreen
+                                  const UserTypeSelectionPage(),
                             ),
                           );
                         },

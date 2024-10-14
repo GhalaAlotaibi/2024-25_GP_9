@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'customer_signup_screen.dart'; // Import your signup screen
+import 'userTypeSelection_screen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -175,7 +176,8 @@ class _LogInScreenState extends State<LogInScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (e) => const SignUpScreen(),
+                                    builder: (e) =>
+                                        const UserTypeSelectionPage(),
                                   ),
                                 );
                               },
