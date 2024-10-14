@@ -19,7 +19,7 @@ class WelcomeButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap, // Call the onTap function directly
       child: Container(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(22.0),
         decoration: BoxDecoration(
           color: color!,
           borderRadius: const BorderRadius.only(
@@ -30,7 +30,7 @@ class WelcomeButton extends StatelessWidget {
           buttonText!,
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 20.0,
+            fontSize: 25.0,
             fontWeight: FontWeight.bold,
             color: textColor!,
           ),

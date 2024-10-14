@@ -9,19 +9,15 @@ class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        iconTheme:
-            const IconThemeData(color: Color.fromARGB(255, 255, 255, 255)),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-      ),
       extendBodyBehindAppBar: true,
+      backgroundColor: Colors.white,
+      //backgroundColor: const Color(0xFFF7EFE5),
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center, // Center vertically
           children: [
             // Logo at the top
-            Container(
+            SizedBox(
               width: 350, // Set desired width
               height: 350, // Set desired height
               child: Image.asset(
@@ -35,23 +31,23 @@ class WelcomeScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Center(
                 child: RichText(
-                  textAlign: TextAlign.center,
+                  textAlign: TextAlign.right,
                   text: const TextSpan(
                     children: [
                       TextSpan(
-                        text: 'Welcome Back!\n',
+                        text: '!Tracki اهلا بك في\n',
                         style: TextStyle(
-                          fontSize: 45.0,
+                          fontSize: 38.0,
                           fontWeight: FontWeight.w600,
-                          color: Colors.purple,
+                          color: Color(0xFF674188),
                         ),
                       ),
                       TextSpan(
                         text:
-                            '\nEnter personal details to your employee account',
+                            '.يمكنك اكتشاف عربات الطعام في الرياض بسهولة، وتستطيع أيضًا تتبع عرباتك المفضلة، مما يجعل تجربتك مع الطعام أكثر متعة',
                         style: TextStyle(
                           fontSize: 20,
-                          color: Colors.purple,
+                          color: Color(0xFF674188),
                         ),
                       ),
                     ],
@@ -68,31 +64,33 @@ class WelcomeScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       child: WelcomeButton(
-                        buttonText: 'Sign in',
+                        buttonText: 'حساب جديد',
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const LogInScreen(),
+                              builder: (context) =>
+                                  const SignUpScreen(), // Navigate to SignUpScreen
                             ),
                           );
                         },
-                        color: Colors.lightBlue,
-                        textColor: Colors.white,
+                        color: Colors.white,
+                        textColor: Color(0xFFC8A1E0),
                       ),
                     ),
                     Expanded(
                       child: WelcomeButton(
-                        buttonText: 'Sign up',
+                        buttonText: 'تسجيل دخول', // Change text to "Sign in"
                         onTap: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => const SignUpScreen(),
+                              builder: (context) =>
+                                  const LogInScreen(), // Navigate to LogInScreen
                             ),
                           );
                         },
-                        color: Colors.purple,
+                        color: Color(0xFF674188),
                         textColor: Colors.white,
                       ),
                     ),

@@ -44,7 +44,7 @@ class _LogInScreenState extends State<LogInScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Text(
+                      const Text(
                         'Welcome back',
                         style: TextStyle(
                           fontSize: 30.0,
@@ -120,7 +120,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             ],
                           ),
                           GestureDetector(
-                            child: Text(
+                            child: const Text(
                               'Forget password?',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
@@ -165,7 +165,7 @@ class _LogInScreenState extends State<LogInScreen> {
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Sign up',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,

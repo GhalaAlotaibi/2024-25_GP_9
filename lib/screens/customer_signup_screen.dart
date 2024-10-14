@@ -45,7 +45,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       // Get started text
-                      Text(
+                      const Text(
                         'Get Started',
                         style: TextStyle(
                           fontSize: 30.0,
@@ -141,7 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             'I agree to the processing of ',
                             style: TextStyle(color: Colors.black45),
                           ),
-                          Text(
+                          const Text(
                             'Personal data',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
@@ -219,7 +219,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 ),
                               );
                             },
-                            child: Text(
+                            child: const Text(
                               'Sign in',
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
