@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'screens/welcome_screen.dart'; // Import the welcome screen from the screens folder
+import 'package:firebase_core/firebase_core.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {

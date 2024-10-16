@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "283818817351",
+    "project_id": "trucki-database",
+    "storage_bucket": "trucki-database.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283818817351:android:ee077e56712063d84c3e62",
+        "android_client_info": {
+          "package_name": "com.example.tracki"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2bhNnHVJoA7GqgMX7ZLnZh3TmrETBb70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:283818817351:android:46ad5c87f04a91624c3e62",
+        "android_client_info": {
+          "package_name": "com.example.firebase_test"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC2bhNnHVJoA7GqgMX7ZLnZh3TmrETBb70"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

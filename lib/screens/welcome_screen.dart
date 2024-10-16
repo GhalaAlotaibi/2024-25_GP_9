@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
-import 'userTypeSelection_screen.dart';
+import 'user_type_selection_screen.dart';
 import '/widgets/welcome_button.dart';
 
 class WelcomeScreen extends StatelessWidget {
@@ -74,7 +74,7 @@ class WelcomeScreen extends StatelessWidget {
                           );
                         },
                         color: Colors.white,
-                        textColor: Color(0xFFC8A1E0),
+                        textColor: const Color(0xFFC8A1E0),
                       ),
                     ),
                     Expanded(
@@ -89,7 +89,7 @@ class WelcomeScreen extends StatelessWidget {
                             ),
                           );
                         },
-                        color: Color(0xFF674188),
+                        color: const Color(0xFF674188),
                         textColor: Colors.white,
                       ),
                     ),
