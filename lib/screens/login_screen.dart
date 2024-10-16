@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/screens/app_main_screen.dart';
+import 'package:tracki/screens/my_app_home_screen.dart';
 import 'customer_signup_screen.dart'; // Import your signup screen
-import 'userTypeSelection_screen.dart';
+import 'user_type_selection_screen.dart'; // Import your user type selection screen
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -145,10 +147,12 @@ class _LogInScreenState extends State<LogInScreen> {
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formLogInKey.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                      'جاري معالجة البيانات'), // Arabic message
+                              // If the form is valid, navigate to the home page
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      const AppMainScreen(), // Replace with your home screen
                                 ),
                               );
                             }
