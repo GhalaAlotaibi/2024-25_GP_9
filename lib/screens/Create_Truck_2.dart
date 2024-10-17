@@ -74,7 +74,7 @@ class CreateTruck2 extends StatelessWidget {
                             ),
                           );
                         },
-                        child: const Text('التالي 2'), // Placeholder button text
+                        child: const Text('التالي'), // Placeholder button text
                       ),
                     ),
                     const SizedBox(height: 20.0), // Spacing after the button
