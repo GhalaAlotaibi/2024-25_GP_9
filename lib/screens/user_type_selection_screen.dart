@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'customer_signup_screen.dart'; // Import your customer signup screen
-//import 'owner_signup_screen.dart'; // Import your owner signup screen
+import 'owner_signup_screen.dart'; // Import your owner signup screen
 
 class UserTypeSelectionPage extends StatelessWidget {
   const UserTypeSelectionPage({super.key});
@@ -53,7 +53,7 @@ class UserTypeSelectionPage extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) =>
-                          const SignUpScreen(), // Navigate to Owner Sign Up
+                          const OwnerSignUpScreen(), // Navigate to Owner Sign Up
                     ),
                   );
                 },
