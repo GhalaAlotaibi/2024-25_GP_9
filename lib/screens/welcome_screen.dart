@@ -34,7 +34,7 @@ class WelcomeScreen extends StatelessWidget {
                   text: const TextSpan(
                     children: [
                       TextSpan(
-                        text: '!Tracki اهلا بك في\n',
+                        text: '!Tracki اهلًا بك في\n',
                         style: TextStyle(
                           fontSize: 38.0,
                           fontWeight: FontWeight.w600,
