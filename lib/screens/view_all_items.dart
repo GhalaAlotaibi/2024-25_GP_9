@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
-import 'package:tracki/widgets/items_display.dart';
+import 'package:tracki/screens/food_truck_profile_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
 class ViewAllItems extends StatefulWidget {
@@ -12,10 +12,10 @@ class ViewAllItems extends StatefulWidget {
   State<ViewAllItems> createState() => _ViewAllItemsState();
 }
 
-//This page is used for displaying all the registered food trucks
 class _ViewAllItemsState extends State<ViewAllItems> {
   final CollectionReference completeListOfTrucks =
       FirebaseFirestore.instance.collection("Food_Truck");
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,81 +25,239 @@ class _ViewAllItemsState extends State<ViewAllItems> {
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
-          const SizedBox(
-            width: 15,
-          ),
-          MyIconButton(
-
-              //Should be used throughout all the pages
-              icon: Icons.arrow_back_ios_new,
-              pressed: () {
-                Navigator.pop(context);
-              }),
+          const SizedBox(width: 15),
+          MyIconButton(icon: Iconsax.notification, pressed: () {}),
           const Spacer(),
           const Text(
             "العربات",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           const Spacer(),
-          MyIconButton(icon: Iconsax.notification, pressed: () {}),
+          MyIconButton(
+              icon: Icons.arrow_forward_ios,
+              pressed: () {
+                Navigator.pop(context);
+              }),
           const SizedBox(width: 15),
         ],
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.only(right: 5, left: 15),
+        padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
           children: [
             mySearchBar(),
-            const SizedBox(
-              height: 10,
-            ),
             StreamBuilder(
               stream: completeListOfTrucks.snapshots(),
-              builder: (context, AsyncSnapshot<QuerySnapshot> StreamSnapshot) {
-                if (StreamSnapshot.hasData) {
-                  return GridView.builder(
-                      itemCount: StreamSnapshot.data!.docs.length,
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2, childAspectRatio: 0.7),
-                      itemBuilder: (context, index) {
-                        final DocumentSnapshot documentSnapshot =
-                            StreamSnapshot.data!.docs[index];
-                        return Column(
-                          //Overflow here
-                          children: [
-                            ItemsDisplay(documentSnapshot: documentSnapshot),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Iconsax.star1,
-                                  color: Colors.amberAccent,
+              builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
+                if (streamSnapshot.hasData) {
+                  return ListView.builder(
+                    itemCount: streamSnapshot.data!.docs.length,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (context, index) {
+                      final DocumentSnapshot documentSnapshot =
+                          streamSnapshot.data!.docs[index];
+
+                      String uniqueId =
+                          '${documentSnapshot.id}_${documentSnapshot["name"]}';
+
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FoodTruckProfileDisplay(
+                                documentSnapshot: documentSnapshot,
+                              ),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                spreadRadius: 2,
+                                blurRadius: 8,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: Stack(
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Hero(
+                                    tag: documentSnapshot['truckImage'],
+                                    child: Container(
+                                      height: 200,
+                                      decoration: BoxDecoration(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        ),
+                                        image: DecorationImage(
+                                          fit: BoxFit.cover,
+                                          image: NetworkImage(
+                                            documentSnapshot["truckImage"],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(height: 7),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                      children: [
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            const SizedBox(width: 10),
+                                            Text(
+                                              documentSnapshot["name"],
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 10),
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: const Color.fromARGB(
+                                                            255, 180, 180, 180)
+                                                        .withOpacity(0.20),
+                                                    spreadRadius: 2,
+                                                    blurRadius: 5,
+                                                    offset: const Offset(0, 2),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: ClipOval(
+                                                child: Image.network(
+                                                  documentSnapshot[
+                                                      "businessLogo"],
+                                                  width: 60,
+                                                  height: 60,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            const SizedBox(width: 6),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 5),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "${documentSnapshot['operatingHours']} ",
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            const Icon(
+                                              Iconsax.clock,
+                                              size: 20,
+                                              color: Colors.grey,
+                                            ),
+                                            const Text(
+                                              "          ",
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.w700,
+                                                  color: Colors.grey),
+                                            ),
+                                            Text(
+                                              "${documentSnapshot['category']}",
+                                              style: const TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            const Icon(
+                                              Icons.restaurant_menu,
+                                              size: 20,
+                                              color: Colors.grey,
+                                            ),
+                                            const SizedBox(width: 15),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 10),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              "( ${documentSnapshot['ratingsCount']} عدد التقييمات )",
+                                              style: const TextStyle(
+                                                  color: Color.fromARGB(
+                                                      255, 163, 163, 163),
+                                                  fontSize: 11),
+                                            ),
+                                            const SizedBox(width: 5),
+                                            Text(
+                                              documentSnapshot['rating'],
+                                              style: const TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            const Text("/5"),
+                                            const SizedBox(width: 5),
+                                            const Icon(
+                                              Iconsax.star1,
+                                              color: Colors.amberAccent,
+                                            ),
+                                            const SizedBox(width: 10),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Positioned(
+                                top: 5,
+                                left: 5,
+                                child: CircleAvatar(
+                                  radius: 18,
+                                  backgroundColor: Colors.white,
+                                  child: InkWell(
+                                    onTap: () {},
+                                    child: const Icon(
+                                      Iconsax.heart,
+                                      color: Colors.black,
+                                      size: 20,
+                                    ),
+                                  ),
                                 ),
-                                const SizedBox(width: 5),
-                                Text(
-                                  documentSnapshot['rating'],
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                const Text("/5"),
-                                const SizedBox(width: 5),
-                                Text(
-                                  "${documentSnapshot['ratingsCount']} reviews",
-                                  style: const TextStyle(
-                                      color: Color.fromARGB(255, 163, 163, 163),
-                                      fontSize: 11),
-                                )
-                              ],
-                            )
-                          ],
-                        );
-                      });
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  );
                 }
                 return const Center(child: CircularProgressIndicator());
               },
-            )
+            ),
           ],
         ),
       ),
@@ -121,11 +279,13 @@ class _ViewAllItemsState extends State<ViewAllItems> {
             hintText: "ابحث عن عربة طعام",
             hintStyle: const TextStyle(color: Colors.grey),
             enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
             focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none),
+              borderRadius: BorderRadius.circular(10),
+              borderSide: BorderSide.none,
+            ),
           ),
         ),
       ),

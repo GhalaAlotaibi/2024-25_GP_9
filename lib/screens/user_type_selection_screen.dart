@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'customer_signup_screen.dart'; // Import your customer signup screen
 import 'owner_signup_screen.dart'; // Import your owner signup screen
 
@@ -8,6 +9,7 @@ class UserTypeSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
       appBar: AppBar(
         backgroundColor: const Color(0xFF674188),
       ),
@@ -36,7 +38,7 @@ class UserTypeSelectionPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC8A1E0),
+                  backgroundColor: kBannerColor,
                   foregroundColor: Colors.white, //
                   textStyle: const TextStyle(fontSize: 20), // Text style
                 ),
@@ -58,7 +60,7 @@ class UserTypeSelectionPage extends StatelessWidget {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFC8A1E0),
+                  backgroundColor: kBannerColor,
                   foregroundColor: Colors.white, //
                   textStyle: const TextStyle(fontSize: 20), // Text style
                 ),

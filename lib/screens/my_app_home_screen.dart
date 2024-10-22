@@ -168,16 +168,15 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 22),
       child: Directionality(
-        textDirection: TextDirection.rtl, // Ensure RTL layout
+        textDirection: TextDirection.rtl,
         child: TextField(
-          textAlign: TextAlign.right, // Aligns the text to the right
+          textAlign: TextAlign.right,
           decoration: InputDecoration(
             filled: true,
-            prefixIcon: const Icon(
-                Iconsax.search_normal), // Icon will now appear on the right
+            prefixIcon: const Icon(Iconsax.search_normal),
             fillColor: Colors.white,
             border: InputBorder.none,
-            hintText: "ابحث عن عربة طعام", // Arabic hint text
+            hintText: "ابحث عن عربة طعام",
             hintStyle: const TextStyle(color: Colors.grey),
             enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(10),
@@ -194,7 +193,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   Row headerParts() {
     return Row(
       children: [
-        MyIconButton(icon: Iconsax.notification, pressed: () {}),
+        //  MyIconButton(icon: Iconsax.notification, pressed: () {}),
         const Spacer(),
         const Text(
           //To be changed, into what IDK

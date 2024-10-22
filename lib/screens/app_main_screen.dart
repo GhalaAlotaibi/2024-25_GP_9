@@ -27,9 +27,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //the content should be here
       backgroundColor: Colors.white,
-
       bottomNavigationBar: BottomNavigationBar(
           backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           elevation: 0,

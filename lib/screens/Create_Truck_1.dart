@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
 
 class CreateTruck1 extends StatefulWidget {
@@ -22,11 +23,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
   String? closingTime;
 
   // List of truck categories
-  final List<String> categories = [
-    'Breakfast',
-    'Lunch',
-    'Dinner',
-  ];
+  List<String> categories = []; // Initialize as an empty list
 
   // Generate a list of times in 24-hour format
   List<String> generateTimeList() {
@@ -45,11 +42,31 @@ class _CreateTruck1State extends State<CreateTruck1> {
   void initState() {
     super.initState();
     timeList.addAll(generateTimeList());
+    fetchCategories(); // Call the fetch function
+  }
+
+  // Fetch categories from Firestore
+  Future<void> fetchCategories() async {
+    try {
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('Food-Category').get();
+
+      List<String> fetchedCategories = snapshot.docs
+          .map((doc) => doc['name'] as String) // Get the 'name' field
+          .toList();
+
+      setState(() {
+        categories = fetchedCategories; // Update the categories list
+      });
+    } catch (e) {
+      print('Error fetching categories: $e');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBannerColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF674188), // App bar color
       ),
@@ -77,7 +94,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                   child: Column(
                     children: [
                       const Text(
-                        'ARABICcإضافة عربة',
+                        'إضافة عربة',
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,
@@ -87,7 +104,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                       ),
                       const SizedBox(height: 20.0), // Adjusted space
 
-// Truck Name Input Field
+                      // Truck Name Input Field
                       Directionality(
                         textDirection:
                             TextDirection.rtl, // Set text direction to RTL
@@ -124,7 +141,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                       const SizedBox(
                           height: 25.0), // Spacing after the input field
 
-// Business Logo Input Field
+                      // Business Logo Input Field
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: TextFormField(
@@ -155,10 +172,11 @@ class _CreateTruck1State extends State<CreateTruck1> {
                           ),
                         ),
                       ),
+
                       const SizedBox(
                           height: 25.0), // Spacing after the input field
 
-// Truck Image Input Field
+                      // Truck Image Input Field
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: TextFormField(
@@ -189,10 +207,11 @@ class _CreateTruck1State extends State<CreateTruck1> {
                           ),
                         ),
                       ),
+
                       const SizedBox(
                           height: 25.0), // Spacing after the input field
 
-// Truck Category Dropdown
+                      // Truck Category Dropdown
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: DropdownButtonFormField<String>(
@@ -230,9 +249,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                           }).toList(),
                         ),
                       ),
-                      const SizedBox(
-                          height: 25.0), // Spacing after the dropdown
-                          
+                      const SizedBox(height: 25.0),
 // Truck Description Input Field
                       Directionality(
                         textDirection:
@@ -401,7 +418,6 @@ class _CreateTruck1State extends State<CreateTruck1> {
                               color: Color(0xFF674188),
                             ),
                           ),
-
                         ),
                       ),
                     ],
@@ -409,10 +425,6 @@ class _CreateTruck1State extends State<CreateTruck1> {
                 ),
               ),
             ),
-          ),
-          const Expanded(
-            flex: 1,
-            child: SizedBox(height: 5), // Reduced height
           ),
         ],
       ),

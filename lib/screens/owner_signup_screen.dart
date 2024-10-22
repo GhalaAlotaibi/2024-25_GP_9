@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:tracki/Utils/constants.dart';
 import 'login_screen.dart';
 import 'Create_Truck_1.dart';
 
@@ -23,6 +24,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBannerColor,
       appBar: AppBar(
         backgroundColor: const Color(0xFF674188),
       ),

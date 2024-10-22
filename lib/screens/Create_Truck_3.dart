@@ -45,7 +45,7 @@ class CreateTruck3 extends StatelessWidget {
               child: Center(
                 child: RichText(
                   textAlign: TextAlign.center,
-                  text: const TextSpan(
+                  text: TextSpan(
                     children: [
                       TextSpan(
                         text: '!Tracki مرحبًا بك في \n',
@@ -56,7 +56,7 @@ class CreateTruck3 extends StatelessWidget {
                         ),
                       ),
                       TextSpan(
-                        text:
+                        text: //the fieled
                             'تمت إضافة عربتك بنجاح، يمكنك الآن عرض ملفك الشخصي',
                         style: TextStyle(
                           fontSize: 20,
@@ -68,21 +68,20 @@ class CreateTruck3 extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Space 
+            const SizedBox(height: 20), // Space
 
-InkWell(
-  onTap: () => _navigateToTruckProfile(context), // Navigate on tap
-  child: const Text(
-    "عرض الملف الشخصي", // Link text
-    style: TextStyle(
-      color: Color(0xFF674188), // Link color
-      fontSize: 20, // Font size for the link
-      decoration: TextDecoration.underline, // Underline for link effect
-    ),
-  ),
-),
-
-
+            InkWell(
+              onTap: () => _navigateToTruckProfile(context), // Navigate on tap
+              child: const Text(
+                "التالي", // Link text
+                style: TextStyle(
+                  color: Color(0xFF674188), // Link color
+                  fontSize: 20, // Font size for the link
+                  decoration:
+                      TextDecoration.underline, // Underline for link effect
+                ),
+              ),
+            ),
           ],
         ),
       ),
