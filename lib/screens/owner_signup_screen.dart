@@ -51,7 +51,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                   child: Column(
                     children: [
                       const Text(
-                        'Ownerإنشاء حساب جديد',
+                        "إنشاء حساب جديد",
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,

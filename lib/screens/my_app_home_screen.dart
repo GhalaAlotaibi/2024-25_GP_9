@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/view_all_items.dart';
 import 'package:tracki/widgets/banner.dart';
 import 'package:tracki/widgets/items_display.dart';
@@ -25,7 +26,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
       .where("category", isEqualTo: category);
   Query get allItems => FirebaseFirestore.instance.collection("Food_Truck");
   Query get selectedTrucks => category == "الكل" ? allItems : filteredItems;
-
+  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -54,7 +55,11 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                     ),
-                    selectedCategory(),
+                    Directionality(
+                      textDirection: TextDirection
+                          .rtl, // Right-to-left direction for التصنيفات
+                      child: selectedCategory(),
+                    ),
                     const SizedBox(
                       height: 10,
                     ),
@@ -93,19 +98,27 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                               snapshot.data?.docs ?? [];
                           return Padding(
                             padding: const EdgeInsets.only(top: 5, left: 0),
-                            child: SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: trucks
-                                    .map((e) =>
-                                        ItemsDisplay(documentSnapshot: e))
-                                    .toList(),
+                            child: Directionality(
+                              textDirection: TextDirection
+                                  .rtl, // Right-to-left direction for عربات الطعام
+                              child: SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: trucks
+                                      .map((e) =>
+                                          ItemsDisplay(documentSnapshot: e))
+                                      .toList(),
+                                ),
                               ),
                             ),
                           );
                         }
                         return const Center(child: CircularProgressIndicator());
                       },
+                    ),
+                    // Adding extra scroll space
+                    const SizedBox(
+                      height: 100, // Adjust height as needed
                     ),
                   ],
                 ),
@@ -193,7 +206,16 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   Row headerParts() {
     return Row(
       children: [
-        //  MyIconButton(icon: Iconsax.notification, pressed: () {}),
+        MyIconButton(
+            icon: Iconsax.logout_14,
+            pressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) =>
+                        const LogInScreen()), // Navigate to login page
+              );
+            }),
         const Spacer(),
         const Text(
           //To be changed, into what IDK

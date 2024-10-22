@@ -26,7 +26,7 @@ class _ViewAllItemsState extends State<ViewAllItems> {
         elevation: 0,
         actions: [
           const SizedBox(width: 15),
-          MyIconButton(icon: Iconsax.notification, pressed: () {}),
+          MyIconButton(icon: Iconsax.logout_13, pressed: () {}),
           const Spacer(),
           const Text(
             "العربات",

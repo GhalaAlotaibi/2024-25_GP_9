@@ -81,7 +81,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           Text(
-            'أهلًا بك مجددًا',
+            'أهلًا بك',
             textAlign: TextAlign.right,
             style: TextStyle(
               fontSize: 25,
