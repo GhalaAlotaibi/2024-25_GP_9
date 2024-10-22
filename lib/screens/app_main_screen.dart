@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/screens/my_app_home_screen.dart';
+import 'package:tracki/screens/Customer_map_screen.dart';
 import '../Utils/constants.dart';
 
 class AppMainScreen extends StatefulWidget {
@@ -18,7 +19,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
     page = [
       const MyAppHomeScreen(),
       navBarPage(Iconsax.heart5),
-      navBarPage(Iconsax.map5),
+      const CustomerMapScreen(),
       navBarPage(Iconsax.setting_21),
     ];
     super.initState();

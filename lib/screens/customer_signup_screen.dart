@@ -1,7 +1,8 @@
-// ignore_for_file: prefer_const_constructors
-
 import 'package:flutter/material.dart';
 import 'login_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'app_main_screen.dart';
+import '../user_auth/firebase_auth_services.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -12,7 +13,19 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final TextEditingController usernameController = TextEditingController();
+  final FirebaseAuthService _authService = FirebaseAuthService();
   bool agreePersonalData = true;
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+    usernameController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +37,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(height: 5), // Reduced height
+            child: SizedBox(height: 5),
           ),
           Expanded(
             flex: 7,
@@ -41,9 +54,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
-                    // Set text direction to RTL
                     children: [
-                      // Get started text
                       const Text(
                         'إنشاء حساب جديد',
                         style: TextStyle(
@@ -51,11 +62,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF674188),
                         ),
-                        textAlign: TextAlign.center, // Align text to the right
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20.0), // Adjusted space
+                      const SizedBox(height: 20.0),
                       // Full name
                       TextFormField(
+                        controller: usernameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'الرجاء إدخال اسم المستخدم';
@@ -65,8 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         textAlign: TextAlign.right, // Align text to the right
                         decoration: InputDecoration(
                           label: const Text('اسم المستخدم',
-                              textAlign:
-                                  TextAlign.center), // Right-aligned label
+                              textAlign: TextAlign.center),
                           hintText: 'ادخل اسم المستخدم',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
@@ -83,6 +94,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(height: 25.0),
 // Email
                       TextFormField(
+                        controller: emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'الرجاء إدخال البريد الإلكتروني';
@@ -91,8 +103,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         },
                         textAlign: TextAlign.right, // Align text to the right
                         decoration: InputDecoration(
-                          labelText:
-                              'البريد الإلكتروني', // Use labelText instead of label
+                          labelText: 'البريد الإلكتروني',
                           hintText: 'ادخل البريد الإلكتروني',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
@@ -109,6 +120,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 25.0), // Password
                       TextFormField(
+                        controller: passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -117,10 +129,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           }
                           return null;
                         },
-                        textAlign: TextAlign.right, // Align text to the right
+                        textAlign: TextAlign.right,
                         decoration: InputDecoration(
-                          labelText:
-                              'الرمز السري', // Use labelText instead of label
+                          labelText: 'الرمز السري',
                           hintText: 'ادخل الرمز السري',
                           hintStyle: const TextStyle(color: Colors.black26),
                           border: OutlineInputBorder(
@@ -136,10 +147,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 25.0),
-                      // I agree to the processing
                       Row(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         children: [
                           Checkbox(
                             value: agreePersonalData,
@@ -162,20 +171,37 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('جاري معالجة البيانات'),
-                                ),
-                              );
+                              String email = emailController.text.trim();
+                              String password = passwordController.text.trim();
+                              String username = usernameController.text.trim();
+
+                              String? result =
+                                  await _authService.signUpWithEmailAndPassword(
+                                      email, password, username);
+
+                              if (result == null) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content: Text('تم إنشاء الحساب بنجاح!')),
+                                );
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => AppMainScreen()),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(result)),
+                                );
+                              }
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text(
-                                      'يرجى الموافقة على معالجة البيانات الشخصية'),
-                                ),
+                                    content: Text(
+                                        'يرجى الموافقة على معالجة البيانات الشخصية')),
                               );
                             }
                           },
@@ -184,8 +210,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       const SizedBox(height: 30.0),
                       Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -193,8 +218,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               'هل لديك حساب بالفعل؟ ',
                               style: TextStyle(color: Colors.black45),
                             ),
-                            const SizedBox(
-                                width: 5), // Add some space between the texts
+                            const SizedBox(width: 5),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
