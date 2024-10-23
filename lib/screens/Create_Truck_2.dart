@@ -11,6 +11,7 @@ class CreateTruck2 extends StatelessWidget {
   final String selectedCategory; // Selected category
   final String description; // Description
   final String operatingHours; // Combined operating hours
+  final String licenseNo; // License Number
 
   // TextEditingController for the location input
   final TextEditingController locationController = TextEditingController();
@@ -27,6 +28,7 @@ class CreateTruck2 extends StatelessWidget {
     required this.selectedCategory,
     required this.description,
     required this.operatingHours, // Pass combined operating hours
+    required this.licenseNo, // Accept License Number
   }) : super(key: key);
 
   Future<void> _saveTruckDetails(BuildContext context) async {
@@ -46,6 +48,7 @@ class CreateTruck2 extends StatelessWidget {
         'operatingHours': operatingHours,
         'ownerID': ownerId,
         'location': locationController.text,
+        'licenseNo': licenseNo, //License Number
         'rating': '0',
         'ratingsCount': 0, //انا غيرتها ساره غ
         'item_names_list': [], // Initialize with an empty list
