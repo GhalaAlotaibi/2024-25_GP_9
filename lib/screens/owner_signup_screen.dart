@@ -16,7 +16,8 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
   bool agreePersonalData = true;
 
   // Controllers for the form fields
-  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -62,34 +63,70 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                       const SizedBox(height: 20.0),
 
                       // Name
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          controller: _nameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال اسم المستخدم';
-                            }
-                            return null;
-                          },
-                          textAlign: TextAlign.right,
-                          decoration: InputDecoration(
-                            labelText: 'اسم المستخدم',
-                            hintText: 'ادخل اسم المستخدم',
-                            hintStyle: const TextStyle(color: Colors.black26),
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                          ),
-                        ),
-                      ),
+                      Row(
+  mainAxisAlignment: MainAxisAlignment.spaceBetween, // Adjust alignment if needed
+  children: [
+    Expanded(
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: TextFormField(
+          controller: _lastNameController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'الرجاء إدخال الاسم الثاني';
+            }
+            return null;
+          },
+          textAlign: TextAlign.right,
+          decoration: InputDecoration(
+            labelText: 'الاسم الثاني',
+            hintText: 'ادخل الاسم الثاني',
+            hintStyle: const TextStyle(color: Colors.black26),
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ),
+    ),
+    SizedBox(width: 10), // Add spacing between the fields
+    Expanded(
+      child: Directionality(
+        textDirection: TextDirection.rtl,
+        child: TextFormField(
+          controller: _firstNameController,
+          validator: (value) {
+            if (value == null || value.isEmpty) {
+              return 'الرجاء إدخال الاسم الأول';
+            }
+            return null;
+          },
+          textAlign: TextAlign.right,
+          decoration: InputDecoration(
+            labelText: 'الاسم الأول',
+            hintText: 'ادخل الاسم الأول',
+            hintStyle: const TextStyle(color: Colors.black26),
+            border: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: const BorderSide(color: Colors.black12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      ),
+    ),
+  ],
+),
+
+
                       const SizedBox(height: 25.0),
 
                       // Phone number
@@ -295,48 +332,52 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
   }
 
   //DB
-  Future<String?> addOwnerToDatabase() async {
-    CollectionReference owners =
-        FirebaseFirestore.instance.collection('Truck_Owner');
+Future<String?> addOwnerToDatabase() async {
+  CollectionReference owners =
+      FirebaseFirestore.instance.collection('Truck_Owner');
 
-    // Check if the email already exists
-    QuerySnapshot emailQuerySnapshot =
-        await owners.where('Email', isEqualTo: _emailController.text).get();
+  // Check if the email already exists
+  QuerySnapshot emailQuerySnapshot =
+      await owners.where('Email', isEqualTo: _emailController.text).get();
 
-    if (emailQuerySnapshot.docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('البريد الإلكتروني مسجل مسبقًا!'),
-        ),
-      );
-      return null; // Indicate failure
-    }
-
-    // Check if the phone number already exists
-    QuerySnapshot phoneQuerySnapshot =
-        await owners.where('PhoneNum', isEqualTo: _phoneController.text).get();
-
-    if (phoneQuerySnapshot.docs.isNotEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('رقم الهاتف مسجل مسبقًا!'),
-        ),
-      );
-      return null; // Indicate failure
-    }
-
-    try {
-      DocumentReference docRef = await owners.add({
-        'Name': _nameController.text,
-        'PhoneNum': _phoneController.text,
-        'Email': _emailController.text,
-        // Hash the password securely (not shown for simplicity)
-      });
-
-      return docRef.id; // Return the Owner ID for navigation
-    } catch (e) {
-      print('Error adding owner: $e');
-      return null;
-    }
+  if (emailQuerySnapshot.docs.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('البريد الإلكتروني مسجل مسبقًا!'),
+      ),
+    );
+    return null; // Indicate failure
   }
+
+  // Check if the phone number already exists
+  QuerySnapshot phoneQuerySnapshot =
+      await owners.where('PhoneNum', isEqualTo: _phoneController.text).get();
+
+  if (phoneQuerySnapshot.docs.isNotEmpty) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('رقم الهاتف مسجل مسبقًا!'),
+      ),
+    );
+    return null; // Indicate failure
+  }
+
+  try {
+    // Combine first and last name
+    String fullName = '${_firstNameController.text} ${_lastNameController.text}';
+    
+    DocumentReference docRef = await owners.add({
+      'Name': fullName, // Use combined name
+      'PhoneNum': _phoneController.text,
+      'Email': _emailController.text,
+      // Hash the password securely (not shown for simplicity)
+    });
+
+    return docRef.id; // Return the Owner ID for navigation
+  } catch (e) {
+    print('Error adding owner: $e');
+    return null;
+  }
+}
+
 }

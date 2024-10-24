@@ -13,12 +13,13 @@ class CreateTruck1 extends StatefulWidget {
 }
 
 class _CreateTruck1State extends State<CreateTruck1> {
-  final _formKey = GlobalKey<FormState>(); // Form key for validation
-  String? selectedCategory; // Variable to hold the selected category
-  String truckName = ''; // To hold truck name
-  String description = ''; // To hold truck description
-  String businessLogo = ''; // To hold business logo URL
-  String truckImage = ''; // To hold truck image URL
+  final _formKey = GlobalKey<FormState>(); 
+  String? selectedCategory;
+  String truckName = ''; 
+  String licenseNo = ''; // New variable to hold the License Number
+  String description = ''; 
+  String businessLogo = ''; 
+  String truckImage = '';
   String? openingTime;
   String? closingTime;
 
@@ -138,8 +139,38 @@ class _CreateTruck1State extends State<CreateTruck1> {
                         ),
                       ),
 
-                      const SizedBox(
-                          height: 25.0), // Spacing after the input field
+                      const SizedBox(height: 25.0),
+
+
+                          // License Number Input Field
+Directionality(
+  textDirection: TextDirection.rtl,
+  child: TextFormField(
+    decoration: InputDecoration(
+      labelText: 'رقم الرخصة',
+      border: OutlineInputBorder(
+        borderSide: const BorderSide(color: Colors.black12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderSide: const BorderSide(color: Colors.black12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+    ),
+    validator: (value) {
+      if (value == null || value.isEmpty) {
+        return 'الرجاء إدخال رقم الرخصة';
+      }
+      return null;
+    },
+    onChanged: (value) {
+      setState(() {
+        licenseNo = value; // Update the license number
+      });
+    },
+  ),
+),
+const SizedBox( height: 25.0),
 
                       // Business Logo Input Field
                       Directionality(
@@ -173,8 +204,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                         ),
                       ),
 
-                      const SizedBox(
-                          height: 25.0), // Spacing after the input field
+                      const SizedBox( height: 25.0), // Spacing after the input field
 
                       // Truck Image Input Field
                       Directionality(
@@ -250,6 +280,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                         ),
                       ),
                       const SizedBox(height: 25.0),
+                      
 // Truck Description Input Field
                       Directionality(
                         textDirection:
@@ -393,19 +424,15 @@ class _CreateTruck1State extends State<CreateTruck1> {
                                         '$openingTime-$closingTime';
 
                                     return CreateTruck2(
-                                      ownerId: widget
-                                          .ownerId, // Pass the owner ID to the next page
-                                      truckName: truckName, // Pass truck name
-                                      businessLogo:
-                                          businessLogo, // Pass business logo
-                                      truckImage:
-                                          truckImage, // Pass truck image
-                                      selectedCategory:
-                                          selectedCategory!, // Pass selected category
-                                      description:
-                                          description, // Pass truck description
-                                      operatingHours:
-                                          operatingHours, // Pass combined operating hours
+                                      ownerId: widget.ownerId, 
+                                      truckName: truckName, 
+                                      licenseNo: licenseNo, // Pass the License Number
+                                      businessLogo:businessLogo, 
+                                      truckImage:truckImage,
+                                      selectedCategory:selectedCategory!, 
+                                      description:description,
+                                      operatingHours:operatingHours, 
+                                          
                                     );
                                   },
                                 ),

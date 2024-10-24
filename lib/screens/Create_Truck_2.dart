@@ -12,6 +12,7 @@ class CreateTruck2 extends StatefulWidget {
   final String selectedCategory; // Selected category
   final String description; // Description
   final String operatingHours; // Combined operating hours
+  final String licenseNo; // License Number
 
   CreateTruck2({
     Key? key,
@@ -22,6 +23,7 @@ class CreateTruck2 extends StatefulWidget {
     required this.selectedCategory,
     required this.description,
     required this.operatingHours, // Pass combined operating hours
+    required this.licenseNo, // Accept License Number
   }) : super(key: key);
 
   @override
@@ -40,15 +42,16 @@ class _CreateTruck2State extends State<CreateTruck2> {
 
       // Create truck data to save
       Map<String, dynamic> truckData = {
-        'name': widget.truckName,
-        'businessLogo': widget.businessLogo,
-        'truckImage': widget.truckImage,
-        'category': widget.selectedCategory,
-        'description': widget.description,
-        'operatingHours': widget.operatingHours,
-        'ownerID': widget.ownerId,
-        'location':
-            '${_selectedLocation.latitude},${_selectedLocation.longitude}', // Combined string
+        'name': truckName,
+        'businessLogo': businessLogo,
+        'truckImage': truckImage,
+        'category': selectedCategory,
+        'description': description,
+        'operatingHours': operatingHours,
+        'ownerID': ownerId,
+       location':
+            '${_selectedLocation.latitude},${_selectedLocation.longitude}',
+        'licenseNo': licenseNo, //License Number
         'rating': '0',
         'ratingsCount': 0,
         'item_names_list': [],
