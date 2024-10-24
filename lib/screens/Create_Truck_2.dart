@@ -42,16 +42,16 @@ class _CreateTruck2State extends State<CreateTruck2> {
 
       // Create truck data to save
       Map<String, dynamic> truckData = {
-        'name': truckName,
-        'businessLogo': businessLogo,
-        'truckImage': truckImage,
-        'category': selectedCategory,
-        'description': description,
-        'operatingHours': operatingHours,
-        'ownerID': ownerId,
-       location':
+        'name': widget.truckName,
+        'businessLogo': widget.businessLogo,
+        'truckImage': widget.truckImage,
+        'category': widget.selectedCategory,
+        'description': widget.description,
+        'operatingHours': widget.operatingHours,
+        'ownerID': widget.ownerId,
+        'location':
             '${_selectedLocation.latitude},${_selectedLocation.longitude}',
-        'licenseNo': licenseNo, //License Number
+        'licenseNo': widget.licenseNo, // License Number
         'rating': '0',
         'ratingsCount': 0,
         'item_names_list': [],
