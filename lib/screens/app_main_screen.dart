@@ -5,7 +5,9 @@ import 'package:tracki/screens/Customer_map_screen.dart';
 import '../Utils/constants.dart';
 
 class AppMainScreen extends StatefulWidget {
-  const AppMainScreen({super.key});
+  final String customerID;
+
+  const AppMainScreen({super.key, required this.customerID});
 
   @override
   State<AppMainScreen> createState() => _AppMainScreenState();

@@ -4,6 +4,8 @@ import 'package:tracki/screens/app_main_screen.dart';
 import 'package:tracki/screens/owner_main_screen.dart';
 import 'customer_signup_screen.dart'; // Import your signup screen
 import 'user_type_selection_screen.dart'; // Import your user type selection screen
+import '../user_auth/firebase_auth_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -15,6 +17,71 @@ class LogInScreen extends StatefulWidget {
 class _LogInScreenState extends State<LogInScreen> {
   final _formLogInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  final FirebaseAuthService _authService = FirebaseAuthService();
+  @override
+  void dispose() {
+    // Dispose of the controllers when the widget is removed
+    emailController.dispose();
+    passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> signIn() async {
+    if (_formLogInKey.currentState!.validate()) {
+      String userID = "";
+      String? result = await _authService.signInWithEmailAndPassword(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+
+      if (result != null && result.length != 0 && !isErrorMessage(result)) {
+        userID = result;
+        print('User ID: $userID');
+        // Search in the owners database
+        DocumentSnapshot ownerDoc = await FirebaseFirestore.instance
+            .collection('Truck_Owner')
+            .doc(userID)
+            .get();
+
+        if (ownerDoc.exists) {
+          // Navigate to OwnerMainScreen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  OwnerMainScreen(ownerID: userID), // Remove 'const'
+            ),
+          );
+        } else {
+          // Search in the customers database
+          DocumentSnapshot customerDoc = await FirebaseFirestore.instance
+              .collection('Customer')
+              .doc(userID)
+              .get();
+
+          if (customerDoc.exists) {
+            // Navigate to AppMainScreen
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AppMainScreen(customerID: userID)),
+            );
+          } else {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text('الحساب غير موجود')));
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content:
+                  Text(result ?? 'فشل تسجيل الدخول')), // Display error message
+        );
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,14 +126,17 @@ class _LogInScreenState extends State<LogInScreen> {
                         ),
                         const SizedBox(height: 40.0),
                         // Email
+
                         TextFormField(
+                          controller: emailController,
+                          textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.right,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'يرجى إدخال البريد الإلكتروني'; // Arabic validation message
                             }
                             return null;
                           },
-                          textAlign: TextAlign.right,
                           decoration: InputDecoration(
                             label: const Text('البريد الإلكتروني',
                                 textAlign:
@@ -88,6 +158,8 @@ class _LogInScreenState extends State<LogInScreen> {
                         const SizedBox(height: 25.0),
                         // Password
                         TextFormField(
+                          controller: passwordController,
+                          textDirection: TextDirection.rtl,
                           obscureText: true,
                           obscuringCharacter: '*',
                           validator: (value) {
@@ -153,18 +225,7 @@ class _LogInScreenState extends State<LogInScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              if (_formLogInKey.currentState!.validate()) {
-                                // If the form is valid, navigate to the home page
-                                Navigator.pushReplacement(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const AppMainScreen(),
-                                    //const OwnerMainScreen(),  لازم تعديل
-                                  ),
-                                );
-                              }
-                            },
+                            onPressed: signIn, // Call the signIn method
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: kBannerColor),
                             child: const Text(
@@ -215,5 +276,25 @@ class _LogInScreenState extends State<LogInScreen> {
         ),
       ),
     );
+  }
+
+  bool isErrorMessage(String message) {
+    const List<String> errorMessages = [
+      'يرجى إدخال بريد إلكتروني صالح',
+      'البريد الإلكتروني مستخدم بالفعل',
+      'تسجيل الدخول غير مفعل',
+      'يجب ان تحتوي كلمة المرور 8 احرف على الاقل',
+      'حدث خطأ: ',
+      'كلمة المرور خاطئة',
+      'المستخدم غير موجود',
+      'كلمة المرور يجب أن لا تقل عن 8 خانات',
+      'تسجيل الدخول غير مفعل',
+      'المستخدم غير موجود'
+          'كلمة المرور خاطئة',
+
+      // Add more error messages as needed
+    ];
+
+    return errorMessages.contains(message);
   }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
-import 'package:tracki/screens/my_app_home_screen.dart';
 import 'package:tracki/screens/owner_home_screen.dart';
 import 'package:tracki/screens/owner_profile.dart';
 import 'package:tracki/screens/google_map.dart';
@@ -18,28 +17,36 @@ class OwnerMainScreen extends StatefulWidget {
 
 class _OwnerMainScreenState extends State<OwnerMainScreen> {
   int selectedIndex = 0;
-  late final List<Widget> page;
- double? latitude;
+  late List<Widget> page; // Declare page as late
+  double? latitude;
   double? longitude;
 
   @override
   void initState() {
     super.initState();
+    // Initialize the page with placeholders
+    page = [
+      Center(child: CircularProgressIndicator()), // Placeholder for Home
+      Center(child: CircularProgressIndicator()), // Placeholder for Profile
+      Center(child: CircularProgressIndicator()), // Placeholder for Map
+      navBarPage(Iconsax.setting_21), // Placeholder for Settings
+    ];
     fetchLocation();
   }
- Future<void> fetchLocation() async {
+
+  Future<void> fetchLocation() async {
     try {
       DocumentSnapshot snapshot = await FirebaseFirestore.instance
-          .collection('Food_Truck') 
-          .doc(widget.ownerID) 
+          .collection('Food_Truck')
+          .doc(widget.ownerID)
           .get();
 
       if (snapshot.exists) {
-      Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-      if (data.containsKey('location')) {
-        String locationString = data['location'];
-        List<String> locationParts = locationString.split(',');
-      latitude = double.parse(locationParts[0]);
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        if (data.containsKey('location')) {
+          String locationString = data['location'];
+          List<String> locationParts = locationString.split(',');
+          latitude = double.parse(locationParts[0]);
           longitude = double.parse(locationParts[1]);
         }
       }
@@ -47,14 +54,14 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
       print('Error fetching location: $e');
     }
 
+    // Update the page with the fetched location
     setState(() {
-      // Update the page  with the fetched location
       page = [
         OwnerHomeScreen(ownerID: widget.ownerID),
         OwnerProfile(ownerID: widget.ownerID),
         latitude != null && longitude != null
             ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
-            : Center(child: CircularProgressIndicator()),
+            : Center(child: Text('Failed to load map')),
         navBarPage(Iconsax.setting_21),
       ];
     });
@@ -62,7 +69,6 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
 
   @override
   Widget build(BuildContext context) {
-   
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
@@ -98,7 +104,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
               label: 'Settings'),
         ],
       ),
-      body: page[selectedIndex],
+      body: page[selectedIndex], // Access the page safely
     );
   }
 
