@@ -8,6 +8,9 @@ import 'package:tracki/widgets/banner.dart';
 import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
+import '../user_auth/firebase_auth_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class MyAppHomeScreen extends StatefulWidget {
   const MyAppHomeScreen({super.key});
 
@@ -17,6 +20,7 @@ class MyAppHomeScreen extends StatefulWidget {
 
 class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   final CollectionReference categoriesItems = FirebaseFirestore.instance
       .collection("Food-Category"); //هنا عشان نطبع التصنيفات من قاعدة البيانات
@@ -207,15 +211,24 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     return Row(
       children: [
         MyIconButton(
-            icon: Iconsax.logout_14,
-            pressed: () {
+          icon: Iconsax.logout_14,
+          pressed: () async {
+            try {
+              await _authService.signOut(); // Sign out from Firebase
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
                     builder: (context) =>
                         const LogInScreen()), // Navigate to login page
               );
-            }),
+            } catch (e) {
+              // Handle errors here, e.g., show a snackbar
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text('Error signing out: $e')),
+              );
+            }
+          },
+        ),
         const Spacer(),
         const Text(
           //To be changed, into what IDK

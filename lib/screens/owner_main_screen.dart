@@ -20,10 +20,12 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
   late List<Widget> page; // Declare page as late
   double? latitude;
   double? longitude;
+  String? currentOwnerID; // Variable to hold the current owner/truck ID
 
   @override
   void initState() {
     super.initState();
+    currentOwnerID = widget.ownerID;
     // Initialize the page with placeholders
     page = [
       Center(child: CircularProgressIndicator()), // Placeholder for Home
@@ -36,34 +38,72 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
 
   Future<void> fetchLocation() async {
     try {
-      DocumentSnapshot snapshot = await FirebaseFirestore.instance
+      // Check if the ownerID corresponds to a Food Truck
+      DocumentSnapshot truckSnapshot = await FirebaseFirestore.instance
           .collection('Food_Truck')
-          .doc(widget.ownerID)
+          .doc(currentOwnerID)
           .get();
 
-      if (snapshot.exists) {
-        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
-        if (data.containsKey('location')) {
-          String locationString = data['location'];
+      if (truckSnapshot.exists) {
+        // It's a Food Truck ID, fetch its data
+        Map<String, dynamic> truckData =
+            truckSnapshot.data() as Map<String, dynamic>;
+        print('Fetched Food Truck data: $truckData');
+
+        // Extract location
+        if (truckData.containsKey('location')) {
+          String locationString = truckData['location'];
           List<String> locationParts = locationString.split(',');
-          latitude = double.parse(locationParts[0]);
-          longitude = double.parse(locationParts[1]);
+          latitude = double.tryParse(locationParts[0]);
+          longitude = double.tryParse(locationParts[1]);
+        } else {
+          print('Location key not found in Food Truck document.');
+        }
+      } else {
+        // Not a Food Truck ID, check for food trucks owned by this ownerID
+        QuerySnapshot foodTruckSnapshot = await FirebaseFirestore.instance
+            .collection('Food_Truck')
+            .where('ownerID', isEqualTo: currentOwnerID)
+            .get();
+
+        if (foodTruckSnapshot.docs.isNotEmpty) {
+          // Use the first food truck found
+          var firstTruckDoc = foodTruckSnapshot.docs.first;
+          currentOwnerID = firstTruckDoc.id; // Update to the first truck ID
+          Map<String, dynamic> truckData =
+              firstTruckDoc.data() as Map<String, dynamic>;
+
+          // Extract location
+          if (truckData.containsKey('location')) {
+            String locationString = truckData['location'];
+            List<String> locationParts = locationString.split(',');
+            latitude = double.tryParse(locationParts[0]);
+            longitude = double.tryParse(locationParts[1]);
+          } else {
+            print('Location key not found in Food Truck document for owner.');
+          }
+        } else {
+          print('No food trucks found for ownerID: $currentOwnerID');
         }
       }
     } catch (e) {
-      print('Error fetching location: $e');
+      print('Error fetching data: $e');
     }
 
     // Update the page with the fetched location
     setState(() {
-      page = [
-        OwnerHomeScreen(ownerID: widget.ownerID),
-        OwnerProfile(ownerID: widget.ownerID),
-        latitude != null && longitude != null
-            ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
-            : Center(child: Text('Failed to load map')),
-        navBarPage(Iconsax.setting_21),
-      ];
+      if (currentOwnerID != null) {
+        page = [
+          OwnerHomeScreen(ownerID: currentOwnerID!),
+          OwnerProfile(ownerID: currentOwnerID!),
+          latitude != null && longitude != null
+              ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
+              : Center(child: Text('Failed to load map')),
+          navBarPage(Iconsax.setting_21),
+        ];
+      } else {
+        page = [Center(child: Text('Owner ID is null. Unable to load data.'))];
+      }
     });
   }
 
@@ -104,7 +144,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
               label: 'Settings'),
         ],
       ),
-      body: page[selectedIndex], // Access the page safely
+      body: page[selectedIndex],
     );
   }
 

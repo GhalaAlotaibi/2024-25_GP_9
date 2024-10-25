@@ -6,6 +6,11 @@ import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/owner_profile.dart';
 import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/widgets/banner2.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
+import 'package:tracki/screens/login_screen.dart';
+
+import '../user_auth/firebase_auth_services.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OwnerHomeScreen extends StatefulWidget {
   final String ownerID; //the doc id not the ownerID !!
@@ -17,6 +22,8 @@ class OwnerHomeScreen extends StatefulWidget {
 }
 
 class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
+  final FirebaseAuthService _authService = FirebaseAuthService();
+
   Future<Map<String, dynamic>> fetchOwnerData(String ownerID) async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('Food_Truck')
@@ -74,23 +81,54 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
   }
 
 // Welcome Message with Business Logo
+  // Assuming you have already defined MyIconButton elsewhere in your code
   Widget buildWelcomeMessage(String logoUrl, String ownerID) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 19, 0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.end,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            'أهلًا بك',
-            textAlign: TextAlign.right,
-            style: TextStyle(
-              fontSize: 25,
-              fontWeight: FontWeight.w800,
-              color: const Color.fromARGB(255, 0, 0, 0),
+          // Logout Button on the Left with Padding
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 16.0), // Adjust the value as needed
+            child: MyIconButton(
+              icon: Iconsax.logout_14,
+              pressed: () async {
+                try {
+                  await _authService.signOut(); // Sign out from Firebase
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            const LogInScreen()), // Navigate to login page
+                  );
+                } catch (e) {
+                  // Handle errors here, e.g., show a snackbar
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error signing out: $e')),
+                  );
+                }
+              },
             ),
           ),
-          const SizedBox(width: 10),
-          buildBusinessLogo(logoUrl),
+
+          // Greeting Text and Business Logo on the Right
+          Row(
+            children: [
+              Text(
+                'أهلًا بك',
+                textAlign: TextAlign.right,
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.w800,
+                  color: const Color.fromARGB(255, 0, 0, 0),
+                ),
+              ),
+              const SizedBox(width: 10),
+              buildBusinessLogo(logoUrl),
+            ],
+          ),
         ],
       ),
     );

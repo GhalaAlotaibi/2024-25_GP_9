@@ -93,4 +93,7 @@ class FirebaseAuthService {
   bool isStrongPassword(String password) {
     return password.length >= 8;
   }
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
 }
