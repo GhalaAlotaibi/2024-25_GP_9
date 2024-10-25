@@ -58,7 +58,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
             //const SizedBox(height: 50), // Space before buttons
-const Spacer(),
+            const Spacer(),
             // Align buttons at the bottom
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
