@@ -217,9 +217,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
               await _authService.signOut(); // Sign out from Firebase
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        const LogInScreen()), // Navigate to login page
+                MaterialPageRoute(builder: (context) => const LogInScreen()),
               );
             } catch (e) {
               // Handle errors here, e.g., show a snackbar

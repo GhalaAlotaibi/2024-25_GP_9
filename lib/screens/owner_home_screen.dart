@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/chatbot.dart';
 import 'package:tracki/screens/owner_profile.dart';
 import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/widgets/banner2.dart';
@@ -190,7 +191,12 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               title: '---------',
               color: const Color.fromARGB(255, 255, 255, 255),
               onTap: () {
-                // Navigate to Chatbot feature
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => ChatbotUI(),
+                  ),
+                );
               },
             ),
             buildServiceCard(

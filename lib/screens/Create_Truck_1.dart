@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
+import 'dart:io';
 
 class CreateTruck1 extends StatefulWidget {
-  final String ownerId; // Add this field to capture OwnerId
+  final String ownerId;
 
   const CreateTruck1({Key? key, required this.ownerId}) : super(key: key);
 
@@ -13,55 +16,78 @@ class CreateTruck1 extends StatefulWidget {
 }
 
 class _CreateTruck1State extends State<CreateTruck1> {
-  final _formKey = GlobalKey<FormState>(); 
+  final _formKey = GlobalKey<FormState>();
   String? selectedCategory;
-  String truckName = ''; 
-  String licenseNo = ''; // New variable to hold the License Number
-  String description = ''; 
-  String businessLogo = ''; 
-  String truckImage = '';
+  String truckName = '';
+  String licenseNo = '';
+  String description = '';
+  String businessLogoUrl = '';
+  String truckImageUrl = '';
   String? openingTime;
   String? closingTime;
+  File? businessLogo;
+  File? truckImage;
 
-  // List of truck categories
-  List<String> categories = []; // Initialize as an empty list
-
-  // Generate a list of times in 24-hour format
-  List<String> generateTimeList() {
-    List<String> timeList = [];
-    for (int hour = 0; hour < 24; hour++) {
-      String time =
-          hour.toString().padLeft(2, '0') + ":00"; // Format as "HH:MM"
-      timeList.add(time);
-    }
-    return timeList;
-  }
-
-  final List<String> timeList = []; // Generate time list
+  List<String> categories = [];
+  final List<String> timeList = [];
 
   @override
   void initState() {
     super.initState();
     timeList.addAll(generateTimeList());
-    fetchCategories(); // Call the fetch function
+    fetchCategories();
   }
 
-  // Fetch categories from Firestore
   Future<void> fetchCategories() async {
     try {
       QuerySnapshot snapshot =
           await FirebaseFirestore.instance.collection('Food-Category').get();
-
-      List<String> fetchedCategories = snapshot.docs
-          .map((doc) => doc['name'] as String) // Get the 'name' field
-          .toList();
-
+      List<String> fetchedCategories =
+          snapshot.docs.map((doc) => doc['name'] as String).toList();
       setState(() {
-        categories = fetchedCategories; // Update the categories list
+        categories = fetchedCategories;
       });
     } catch (e) {
       print('Error fetching categories: $e');
     }
+  }
+
+  // Method to pick and upload image
+  Future<void> _pickAndUploadImage({required bool isBusinessLogo}) async {
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('uploads/${DateTime.now().millisecondsSinceEpoch}');
+        await storageRef.putFile(imageFile);
+        final imageUrl = await storageRef.getDownloadURL();
+
+        setState(() {
+          if (isBusinessLogo) {
+            businessLogo = imageFile;
+            businessLogoUrl = imageUrl;
+          } else {
+            truckImage = imageFile;
+            truckImageUrl = imageUrl;
+          }
+        });
+      } catch (e) {
+        print('Error uploading image: $e');
+      }
+    }
+  }
+
+  List<String> generateTimeList() {
+    List<String> timeList = [];
+    for (int hour = 0; hour < 24; hour++) {
+      String time = hour.toString().padLeft(2, '0') + ":00";
+      timeList.add(time);
+    }
+    return timeList;
   }
 
   @override
@@ -69,19 +95,18 @@ class _CreateTruck1State extends State<CreateTruck1> {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF674188), // App bar color
+        backgroundColor: const Color(0xFF674188),
       ),
       body: Column(
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(height: 5), // Reduced height
+            child: SizedBox(height: 5),
           ),
           Expanded(
             flex: 7,
             child: Container(
-              padding: const EdgeInsets.fromLTRB(
-                  25.0, 20.0, 25.0, 20.0), // Add padding around the body
+              padding: const EdgeInsets.fromLTRB(25.0, 20.0, 25.0, 20.0),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.only(
@@ -91,7 +116,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
               ),
               child: SingleChildScrollView(
                 child: Form(
-                  key: _formKey, // Use the form key for validation
+                  key: _formKey,
                   child: Column(
                     children: [
                       const Text(
@@ -101,24 +126,22 @@ class _CreateTruck1State extends State<CreateTruck1> {
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF674188),
                         ),
-                        textAlign: TextAlign.center, // Align text to the center
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20.0), // Adjusted space
+                      const SizedBox(height: 20.0),
 
-                      // Truck Name Input Field
                       Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال اسم العربة'; // Error message in Arabic
+                              return 'الرجاء إدخال اسم العربة';
                             }
-                            truckName = value; // Save the truck name
+                            truckName = value;
                             return null;
                           },
-                          textAlign: TextAlign.right, // Align text to the right
-                          keyboardType: TextInputType.text, // Allow text input
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             label: const Text('اسم العربة',
                                 textAlign: TextAlign.center),
@@ -141,54 +164,11 @@ class _CreateTruck1State extends State<CreateTruck1> {
 
                       const SizedBox(height: 25.0),
 
-
-                          // License Number Input Field
-Directionality(
-  textDirection: TextDirection.rtl,
-  child: TextFormField(
-    decoration: InputDecoration(
-      labelText: 'رقم الرخصة',
-      border: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'الرجاء إدخال رقم الرخصة';
-      }
-      return null;
-    },
-    onChanged: (value) {
-      setState(() {
-        licenseNo = value; // Update the license number
-      });
-    },
-  ),
-),
-const SizedBox( height: 25.0),
-
-                      // Business Logo Input Field
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: TextFormField(
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال رابط الشعار';
-                            }
-                            businessLogo = value;
-                            return null;
-                          },
-                          textAlign: TextAlign.right,
                           decoration: InputDecoration(
-                            label: const Text('رابط الشعار',
-                                textAlign: TextAlign.center),
-                            hintText: 'ادخل رابط الشعار',
-                            hintStyle: const TextStyle(color: Colors.black26),
+                            labelText: 'رقم الرخصة',
                             border: OutlineInputBorder(
                               borderSide:
                                   const BorderSide(color: Colors.black12),
@@ -199,49 +179,23 @@ const SizedBox( height: 25.0),
                                   const BorderSide(color: Colors.black12),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            alignLabelWithHint: true,
                           ),
-                        ),
-                      ),
-
-                      const SizedBox( height: 25.0), // Spacing after the input field
-
-                      // Truck Image Input Field
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: TextFormField(
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال رابط صورة العربة';
+                              return 'الرجاء إدخال رقم الرخصة';
                             }
-                            truckImage = value;
                             return null;
                           },
-                          textAlign: TextAlign.right,
-                          decoration: InputDecoration(
-                            label: const Text('رابط صورة العربة',
-                                textAlign: TextAlign.center),
-                            hintText: 'ادخل رابط صورة العربة',
-                            hintStyle: const TextStyle(color: Colors.black26),
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            alignLabelWithHint: true,
-                          ),
+                          onChanged: (value) {
+                            setState(() {
+                              licenseNo = value;
+                            });
+                          },
                         ),
                       ),
 
-                      const SizedBox(
-                          height: 25.0), // Spacing after the input field
+                      const SizedBox(height: 25.0),
 
-                      // Truck Category Dropdown
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: DropdownButtonFormField<String>(
@@ -280,17 +234,74 @@ const SizedBox( height: 25.0),
                         ),
                       ),
                       const SizedBox(height: 25.0),
-                      
-// Truck Description Input Field
+                      //
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Column(
+                            children: [
+                              InkWell(
+                                onTap: () =>
+                                    _pickAndUploadImage(isBusinessLogo: true),
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: Colors.black26),
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: businessLogo != null
+                                      ? Image.file(businessLogo!,
+                                          fit: BoxFit.cover)
+                                      : const Icon(
+                                          Icons.add_a_photo,
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              const Text("اختيار الشعار"),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              InkWell(
+                                onTap: () =>
+                                    _pickAndUploadImage(isBusinessLogo: false),
+                                child: Container(
+                                  height: 100,
+                                  width: 100,
+                                  decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.black26), // Add border
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: truckImage != null
+                                      ? Image.file(truckImage!,
+                                          fit: BoxFit.cover)
+                                      : const Icon(
+                                          Icons.add_a_photo,
+                                          color: Colors.grey,
+                                          size: 30,
+                                        ),
+                                ),
+                              ),
+                              const SizedBox(height: 5),
+                              const Text("اختيار صورة العربة"),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 25.0),
+
                       Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         child: TextFormField(
                           maxLength: 140,
-                          textAlign: TextAlign.right, // Align text to the right
-                          keyboardType:
-                              TextInputType.multiline, // Allow multiline input
-                          maxLines: null, // Allow unlimited lines
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
                           decoration: InputDecoration(
                             labelText: 'وصف للعربة',
                             hintText: 'ادخل وصفًا للعربة',
@@ -316,10 +327,8 @@ const SizedBox( height: 25.0),
                         ),
                       ),
 
-                      const SizedBox(
-                          height: 25.0), // Spacing after the input field
+                      const SizedBox(height: 25.0),
 
-                      // Operating Hours Input Fields
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: Row(
@@ -330,14 +339,13 @@ const SizedBox( height: 25.0),
                                 value: openingTime,
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'الرجاء اختيار ساعة الافتتاح'; // Error message in Arabic
+                                    return 'الرجاء اختيار ساعة الافتتاح';
                                   }
                                   return null;
                                 },
                                 decoration: InputDecoration(
                                   label: const Text('اختر ساعة الافتتاح',
-                                      textAlign: TextAlign
-                                          .right), // Right-aligned label
+                                      textAlign: TextAlign.right),
                                   border: OutlineInputBorder(
                                     borderSide:
                                         const BorderSide(color: Colors.black12),
@@ -351,33 +359,30 @@ const SizedBox( height: 25.0),
                                 ),
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    openingTime =
-                                        newValue; // Update opening time
+                                    openingTime = newValue;
                                   });
                                 },
                                 items: timeList.map((String time) {
                                   return DropdownMenuItem<String>(
                                     value: time,
-                                    child: Text(time), // Display time
+                                    child: Text(time),
                                   );
                                 }).toList(),
                               ),
                             ),
-                            const SizedBox(
-                                width: 15), // Spacing between dropdowns
+                            const SizedBox(width: 15),
                             Expanded(
                               child: DropdownButtonFormField<String>(
                                 value: closingTime,
                                 validator: (value) {
                                   if (value == null) {
-                                    return 'الرجاء اختيار ساعة الإغلاق'; // Error message in Arabic
+                                    return 'الرجاء اختيار ساعة الإغلاق';
                                   }
                                   return null;
                                 },
                                 decoration: InputDecoration(
                                   label: const Text('اختر ساعة الإغلاق',
-                                      textAlign: TextAlign
-                                          .right), // Right-aligned label
+                                      textAlign: TextAlign.right),
                                   border: OutlineInputBorder(
                                     borderSide:
                                         const BorderSide(color: Colors.black12),
@@ -391,14 +396,13 @@ const SizedBox( height: 25.0),
                                 ),
                                 onChanged: (String? newValue) {
                                   setState(() {
-                                    closingTime =
-                                        newValue; // Update closing time
+                                    closingTime = newValue;
                                   });
                                 },
                                 items: timeList.map((String time) {
                                   return DropdownMenuItem<String>(
                                     value: time,
-                                    child: Text(time), // Display time
+                                    child: Text(time),
                                   );
                                 }).toList(),
                               ),
@@ -407,14 +411,13 @@ const SizedBox( height: 25.0),
                         ),
                       ),
 
-                      const SizedBox(height: 30.0), // Spacing before button
+                      const SizedBox(height: 30.0),
 // Submit Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // If the form is valid, navigate to the next page
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -424,22 +427,21 @@ const SizedBox( height: 25.0),
                                         '$openingTime-$closingTime';
 
                                     return CreateTruck2(
-                                      ownerId: widget.ownerId, 
-                                      truckName: truckName, 
-                                      licenseNo: licenseNo, // Pass the License Number
-                                      businessLogo:businessLogo, 
-                                      truckImage:truckImage,
-                                      selectedCategory:selectedCategory!, 
-                                      description:description,
-                                      operatingHours:operatingHours, 
-                                          
+                                      ownerId: widget.ownerId,
+                                      truckName: truckName,
+                                      licenseNo: licenseNo,
+                                      businessLogo: businessLogoUrl,
+                                      truckImage: truckImageUrl,
+                                      selectedCategory: selectedCategory!,
+                                      description: description,
+                                      operatingHours: operatingHours,
                                     );
                                   },
                                 ),
                               );
                             }
                           },
-                          child: Text(
+                          child: const Text(
                             'التالي',
                             style: TextStyle(
                               color: Color(0xFF674188),

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/owner_reviews.dart'; // Make sure to import your OwnerReviews page
 
@@ -320,7 +321,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                      OwnerReviews(ownerID: widget.documentSnapshot.id),
+                      CustomerReviews(ownerID: widget.documentSnapshot.id),
                 ),
               );
             },

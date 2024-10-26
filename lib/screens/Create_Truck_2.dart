@@ -5,14 +5,14 @@ import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_3.dart';
 
 class CreateTruck2 extends StatefulWidget {
-  final String ownerId; // Capture the owner ID
-  final String truckName; // Truck name
-  final String businessLogo; // Business logo URL
-  final String truckImage; // Truck image URL
-  final String selectedCategory; // Selected category
-  final String description; // Description
-  final String operatingHours; // Combined operating hours
-  final String licenseNo; // License Number
+  final String ownerId;  
+  final String truckName;  
+  final String businessLogo;  
+  final String truckImage;  
+  final String selectedCategory;  
+  final String description;  
+  final String operatingHours; 
+  final String licenseNo; 
 
   CreateTruck2({
     Key? key,
@@ -22,8 +22,8 @@ class CreateTruck2 extends StatefulWidget {
     required this.truckImage,
     required this.selectedCategory,
     required this.description,
-    required this.operatingHours, // Pass combined operating hours
-    required this.licenseNo, // Accept License Number
+    required this.operatingHours, 
+    required this.licenseNo,  
   }) : super(key: key);
 
   @override
@@ -32,7 +32,7 @@ class CreateTruck2 extends StatefulWidget {
 
 class _CreateTruck2State extends State<CreateTruck2> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  LatLng _selectedLocation = LatLng(24.7136, 46.6753); // Default location
+  LatLng _selectedLocation = LatLng(24.7136, 46.6753);  
   late GoogleMapController _mapController;
 
   Future<void> _saveTruckDetails(BuildContext context) async {
@@ -51,7 +51,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
         'ownerID': widget.ownerId,
         'location':
             '${_selectedLocation.latitude},${_selectedLocation.longitude}',
-        'licenseNo': widget.licenseNo, // License Number
+        'licenseNo': widget.licenseNo,  
         'rating': '0',
         'ratingsCount': 0,
         'item_names_list': [],
@@ -87,7 +87,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF674188),
+      backgroundColor: kBannerColor,
       ),
       body: Column(
         children: [
@@ -132,7 +132,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           onTap: (LatLng location) {
                             setState(() {
                               _selectedLocation =
-                                  location; // Update selected location
+                                  location;  
                             });
                           },
                           markers: {
@@ -153,7 +153,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           onPressed: () {
                             _saveTruckDetails(context);
                           },
-                          child: const Text('التالي'), // "Next" button text
+                          child: const Text('التالي'),  
                         ),
                       ),
                       const SizedBox(height: 20.0),
