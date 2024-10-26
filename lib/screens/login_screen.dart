@@ -69,8 +69,8 @@ class _LogInScreenState extends State<LogInScreen> {
                   builder: (context) => AppMainScreen(customerID: userID)),
             );
           } else {
-            ScaffoldMessenger.of(context)
-                .showSnackBar(SnackBar(content: Text('الحساب غير موجود')));
+            ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(result ?? 'الحساب غير موجود')));
           }
         }
       } else {
@@ -89,9 +89,9 @@ class _LogInScreenState extends State<LogInScreen> {
       textDirection:
           TextDirection.rtl, // Set text direction to RTL for the entire screen
       child: Scaffold(
-        backgroundColor: kBannerColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF674188), // Use the same color
+          backgroundColor: const Color(0xFF674188),
+          automaticallyImplyLeading: true, // This shows the back button
         ),
         body: Column(
           children: [

@@ -57,21 +57,34 @@ class FirebaseAuthService {
   /// Signs in a user with email and password, returning the user's UID.
   Future<String?> signInWithEmailAndPassword(
       String email, String password) async {
+    if (!isValidEmail(email)) {
+      return 'البريد الإلكتروني غير صالح';
+    }
     try {
       UserCredential credential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      return credential.user?.uid; // Return the user ID
+      return credential.user?.uid; // Return the user ID if successful
     } on FirebaseAuthException catch (e) {
+      print('FirebaseAuthException: ${e.code}'); // Log the error code
       switch (e.code) {
         case 'user-not-found':
           return 'المستخدم غير موجود';
         case 'wrong-password':
           return 'كلمة المرور خاطئة';
+        case 'invalid-email':
+          return 'البريد الإلكتروني غير صالح';
+        case 'user-disabled':
+          return 'الحساب معطل';
+        case 'invalid-credential':
+          return 'البيانات المدخلة غير صحيحة';
         default:
-          return 'حدث خطأ: ${e.message}';
+          return 'حدث خطأ: ${e.message ?? "غير معروف"}'; // Default error message
       }
+    } catch (e) {
+      print('Unexpected error: $e'); // Log unexpected errors
+      return 'حدث خطأ غير متوقع: ${e.toString()}';
     }
   }
 
@@ -93,6 +106,7 @@ class FirebaseAuthService {
   bool isStrongPassword(String password) {
     return password.length >= 8;
   }
+
   Future<void> signOut() async {
     await _auth.signOut();
   }
