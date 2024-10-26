@@ -34,7 +34,7 @@ class Banner2 extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    "! سهلناها عليك ",
+                    "! سهـلـنـاهـا عـلـيـك ",
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 22,
@@ -42,7 +42,7 @@ class Banner2 extends StatelessWidget {
                         color: kBannerColor),
                   ),
                   Text(
-                    "من هنا يمكنك إدارة كل ما يتعلق \nبعربتك",
+                    "من هنا يمكنك الوصـول إلى كل ما يتعلـــــق \nبـعربـتــك",
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 18,

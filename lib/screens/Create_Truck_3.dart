@@ -10,12 +10,12 @@ class CreateTruck3 extends StatelessWidget {
       : super(key: key);
 
   void _navigateToTruckProfile(BuildContext context) {
-    // Navigate to Truck_Profile screen and pass the truckId
+ 
     Navigator.push(
       context,
       MaterialPageRoute(
         builder: (context) =>
-            TruckProfile(truckId: truckId), // Pass the truckId to TruckProfile
+            TruckProfile(truckId: truckId),  
       ),
     );
   }
@@ -27,19 +27,19 @@ class CreateTruck3 extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center, // Center vertically
+          mainAxisAlignment: MainAxisAlignment.center,  
           children: [
-            // Logo at the top
+     
             SizedBox(
-              width: 350, // Set desired width
-              height: 350, // Set desired height
+              width: 350,  
+              height: 350,  
               child: Image.asset(
-                'assets/images/logo_Tracki.png', // Replace with your logo path
-                fit: BoxFit.contain, // Maintain aspect ratio
+                'assets/images/logo_Tracki.png', 
+                fit: BoxFit.contain, 
               ),
             ),
-            const SizedBox(height: 20), // Space between logo and text
-            // Welcome Text
+            const SizedBox(height: 20),  
+          
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Center(
@@ -68,17 +68,17 @@ class CreateTruck3 extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20), // Space
+            const SizedBox(height: 20),  
 
             InkWell(
-              onTap: () => _navigateToTruckProfile(context), // Navigate on tap
+              onTap: () => _navigateToTruckProfile(context),  
               child: const Text(
-                "التالي", // Link text
+                "التالي", 
                 style: TextStyle(
-                  color: Color(0xFF674188), // Link color
-                  fontSize: 20, // Font size for the link
+                  color: Color(0xFF674188),  
+                  fontSize: 20,  
                   decoration:
-                      TextDecoration.underline, // Underline for link effect
+                      TextDecoration.underline, 
                 ),
               ),
             ),

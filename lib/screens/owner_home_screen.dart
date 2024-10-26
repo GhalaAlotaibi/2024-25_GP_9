@@ -245,7 +245,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                   ),
                 ),
               ),
-              Align(
+              Align(//
                 alignment: Alignment.bottomLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(20),

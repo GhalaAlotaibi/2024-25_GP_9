@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/app_main_screen.dart';
 import 'package:tracki/screens/owner_main_screen.dart';
-import 'customer_signup_screen.dart'; // Import your signup screen
-import 'user_type_selection_screen.dart'; // Import your user type selection screen
+import 'package:tracki/screens/welcome_screen.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
+import 'customer_signup_screen.dart';
+import 'user_type_selection_screen.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -20,7 +22,7 @@ class _LogInScreenState extends State<LogInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
-  bool isLoading = false; // Loading state variable
+  bool isLoading = false;
 
   @override
   void dispose() {
@@ -32,7 +34,7 @@ class _LogInScreenState extends State<LogInScreen> {
   Future<void> signIn() async {
     if (_formLogInKey.currentState!.validate() && !isLoading) {
       setState(() {
-        isLoading = true; // Set loading to true
+        isLoading = true;
       });
 
       String userID = "";
@@ -42,7 +44,7 @@ class _LogInScreenState extends State<LogInScreen> {
       );
 
       setState(() {
-        isLoading = false; // Reset loading state
+        isLoading = false;
       });
 
       if (result != null && result.isNotEmpty && !isErrorMessage(result)) {
@@ -91,9 +93,25 @@ class _LogInScreenState extends State<LogInScreen> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
+        backgroundColor: const Color(0xFF674188),
         appBar: AppBar(
           backgroundColor: const Color(0xFF674188),
-          automaticallyImplyLeading: true,
+          automaticallyImplyLeading: false,
+          elevation: 0,
+          actions: [
+            MyIconButton(
+              icon: Icons.arrow_back_ios_new,
+              pressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => WelcomeScreen(),
+                  ),
+                );
+              },
+            ),
+            const SizedBox(width: 340),
+          ],
         ),
         body: Column(
           children: [

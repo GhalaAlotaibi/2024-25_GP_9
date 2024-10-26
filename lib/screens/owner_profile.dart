@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
-
 import 'package:tracki/screens/owner_home_screen.dart';
 import 'package:tracki/screens/owner_main_screen.dart';
 import 'package:tracki/screens/truck_details_update.dart';
@@ -169,7 +168,7 @@ class OwnerProfile extends StatelessWidget {
                                   ),
                                 ),
                                 const Text(
-                                  'متوسط التقييم',
+                                  'التقييم',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
@@ -188,7 +187,7 @@ class OwnerProfile extends StatelessWidget {
                                   ),
                                 ),
                                 const Text(
-                                  'عدد التقييمات',
+                                  'التقييمات',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
@@ -207,7 +206,7 @@ class OwnerProfile extends StatelessWidget {
                                   ),
                                 ),
                                 const Text(
-                                  'عدد الأصناف',
+                                  'الأصناف',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Colors.white,
@@ -245,10 +244,10 @@ class OwnerProfile extends StatelessWidget {
                         // Description card
                         Container(
                           width: 385,
-                          height: 130,
+                          height: 120,
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: const Color.fromARGB(255, 149, 149, 149),
+                              color: const Color.fromARGB(255, 231, 231, 231),
                             ),
                             color: const Color.fromARGB(255, 255, 255, 255),
                             borderRadius: BorderRadius.circular(15),
@@ -297,7 +296,6 @@ class OwnerProfile extends StatelessWidget {
                   ),
                   const SizedBox(height: 20),
 
-        
                   // Menu List
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -306,7 +304,7 @@ class OwnerProfile extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final imageUrl = itemImagesList.isNotEmpty
                           ? itemImagesList[index]
-                          : 'https://via.placeholder.com/50';  
+                          : 'https://via.placeholder.com/50';
                       final itemName = itemNamesList[index];
                       final itemPrice = itemPricesList[index];
 

@@ -206,7 +206,7 @@ class _EditItemState extends State<EditItem> {
                           controller: nameController,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال اسم العنصر';  
+                              return 'الرجاء إدخال اسم العنصر';
                             }
                             return null;
                           },
@@ -214,12 +214,11 @@ class _EditItemState extends State<EditItem> {
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
                             label: const Text(
-                              'اسم العنصر',  
+                              'اسم الصنف',
                               textAlign: TextAlign.center,
                             ),
-                            hintText: 'ادخل اسم العنصر',  
-                            hintStyle: const TextStyle(
-                                color: Colors.black26),  
+                            hintText: 'ادخل اسم العنصر',
+                            hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
                               borderSide:
                                   const BorderSide(color: Colors.black12),

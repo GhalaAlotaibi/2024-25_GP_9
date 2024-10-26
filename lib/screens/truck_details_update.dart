@@ -79,18 +79,17 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
       final uploadTask = storageRef.putFile(imageFile);
 
       await uploadTask.whenComplete(() {});
-      final downloadUrl = await storageRef
-          .getDownloadURL();  
+      final downloadUrl = await storageRef.getDownloadURL();
 
       setState(() {
-        logoUrl = downloadUrl; 
+        logoUrl = downloadUrl;
       });
- 
+
       await FirebaseFirestore.instance
           .collection('Food_Truck')
           .doc(widget.ownerID)
           .update({
-        'businessLogo': downloadUrl, 
+        'businessLogo': downloadUrl,
       });
     }
   }
@@ -212,7 +211,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                       TextFormField(
                         initialValue: truckName,
                         decoration: InputDecoration(
-                          labelText: 'اسم العربة',
+                          labelText: 'تحديث اسم العربة',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(20.0),
                           ),
@@ -307,7 +306,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                                   color: Colors.black),
                               SizedBox(width: 10),
                               Text(
-                                'تحديث قائمة الطعام',
+                                'تحديـث قـائمة الطعـام',
                                 style: TextStyle(
                                   fontSize: 16,
                                   color: Colors.black,
@@ -334,7 +333,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                               textStyle: const TextStyle(fontSize: 16),
                             ),
                             child: const Text(
-                              'تحديث بيانات العربة',
+                              "حـفظ التغييرات",
                               style: TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold,
