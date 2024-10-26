@@ -4,6 +4,7 @@ import 'package:tracki/screens/owner_home_screen.dart';
 import 'package:tracki/screens/owner_profile.dart';
 import 'package:tracki/screens/google_map.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tracki/screens/owner_settings.dart';
 import '../Utils/constants.dart';
 
 class OwnerMainScreen extends StatefulWidget {
@@ -26,31 +27,31 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
   void initState() {
     super.initState();
     currentOwnerID = widget.ownerID;
-    // Initialize the page with placeholders
+
     page = [
-      Center(child: CircularProgressIndicator()), // Placeholder for Home
+      Center(child: CircularProgressIndicator()),
       Center(child: CircularProgressIndicator()), // Placeholder for Profile
       Center(child: CircularProgressIndicator()), // Placeholder for Map
-      navBarPage(Iconsax.setting_21), // Placeholder for Settings
+      Center(child: CircularProgressIndicator()), // Placeholder for Settings
     ];
+
     fetchLocation();
   }
 
   Future<void> fetchLocation() async {
     try {
-      // Check if the ownerID corresponds to a Food Truck
+      // Retrieve Food_Truck data based on currentOwnerID
       DocumentSnapshot truckSnapshot = await FirebaseFirestore.instance
           .collection('Food_Truck')
           .doc(currentOwnerID)
           .get();
 
       if (truckSnapshot.exists) {
-        // It's a Food Truck ID, fetch its data
         Map<String, dynamic> truckData =
             truckSnapshot.data() as Map<String, dynamic>;
         print('Fetched Food Truck data: $truckData');
 
-        // Extract location
+        // Extract location if available
         if (truckData.containsKey('location')) {
           String locationString = truckData['location'];
           List<String> locationParts = locationString.split(',');
@@ -60,7 +61,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
           print('Location key not found in Food Truck document.');
         }
       } else {
-        // Not a Food Truck ID, check for food trucks owned by this ownerID
+        // Query Food_Truck collection for trucks owned by this owner
         QuerySnapshot foodTruckSnapshot = await FirebaseFirestore.instance
             .collection('Food_Truck')
             .where('ownerID', isEqualTo: currentOwnerID)
@@ -69,11 +70,10 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
         if (foodTruckSnapshot.docs.isNotEmpty) {
           // Use the first food truck found
           var firstTruckDoc = foodTruckSnapshot.docs.first;
-          currentOwnerID = firstTruckDoc.id; // Update to the first truck ID
+          currentOwnerID = firstTruckDoc.id;
           Map<String, dynamic> truckData =
               firstTruckDoc.data() as Map<String, dynamic>;
 
-          // Extract location
           if (truckData.containsKey('location')) {
             String locationString = truckData['location'];
             List<String> locationParts = locationString.split(',');
@@ -90,20 +90,15 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
       print('Error fetching data: $e');
     }
 
-    // Update the page with the fetched location
     setState(() {
-      if (currentOwnerID != null) {
-        page = [
-          OwnerHomeScreen(ownerID: currentOwnerID!),
-          OwnerProfile(ownerID: currentOwnerID!),
-          latitude != null && longitude != null
-              ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
-              : Center(child: Text('Failed to load map')),
-          navBarPage(Iconsax.setting_21),
-        ];
-      } else {
-        page = [Center(child: Text('Owner ID is null. Unable to load data.'))];
-      }
+      page = [
+        OwnerHomeScreen(ownerID: currentOwnerID!),
+        OwnerProfile(ownerID: currentOwnerID!),
+        latitude != null && longitude != null
+            ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
+            : Center(child: Text('Failed to load map')),
+        OwnerSettings(ownerID: currentOwnerID!),
+      ];
     });
   }
 
@@ -131,26 +126,23 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
         items: [
           BottomNavigationBarItem(
               icon: Icon(selectedIndex == 0 ? Iconsax.home5 : Iconsax.home1),
-              label: 'Home'),
+              label: 'الرئيسية'),
           BottomNavigationBarItem(
-              icon: Icon(selectedIndex == 1 ? Iconsax.user4 : Iconsax.user4),
-              label: 'Profile'),
+              icon: Icon(selectedIndex == 1
+                  ? Iconsax.profile_circle5
+                  : Iconsax.profile_circle4),
+              label: 'عربتي'),
           BottomNavigationBarItem(
-              icon: Icon(selectedIndex == 2 ? Iconsax.map5 : Iconsax.map5),
-              label: 'Map'),
+              icon: Icon(
+                  selectedIndex == 2 ? Iconsax.location5 : Iconsax.location),
+              label: 'تحديث الموقع'),
           BottomNavigationBarItem(
               icon: Icon(
                   selectedIndex == 3 ? Iconsax.setting_21 : Iconsax.setting_2),
-              label: 'Settings'),
+              label: 'الإعدادات'),
         ],
       ),
       body: page[selectedIndex],
-    );
-  }
-
-  Widget navBarPage(iconName) {
-    return Center(
-      child: Icon(iconName, size: 100, color: kprimaryColor),
     );
   }
 }

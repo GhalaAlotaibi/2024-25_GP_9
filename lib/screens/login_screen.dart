@@ -20,49 +20,54 @@ class _LogInScreenState extends State<LogInScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
+  bool isLoading = false; // Loading state variable
+
   @override
   void dispose() {
-    // Dispose of the controllers when the widget is removed
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
   Future<void> signIn() async {
-    if (_formLogInKey.currentState!.validate()) {
+    if (_formLogInKey.currentState!.validate() && !isLoading) {
+      setState(() {
+        isLoading = true; // Set loading to true
+      });
+
       String userID = "";
       String? result = await _authService.signInWithEmailAndPassword(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
 
-      if (result != null && result.length != 0 && !isErrorMessage(result)) {
+      setState(() {
+        isLoading = false; // Reset loading state
+      });
+
+      if (result != null && result.isNotEmpty && !isErrorMessage(result)) {
         userID = result;
         print('User ID: $userID');
-        // Search in the owners database
+
         DocumentSnapshot ownerDoc = await FirebaseFirestore.instance
             .collection('Truck_Owner')
             .doc(userID)
             .get();
 
         if (ownerDoc.exists) {
-          // Navigate to OwnerMainScreen
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-                  OwnerMainScreen(ownerID: userID), // Remove 'const'
+              builder: (context) => OwnerMainScreen(ownerID: userID),
             ),
           );
         } else {
-          // Search in the customers database
           DocumentSnapshot customerDoc = await FirebaseFirestore.instance
               .collection('Customer')
               .doc(userID)
               .get();
 
           if (customerDoc.exists) {
-            // Navigate to AppMainScreen
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -75,9 +80,7 @@ class _LogInScreenState extends State<LogInScreen> {
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-              content:
-                  Text(result ?? 'فشل تسجيل الدخول')), // Display error message
+          SnackBar(content: Text(result ?? 'فشل تسجيل الدخول')),
         );
       }
     }
@@ -86,12 +89,11 @@ class _LogInScreenState extends State<LogInScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection:
-          TextDirection.rtl, // Set text direction to RTL for the entire screen
+      textDirection: TextDirection.rtl,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: const Color(0xFF674188),
-          automaticallyImplyLeading: true, // This shows the back button
+          automaticallyImplyLeading: true,
         ),
         body: Column(
           children: [
@@ -116,31 +118,28 @@ class _LogInScreenState extends State<LogInScreen> {
                     child: Column(
                       children: [
                         const Text(
-                          'مرحبًا بعودتك', // Changed to Arabic
+                          'مرحبًا بعودتك',
                           style: TextStyle(
                             fontSize: 30.0,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF674188), // Match the signup color
+                            color: Color(0xFF674188),
                           ),
-                          textAlign: TextAlign.right, // Align text to the right
+                          textAlign: TextAlign.right,
                         ),
                         const SizedBox(height: 40.0),
-                        // Email
-
                         TextFormField(
                           controller: emailController,
                           textDirection: TextDirection.rtl,
                           textAlign: TextAlign.right,
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'يرجى إدخال البريد الإلكتروني'; // Arabic validation message
+                              return 'يرجى إدخال البريد الإلكتروني';
                             }
                             return null;
                           },
                           decoration: InputDecoration(
                             label: const Text('البريد الإلكتروني',
-                                textAlign:
-                                    TextAlign.right), // Right-aligned label
+                                textAlign: TextAlign.right),
                             hintText: 'ادخل البريد الإلكتروني',
                             hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
@@ -156,7 +155,6 @@ class _LogInScreenState extends State<LogInScreen> {
                           ),
                         ),
                         const SizedBox(height: 25.0),
-                        // Password
                         TextFormField(
                           controller: passwordController,
                           textDirection: TextDirection.rtl,
@@ -164,15 +162,14 @@ class _LogInScreenState extends State<LogInScreen> {
                           obscuringCharacter: '*',
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'يرجى إدخال الرمز السري'; // Arabic validation message
+                              return 'يرجى إدخال الرمز السري';
                             }
                             return null;
                           },
                           textAlign: TextAlign.right,
                           decoration: InputDecoration(
                             label: const Text('الرمز السري',
-                                textAlign:
-                                    TextAlign.right), // Right-aligned label
+                                textAlign: TextAlign.right),
                             hintText: 'ادخل الرمز السري',
                             hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
@@ -188,14 +185,13 @@ class _LogInScreenState extends State<LogInScreen> {
                           ),
                         ),
                         const SizedBox(height: 25.0),
-                        // Remember me and forgot password
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
                               children: [
                                 const Text(
-                                  'تذكرني', // Changed to Arabic
+                                  'تذكرني',
                                   style: TextStyle(color: Colors.black45),
                                 ),
                                 Checkbox(
@@ -211,7 +207,7 @@ class _LogInScreenState extends State<LogInScreen> {
                             ),
                             GestureDetector(
                               child: const Text(
-                                'هل نسيت كلمة المرور؟', // Changed to Arabic
+                                'هل نسيت كلمة المرور؟',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
                                   color: kBannerColor,
@@ -221,21 +217,26 @@ class _LogInScreenState extends State<LogInScreen> {
                           ],
                         ),
                         const SizedBox(height: 25.0),
-                        // Log In Button
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: signIn, // Call the signIn method
+                            onPressed: isLoading
+                                ? null
+                                : signIn, // Disable button if loading
                             style: ElevatedButton.styleFrom(
                                 backgroundColor: kBannerColor),
-                            child: const Text(
-                              'تسجيل الدخول',
-                              style: TextStyle(color: Colors.white),
-                            ),
+                            child: isLoading
+                                ? const CircularProgressIndicator(
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white),
+                                  )
+                                : const Text(
+                                    'تسجيل الدخول',
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                           ),
                         ),
                         const SizedBox(height: 25.0),
-                        // Don't have an account
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
@@ -243,8 +244,7 @@ class _LogInScreenState extends State<LogInScreen> {
                               'لا تملك حساب؟',
                               style: TextStyle(color: Colors.black45),
                             ),
-                            const SizedBox(
-                                width: 5), // Add some space between the texts
+                            const SizedBox(width: 5),
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -289,10 +289,8 @@ class _LogInScreenState extends State<LogInScreen> {
       'المستخدم غير موجود',
       'كلمة المرور يجب أن لا تقل عن 8 خانات',
       'تسجيل الدخول غير مفعل',
-      'المستخدم غير موجود'
-          'كلمة المرور خاطئة',
-
-      // Add more error messages as needed
+      'المستخدم غير موجود',
+      'كلمة المرور خاطئة',
     ];
 
     return errorMessages.contains(message);

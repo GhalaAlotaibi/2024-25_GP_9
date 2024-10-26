@@ -66,7 +66,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const SizedBox(height: 80),
+                const SizedBox(height: 50),
                 buildWelcomeMessage(businessLogo, ownerID),
                 const SizedBox(height: 20),
                 const Banner2(),
@@ -81,18 +81,14 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
     );
   }
 
-// Welcome Message with Business Logo
-  // Assuming you have already defined MyIconButton elsewhere in your code
   Widget buildWelcomeMessage(String logoUrl, String ownerID) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 19, 0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          // Logout Button on the Left with Padding
           Padding(
-            padding:
-                const EdgeInsets.only(left: 16.0), // Adjust the value as needed
+            padding: const EdgeInsets.only(left: 16.0),
             child: MyIconButton(
               icon: Iconsax.logout_14,
               pressed: () async {
@@ -130,6 +126,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               ),
               const SizedBox(width: 10),
               buildBusinessLogo(logoUrl),
+              const SizedBox(height: 80),
             ],
           ),
         ],
@@ -157,15 +154,14 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            buildServiceCard(
-              icon: Iconsax.like_tag,
-              title: "التقييمات",
-              color: kBannerColor,
+            buildServiceCardWithAnimation(
+              title: '---------',
+              color: const Color.fromARGB(255, 255, 255, 255),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => OwnerReviews(ownerID: widget.ownerID),
+                    builder: (context) => ChatbotUI(),
                   ),
                 );
               },
@@ -189,14 +185,15 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
-            buildServiceCardWithAnimation(
-              title: '---------',
-              color: const Color.fromARGB(255, 255, 255, 255),
+            buildServiceCard(
+              icon: Iconsax.like_tag,
+              title: "التقييمات",
+              color: kBannerColor,
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatbotUI(),
+                    builder: (context) => OwnerReviews(ownerID: widget.ownerID),
                   ),
                 );
               },
@@ -225,8 +222,8 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       onTap: onTap,
       child: Card(
         color: const Color.fromARGB(255, 255, 255, 255),
-        elevation: 2.6,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(45)),
         child: Container(
           width: 185,
           height: 160,
@@ -236,13 +233,13 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               Align(
                 alignment: Alignment.topRight,
                 child: Padding(
-                  padding: const EdgeInsets.only(top: 20, right: 20),
+                  padding: const EdgeInsets.only(top: 30, right: 30),
                   child: Text(
                     title,
                     textAlign: TextAlign.right,
                     style: const TextStyle(
                       fontSize: 18,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w600,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
@@ -256,7 +253,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
                       color: color.withOpacity(0.1),
-                      borderRadius: BorderRadius.circular(50),
+                      borderRadius: BorderRadius.circular(45),
                     ),
                     child: Icon(
                       icon,
@@ -282,8 +279,8 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       onTap: onTap,
       child: Card(
         color: kprimaryColor,
-        elevation: 2.6,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 5,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         child: Container(
           width: 185,
           height: 160,

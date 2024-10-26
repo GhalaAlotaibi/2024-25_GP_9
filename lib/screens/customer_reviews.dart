@@ -191,7 +191,7 @@ class CustomerReviews extends StatelessWidget {
                     textDirection: TextDirection.rtl,
                     children: [
                       Text(
-                        commentData['userName'] ?? 'Sara',
+                        commentData['name'] ?? 'اسم المستخدم',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

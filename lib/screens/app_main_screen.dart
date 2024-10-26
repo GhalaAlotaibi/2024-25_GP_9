@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
+import 'package:tracki/screens/favourites_page.dart';
 import 'package:tracki/screens/my_app_home_screen.dart';
 import 'package:tracki/screens/Customer_map_screen.dart';
+import 'package:tracki/screens/profile_screen.dart';
 import '../Utils/constants.dart';
 
 class AppMainScreen extends StatefulWidget {
@@ -15,14 +17,16 @@ class AppMainScreen extends StatefulWidget {
 
 class _AppMainScreenState extends State<AppMainScreen> {
   int selectedIndex = 0;
+
   late final List<Widget> page;
+
   @override
   void initState() {
     page = [
       const MyAppHomeScreen(),
-      navBarPage(Iconsax.heart5),
+      const FavoritesPage(),
       const CustomerMapScreen(),
-      navBarPage(Iconsax.setting_21),
+      ProfileScreen(customerID: widget.customerID),
     ];
     super.initState();
   }
@@ -32,38 +36,39 @@ class _AppMainScreenState extends State<AppMainScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: BottomNavigationBar(
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          elevation: 0,
-          iconSize: 28,
-          currentIndex: selectedIndex,
-          selectedItemColor: kprimaryColor,
-          unselectedItemColor: Colors.grey,
-          type: BottomNavigationBarType.fixed,
-          selectedLabelStyle: const TextStyle(
-              color: kprimaryColor, fontWeight: FontWeight.w600),
-          unselectedLabelStyle:
-              const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-          onTap: (value) {
-            setState(() {
-              selectedIndex = value;
-            });
-          },
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(selectedIndex == 0 ? Iconsax.home5 : Iconsax.home1),
-                label: 'Home'),
-            BottomNavigationBarItem(
-                icon: Icon(selectedIndex == 1 ? Iconsax.heart5 : Iconsax.heart),
-                label: 'Favorite'),
-            BottomNavigationBarItem(
-                icon: Icon(selectedIndex == 2 ? Iconsax.map5 : Iconsax.map5),
-                label: 'Map'),
-            BottomNavigationBarItem(
-                icon: Icon(selectedIndex == 3
-                    ? Iconsax.setting_21
-                    : Iconsax.setting_2),
-                label: 'Settings'),
-          ]),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        elevation: 0,
+        iconSize: 28,
+        currentIndex: selectedIndex,
+        selectedItemColor: kprimaryColor,
+        unselectedItemColor: Colors.grey,
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle:
+            const TextStyle(color: kprimaryColor, fontWeight: FontWeight.w600),
+        unselectedLabelStyle:
+            const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+        onTap: (value) {
+          setState(() {
+            selectedIndex = value;
+          });
+        },
+        items: [
+          BottomNavigationBarItem(
+              icon: Icon(selectedIndex == 0 ? Iconsax.home5 : Iconsax.home1),
+              label: 'الرئيسية'),
+          BottomNavigationBarItem(
+              icon: Icon(selectedIndex == 1 ? Iconsax.heart5 : Iconsax.heart),
+              label: 'المفضلة'),
+          BottomNavigationBarItem(
+              icon: Icon(selectedIndex == 2 ? Iconsax.map5 : Iconsax.map5),
+              label: 'الخريطة'),
+          BottomNavigationBarItem(
+              icon: Icon(selectedIndex == 3
+                  ? Iconsax.profile_circle5
+                  : Iconsax.profile_circle4),
+              label: 'حسابي'),
+        ],
+      ),
       body: page[selectedIndex],
     );
   }

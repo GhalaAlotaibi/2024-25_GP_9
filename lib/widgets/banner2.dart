@@ -11,7 +11,7 @@ class Banner2 extends StatelessWidget {
         height: 140,
         width: 388,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(35),
           color: Colors.white,
           border: Border.all(color: kBannerColor, width: 1),
         ),
@@ -38,7 +38,7 @@ class Banner2 extends StatelessWidget {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w900,
+                        fontWeight: FontWeight.w600,
                         color: kBannerColor),
                   ),
                   Text(
@@ -46,7 +46,7 @@ class Banner2 extends StatelessWidget {
                     textAlign: TextAlign.right,
                     style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         color: Colors.black),
                   ),
                   SizedBox(height: 12),
