@@ -5,6 +5,7 @@ import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/owner_reviews.dart'; // Make sure to import your OwnerReviews page
+import 'package:tracki/screens/profile_map.dart';
 
 class FoodTruckProfileDisplay extends StatefulWidget {
   final DocumentSnapshot<Object?> documentSnapshot;
@@ -300,7 +301,15 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
       label: Row(
         children: [
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              String location = widget.documentSnapshot['location'];
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileMap(location: location),
+                ),
+              );
+            },
             child: Text(
               "عرض الموقع",
               style: const TextStyle(

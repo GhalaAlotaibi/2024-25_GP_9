@@ -98,11 +98,13 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               pressed: () async {
                 try {
                   await _authService.signOut(); // Sign out from Firebase
-                  Navigator.pushReplacement(
-                    context,
+                  Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                         builder: (context) =>
                             const LogInScreen()), // Navigate to login page
+                    (Route<dynamic> route) =>
+                        route.settings.name ==
+                        '/welcome_screen', // Keep the welcome page in the stack
                   );
                 } catch (e) {
                   // Handle errors here, e.g., show a snackbar
