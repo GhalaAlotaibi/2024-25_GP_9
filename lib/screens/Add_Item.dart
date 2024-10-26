@@ -1,82 +1,141 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Truck_Profile.dart'; // Import the TruckProfile file
+import 'package:image_picker/image_picker.dart';
+import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
+import 'Truck_Profile.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
-// Add Item screen
-class AddItem extends StatelessWidget {
-  final String truckId; // Receive truckId from CreateTruck3
+class AddItem extends StatefulWidget {
+  final String truckId;
 
-  // TextEditingControllers for item details
+  const AddItem({Key? key, required this.truckId}) : super(key: key);
+
+  @override
+  _AddItemState createState() => _AddItemState();
+}
+
+class _AddItemState extends State<AddItem> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
-  final TextEditingController imageController =
-      TextEditingController(); // For image URL input
-
-  // Create a GlobalKey for the Form
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
-  AddItem({Key? key, required this.truckId}) : super(key: key);
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+  bool _isLoading = false;
 
-  Future<void> _saveItem(BuildContext context) async {
-    // Validate the form
-    if (_formKey.currentState?.validate() ?? false) {
-      // Reference to Firestore collection
-      CollectionReference trucks =
-          FirebaseFirestore.instance.collection('Food_Truck');
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
-      // Create item data
-      Map<String, dynamic> itemData = {
-        'name': nameController.text,
-        'price': double.tryParse(priceController.text) ?? 0.0,
-        'image': imageController.text,
-      };
+  Future<void> _saveItem() async {
+    if (_formKey.currentState?.validate() ?? false && _selectedImage != null) {
+      setState(() {
+        _isLoading = true;
+      });
 
       try {
-        // Update the truck document by truck ID and add item details to arrays
-        await trucks.doc(truckId).update({
-          'item_names_list': FieldValue.arrayUnion([itemData['name']]),
-          'item_prices_list': FieldValue.arrayUnion([itemData['price']]),
-          'item_images_list': FieldValue.arrayUnion([itemData['image']]),
+  
+        String fileName =
+            'images/${widget.truckId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+        Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
+        UploadTask uploadTask = storageRef.putFile(_selectedImage!);
+        TaskSnapshot snapshot = await uploadTask;
+        String imageUrl = await snapshot.ref.getDownloadURL();
+
+        
+        CollectionReference trucks =
+            FirebaseFirestore.instance.collection('Food_Truck');
+        DocumentSnapshot truckSnapshot = await trucks.doc(widget.truckId).get();
+        if (!truckSnapshot.exists) throw 'Truck not found!';
+
+        List<dynamic> nameList =
+            List.from(truckSnapshot['item_names_list'] ?? []);
+        List<dynamic> priceList =
+            List.from(truckSnapshot['item_prices_list'] ?? []);
+        List<dynamic> imageList =
+            List.from(truckSnapshot['item_images_list'] ?? []);
+
+        nameList.add(nameController.text);
+        priceList.add(double.tryParse(priceController.text) ?? 0.0);
+        imageList.add(imageUrl);
+
+        await trucks.doc(widget.truckId).update({
+          'item_names_list': nameList,
+          'item_prices_list': priceList,
+          'item_images_list': imageList,
         });
 
-        // Clear the input fields after saving
         nameController.clear();
         priceController.clear();
-        imageController.clear();
+        setState(() {
+          _selectedImage = null;
+        });
 
-        // Show a success message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Item added successfully!')),
-        );
-
-        // Navigate back to the TruckProfile screen after saving
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => TruckProfile(
-                truckId: truckId), // Navigate to TruckProfile with the truckId
-          ),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('تمت الإضافة بنجاح!')),
+          );
+          Navigator.of(context).pop();
+        }
       } catch (e) {
-        print("Error saving item: $e");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to add item: $e')),
-        );
+        print("Error: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('فشلت الإضافة: $e')),
+          );
+        }
+      } finally {
+        if (mounted) {
+          setState(() {
+            _isLoading = false;
+          });
+        }
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('يرجى إدخال جميع البيانات واختيار صورة')),
+      );
     }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    priceController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF674188),
+        backgroundColor: kBannerColor,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          const SizedBox(width: 15),
+          MyIconButton(
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          const SizedBox(width: 15),
+        ],
       ),
       body: Column(
         children: [
           const Expanded(
             flex: 1,
-            child: SizedBox(height: 5), // Reduced height
+            child: SizedBox(height: 5),
           ),
           Expanded(
             flex: 7,
@@ -91,162 +150,108 @@ class AddItem extends StatelessWidget {
               ),
               child: SingleChildScrollView(
                 child: Form(
-                  key: _formKey, // Assign the GlobalKey
+                  key: _formKey,
                   child: Column(
                     children: [
                       const Text(
-                        'إضافة عنصر للقائمة',
+                        'إضافة صنف للقائمة',
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,
                           color: Color(0xFF674188),
                         ),
-                        textAlign: TextAlign.center, // Align text to the center
+                        textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 20.0), // Adjusted space
-
-                      // Name input field
+                      const SizedBox(height: 20.0),
                       Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         child: TextFormField(
                           controller: nameController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال اسم العنصر'; // Error message in Arabic
-                            }
-                            return null;
-                          },
-                          textAlign: TextAlign.right, // Align text to the right
-                          keyboardType: TextInputType.text, // Allow text input
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'الرجاء إدخال اسم الصنف'
+                              : null,
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.text,
                           decoration: InputDecoration(
-                            label: const Text(
-                              'اسم العنصر', // Item name
-                              textAlign: TextAlign.center,
-                            ),
-                            hintText: 'ادخل اسم العنصر', // Hint text
-                            hintStyle: const TextStyle(
-                                color: Colors.black26), // Hint text style
+                            label: const Text('اسم الصنف'),
+                            hintText: 'ادخل اسم الصنف',
+                            hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.black12), // Border color
-                              borderRadius:
-                                  BorderRadius.circular(10), // Border radius
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color:
-                                      Colors.black12), // Enabled border color
-                              borderRadius: BorderRadius.circular(
-                                  10), // Enabled border radius
-                            ),
-                            alignLabelWithHint: true, // Align label with hint
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 20.0), // Space after the TextField
-
-                      // Price Input Field
+                      const SizedBox(height: 20.0),
                       Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
+                        textDirection: TextDirection.rtl,
                         child: TextFormField(
                           controller: priceController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال السعر'; // Error message in Arabic
-                            }
-                            return null;
-                          },
-                          textAlign: TextAlign.right, // Align text to the right
-                          keyboardType:
-                              TextInputType.number, // Allow number input
+                          validator: (value) => value == null || value.isEmpty
+                              ? 'الرجاء إدخال السعر'
+                              : null,
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                            label: const Text(
-                              'السعر', // Price
-                              textAlign: TextAlign.center,
-                            ),
-                            hintText: 'ادخل السعر', // Hint text
-                            hintStyle: const TextStyle(
-                                color: Colors.black26), // Hint text style
+                            label: const Text('السعر'),
+                            hintText: 'ادخل السعر',
+                            hintStyle: const TextStyle(color: Colors.black26),
                             border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.black12), // Border color
-                              borderRadius:
-                                  BorderRadius.circular(10), // Border radius
+                              borderRadius: BorderRadius.circular(10),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color:
-                                      Colors.black12), // Enabled border color
-                              borderRadius: BorderRadius.circular(
-                                  10), // Enabled border radius
-                            ),
-                            alignLabelWithHint: true, // Align label with hint
                           ),
                         ),
                       ),
-
-                      const SizedBox(height: 20.0), // Space after the TextField
-
-                      // Image URL input field
-                      Directionality(
-                        textDirection:
-                            TextDirection.rtl, // Set text direction to RTL
-                        child: TextFormField(
-                          controller: imageController,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال رابط الصورة'; // Error message in Arabic
-                            }
-                            return null;
-                          },
-                          textAlign: TextAlign.right, // Align text to the right
-                          keyboardType: TextInputType.text, // Allow text input
-                          decoration: InputDecoration(
-                            label: const Text(
-                              'رابط الصورة', // Image URL
-                              textAlign: TextAlign.center,
-                            ),
-                            hintText: 'ادخل رابط الصورة', // Hint text
-                            hintStyle: const TextStyle(
-                                color: Colors.black26), // Hint text style
-                            border: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color: Colors.black12), // Border color
-                              borderRadius:
-                                  BorderRadius.circular(10), // Border radius
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(
-                                  color:
-                                      Colors.black12), // Enabled border color
-                              borderRadius: BorderRadius.circular(
-                                  10), // Enabled border radius
-                            ),
-                            alignLabelWithHint: true, // Align label with hint
+                      const SizedBox(height: 20.0),
+                      GestureDetector(
+                        onTap: _pickImage,
+                        child: Container(
+                          height: 150,
+                          width: 150,
+                          decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.circular(10),
+                            image: _selectedImage != null
+                                ? DecorationImage(
+                                    image: FileImage(_selectedImage!),
+                                    fit: BoxFit.cover,
+                                  )
+                                : null,
                           ),
+                          child: _selectedImage == null
+                              ? const Icon(
+                                  Icons.add_a_photo,
+                                  color: Colors.grey,
+                                  size: 50,
+                                )
+                              : null,
                         ),
                       ),
-
-                      const SizedBox(height: 30.0), // Spacing before the button
-
-                      // Button
+                      const SizedBox(height: 30.0),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () =>
-                              _saveItem(context), // Save item when pressed
-                          child: const Text(
-                              'إضافة عنصر'), // "Add Item" button text
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: kBannerColor),
+                          onPressed: _isLoading ? null : _saveItem,
+                          child: _isLoading
+                              ? const CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white),
+                                )
+                              : const Text(
+                                  'إضافة صنف',
+                                  style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold),
+                                ),
                         ),
                       ),
-                      const SizedBox(height: 20.0), // Spacing after the button
+                      const SizedBox(height: 20.0),
                     ],
                   ),
                 ),
-              ),
+              ), 
             ),
           ),
         ],

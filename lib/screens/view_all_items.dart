@@ -92,7 +92,8 @@ class _ViewAllItemsState extends State<ViewAllItems> {
                                 crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
                                   Hero(
-                                    tag: documentSnapshot['truckImage'],
+                                    tag:
+                                        '${documentSnapshot.id}_${documentSnapshot['truckImage']}', // Unique tag
                                     child: Container(
                                       height: 200,
                                       decoration: BoxDecoration(

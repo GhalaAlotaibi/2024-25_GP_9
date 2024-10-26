@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/welcome_screen.dart'; // Import the welcome screen from the screens folder
+import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
-//import 'screens/google_map.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +19,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(), // Set WelcomeScreen as the home
+      home: const WelcomeScreen(),
     );
   }
 }

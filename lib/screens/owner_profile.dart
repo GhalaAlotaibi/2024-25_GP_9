@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+
+import 'package:tracki/screens/owner_home_screen.dart';
+import 'package:tracki/screens/owner_main_screen.dart';
+import 'package:tracki/screens/truck_details_update.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
 class OwnerProfile extends StatelessWidget {
@@ -19,14 +23,33 @@ class OwnerProfile extends StatelessWidget {
         elevation: 0,
         actions: [
           const SizedBox(width: 15),
-          MyIconButton(icon: Iconsax.user_edit, pressed: () {}),
-          const Spacer(),
+          MyIconButton(
+            icon: Iconsax.user_edit,
+            pressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => TruckDetailsUpdate(
+                    ownerID: ownerID,
+                  ),
+                ),
+              );
+            },
+          ),
           const Spacer(),
           MyIconButton(
-              icon: Icons.arrow_forward_ios,
-              pressed: () {
-                Navigator.pop(context);
-              }),
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OwnerMainScreen(
+                    ownerID: ownerID,
+                  ),
+                ),
+              );
+            },
+          ),
           const SizedBox(width: 15),
         ],
       ),
@@ -44,6 +67,8 @@ class OwnerProfile extends StatelessWidget {
             final logoUrl = truckData['businessLogo'] ?? '';
             final truckName = truckData['name'] ?? 'Unnamed Truck';
             final truckCategory = truckData['category'] ?? 'No Category';
+            final truckDescription =
+                truckData['description'] ?? 'No description available';
             final rating = truckData['rating'] ?? 0.0;
             final ratingsCount = truckData['ratingsCount'] ?? 0;
             final itemImagesList =
@@ -53,6 +78,8 @@ class OwnerProfile extends StatelessWidget {
             final itemPricesList =
                 truckData['item_prices_list'] as List<dynamic>? ?? [];
             final itemCount = itemNamesList.length;
+            final operatingHours =
+                truckData['operatingHours'] ?? 'No hours available';
 
             return SingleChildScrollView(
               child: Column(
@@ -67,7 +94,7 @@ class OwnerProfile extends StatelessWidget {
                       borderRadius: BorderRadius.circular(25),
                     ),
                     width: 400,
-                    height: 300,
+                    height: 320,
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -104,6 +131,27 @@ class OwnerProfile extends StatelessWidget {
                               size: 18,
                               color: Colors.white,
                             ),
+                          ],
+                        ),
+                        const SizedBox(height: 5),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              operatingHours,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w300,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            const Icon(
+                              Iconsax.clock,
+                              size: 18,
+                              color: Colors.white,
+                            ),
+                            const SizedBox(width: 5),
                           ],
                         ),
                         const SizedBox(height: 25),
@@ -178,6 +226,66 @@ class OwnerProfile extends StatelessWidget {
                     child: Align(
                       alignment: Alignment.centerRight,
                       child: Text(
+                        'وصف العربة',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w800,
+                          color: Color.fromARGB(255, 0, 0, 0),
+                        ),
+                      ),
+                    ),
+                  ),
+                  // Truck Description Section
+                  Padding(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        // Description card
+                        Container(
+                          width: 385,
+                          height: 130,
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: const Color.fromARGB(255, 149, 149, 149),
+                            ),
+                            color: const Color.fromARGB(255, 255, 255, 255),
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: const Color.fromARGB(110, 225, 217, 231),
+                                blurRadius: 5,
+                                spreadRadius: 0.2,
+                                offset: const Offset(0, 1),
+                              ),
+                            ],
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(15.0),
+                            child: Text(
+                              truckDescription,
+                              textDirection: TextDirection.rtl,
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black,
+                              ),
+                              maxLines: 4,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: Text(
                         ' محتويات قائمة الطعام ',
                         style: TextStyle(
                           fontSize: 20,
@@ -187,10 +295,9 @@ class OwnerProfile extends StatelessWidget {
                       ),
                     ),
                   ),
-
                   const SizedBox(height: 20),
 
-                  // Menu List
+        
                   // Menu List
                   ListView.builder(
                     physics: const NeverScrollableScrollPhysics(),
@@ -199,7 +306,7 @@ class OwnerProfile extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final imageUrl = itemImagesList.isNotEmpty
                           ? itemImagesList[index]
-                          : 'https://via.placeholder.com/50';
+                          : 'https://via.placeholder.com/50';  
                       final itemName = itemNamesList[index];
                       final itemPrice = itemPricesList[index];
 
@@ -212,11 +319,10 @@ class OwnerProfile extends StatelessWidget {
                             borderRadius: BorderRadius.circular(13),
                             boxShadow: [
                               BoxShadow(
-                                color: Colors.black
-                                    .withOpacity(0.2), // Shadow color
-                                blurRadius: 5, // Blur radius
-                                spreadRadius: 1, // Spread radius
-                                offset: const Offset(0, 2), // Shadow offset
+                                color: const Color.fromARGB(110, 225, 217, 231),
+                                blurRadius: 5,
+                                spreadRadius: 0.2,
+                                offset: const Offset(0, 1),
                               ),
                             ],
                           ),
@@ -226,11 +332,22 @@ class OwnerProfile extends StatelessWidget {
                             children: [
                               ClipRRect(
                                 borderRadius: BorderRadius.circular(12),
-                                child: Image.network(
-                                  imageUrl,
+                                child: FadeInImage.assetNetwork(
+                                  placeholder:
+                                      'assets/images/placeholder-image.jpg',
+                                  image: imageUrl,
                                   height: 80,
                                   width: 80,
                                   fit: BoxFit.cover,
+                                  imageErrorBuilder:
+                                      (context, error, stackTrace) {
+                                    return Image.asset(
+                                      'assets/images/placeholder-image.jpg',
+                                      height: 80,
+                                      width: 80,
+                                      fit: BoxFit.cover,
+                                    );
+                                  },
                                 ),
                               ),
                               const SizedBox(width: 10),
