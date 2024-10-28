@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
@@ -94,9 +95,20 @@ class _CreateTruck1State extends State<CreateTruck1> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBannerColor,
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF674188),
-      ),
+appBar: AppBar(
+  backgroundColor:Color(0xFF674188),
+  automaticallyImplyLeading: false,
+  elevation: 0,
+  actions: [
+    MyIconButton(
+      icon: Icons.arrow_forward_ios,
+      pressed: () {
+        Navigator.pop(context); // This will return to the previous page
+      },
+    ),
+    const SizedBox(width: 15),
+  ],
+),
       body: Column(
         children: [
           const Expanded(
@@ -329,88 +341,115 @@ class _CreateTruck1State extends State<CreateTruck1> {
 
                       const SizedBox(height: 25.0),
 
-                      Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                value: openingTime,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'الرجاء اختيار ساعة الافتتاح';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  label: const Text('اختر ساعة الافتتاح',
-                                      textAlign: TextAlign.right),
-                                  border: OutlineInputBorder(
-                                    borderSide:
-                                        const BorderSide(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        const BorderSide(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    openingTime = newValue;
-                                  });
-                                },
-                                items: timeList.map((String time) {
-                                  return DropdownMenuItem<String>(
-                                    value: time,
-                                    child: Text(time),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                            const SizedBox(width: 15),
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                value: closingTime,
-                                validator: (value) {
-                                  if (value == null) {
-                                    return 'الرجاء اختيار ساعة الإغلاق';
-                                  }
-                                  return null;
-                                },
-                                decoration: InputDecoration(
-                                  label: const Text('اختر ساعة الإغلاق',
-                                      textAlign: TextAlign.right),
-                                  border: OutlineInputBorder(
-                                    borderSide:
-                                        const BorderSide(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderSide:
-                                        const BorderSide(color: Colors.black12),
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                ),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    closingTime = newValue;
-                                  });
-                                },
-                                items: timeList.map((String time) {
-                                  return DropdownMenuItem<String>(
-                                    value: time,
-                                    child: Text(time),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
+//operating hrs
+                     Container(
+  padding: const EdgeInsets.all(10.0), // Add padding for aesthetics
+  decoration: BoxDecoration(
+    border: Border.all(color: Colors.black12), // Border for the container
+    borderRadius: BorderRadius.circular(10), // Rounded corners
+  ),
+  child: Column(
+    crossAxisAlignment: CrossAxisAlignment.end, // Align the content to the end (right)
+    children: [
+     const Text(
+        'اختر أوقات العمل', // "Select Working Hours"
+        style: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+             color: Colors.grey,
+        ),
+        textAlign: TextAlign.right, // Align the text to the right
+      ),
+      const SizedBox(height: 10), // Space between the label and dropdowns
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          //closing hrs first
+Expanded(
+  child: Directionality(
+    textDirection: TextDirection.rtl, // Ensures right-to-left text direction
+    child: DropdownButtonFormField<String>(
+      value: closingTime,
+      validator: (value) {
+        if (value == null) {
+          return 'الرجاء الإختيار'; // "Please select closing time"
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: 'إلى', // "Closing Hour"
+        border: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // Padding inside the Dropdown
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          closingTime = newValue;
+        });
+      },
+      items: timeList.map((String time) {
+        return DropdownMenuItem<String>(
+          value: time,
+          child: Text(time, textAlign: TextAlign.right), // Align text to the right
+        );
+      }).toList(),
+    ),
+  ),
+),
 
+                  const SizedBox(width: 15),
+        //opening hrs
+Expanded(
+  child: Directionality(
+    textDirection: TextDirection.rtl, // Ensures right-to-left text direction
+    child: DropdownButtonFormField<String>(
+      value: openingTime,
+      validator: (value) {
+        if (value == null) {
+          return 'الرجاء الإختيار'; // "Please select opening time"
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        labelText: 'من', // "Opening Hour"
+        border: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: const BorderSide(color: Colors.black12),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), // Padding inside the Dropdown
+      ),
+      onChanged: (String? newValue) {
+        setState(() {
+          openingTime = newValue;
+        });
+      },
+      items: timeList.map((String time) {
+        return DropdownMenuItem<String>(
+          value: time,
+          child: Text(time, textAlign: TextAlign.right), // Align text to the right
+        );
+      }).toList(),
+    ),
+  ),
+),
+
+        ],
+      ),
+    ],
+  ),
+),
+
+//Operating hrs
                       const SizedBox(height: 30.0),
 // Submit Button
                       SizedBox(

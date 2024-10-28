@@ -22,28 +22,28 @@ class _TruckProfileState extends State<TruckProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(239, 241, 247, 1),
-      appBar: AppBar(
-        backgroundColor: kbackgroundColor,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        actions: [
-          const SizedBox(width: 15),
-          MyIconButton(
-            icon: Icons.arrow_back_ios_new,
-            pressed: () {
-              Navigator.pop(context);
-            },
-          ),
-          const Spacer(),
-          Center(
-            child: const Text(
-              "",
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const Spacer(),
-        ],
+appBar: AppBar(
+  backgroundColor: kbackgroundColor,
+  automaticallyImplyLeading: false,
+  elevation: 0,
+  title: Row(
+    mainAxisAlignment: MainAxisAlignment.end, 
+    children: [
+      MyIconButton(
+        icon: Icons.arrow_forward_ios,
+        pressed: () {
+          Navigator.pop(context);
+        },
       ),
+      const SizedBox(width: 15), 
+      const Text(
+        "", 
+        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.right,
+      ),
+    ],
+  ),
+),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Food_Truck")
