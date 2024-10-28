@@ -100,21 +100,42 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                         if (snapshot.hasData) {
                           final List<DocumentSnapshot> trucks =
                               snapshot.data?.docs ?? [];
-                          return Padding(
-                            padding: const EdgeInsets.only(top: 5, left: 0),
-                            child: Directionality(
-                              textDirection: TextDirection
-                                  .rtl, // Right-to-left direction for عربات الطعام
-                              child: SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Row(
-                                  children: trucks
-                                      .map((e) =>
-                                          ItemsDisplay(documentSnapshot: e))
-                                      .toList(),
+                          return Column(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(top: 5, left: 0),
+                                child: Directionality(
+                                  textDirection: TextDirection.rtl,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Row(
+                                      children: trucks
+                                          .map((e) =>
+                                              ItemsDisplay(documentSnapshot: e))
+                                          .toList(),
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
+                              // Add spacing and text above the suggested trucks row
+                              const SizedBox(height: 20),
+                              const Align(
+                                alignment: Alignment.centerRight,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 0),
+                                  child: Text(
+                                    "مقترحات لك",
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                              ),
+                              SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: suggestedTrucksRow(trucks),
+                              ),
+                            ],
                           );
                         }
                         return const Center(child: CircularProgressIndicator());
@@ -237,5 +258,40 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
         ),
       ],
     );
+  }// Widget to display suggested trucks row
+  // Widget to display suggested trucks row with names below the pictures
+  Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+      child: Row(
+        children: trucks.map((e) {
+          // Assuming the image URL is stored in the field "truckImage" and the name in "truckName"
+          final imageUrl = e['truckImage'];
+          final truckName = e['name']; // Field for truck's name
+          return Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: 12.0), // Increased spacing between pictures
+            child: Column(
+              children: [
+                CircleAvatar(
+                  radius: 25, // Adjust the size as needed
+                  backgroundImage: NetworkImage(imageUrl),
+                  backgroundColor: Colors.grey[200],
+                ),
+                const SizedBox(height: 5), // Space between image and text
+                Text(
+                  truckName,
+                  style: const TextStyle(
+                      fontSize: 12), // Adjust text style as needed
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis, // Handle long text
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
+
 }

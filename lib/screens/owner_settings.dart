@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import '../Utils/constants.dart'; // Assuming kbackgroundColor is defined here
 
@@ -17,13 +19,20 @@ class _OwnerSettingsState extends State<OwnerSettings> {
   Map<String, dynamic>? ownerData;
   bool isLocationAccessAllowed = false;
   bool isNotificationsEnabled = false;
-
+final FirebaseAuth _auth = FirebaseAuth.instance;
   @override
   void initState() {
     super.initState();
     fetchOwnerInfo();
   }
-
+// Logout method
+  Future<void> _logout() async {
+    await _auth.signOut();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LogInScreen()),
+    );
+  }
   Future<void> fetchOwnerInfo() async {
     try {
       DocumentSnapshot foodTruckSnapshot = await FirebaseFirestore.instance
@@ -102,7 +111,46 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                     setState(() {
                       isLocationAccessAllowed = newValue;
                     });
-                  }),
+                  }),Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: _logout,
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'تسجيل خروج',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {},
+                        child: const Padding(
+                          padding: EdgeInsets.only(left: 20),
+                          child: Align(
+                            alignment: Alignment.topLeft,
+                            child: Text(
+                              'حذف الحساب',
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+
                 ],
               ),
             )
