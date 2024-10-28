@@ -255,23 +255,44 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 30),
                       // Logout button
-                      GestureDetector(
-                        onTap: _logout,
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'تسجيل خروج',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: _logout,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'تسجيل خروج',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),GestureDetector(
+                            onTap: _deleteAccount,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'حذف الحساب',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
+                        ],
+                      ), 
+
                     ],
                   ),
                 ),
@@ -280,6 +301,39 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
+ // Method to delete user account and related data
+  Future<void> _deleteAccount() async {
+    try {
+      String userId = _auth.currentUser!.uid;
+
+      // Delete the user's profile image from Firebase Storage
+      Reference storageRef = _storage.ref().child('profile_images/$userId.jpg');
+      await storageRef.delete().catchError((error) {
+        print('No profile image found to delete: $error');
+      });
+
+      // Delete the user's data from Firestore
+      await _firestore.collection('Customer').doc(userId).delete();
+
+      // Delete the user's authentication record
+      await _auth.currentUser!.delete();
+
+      // Navigate to the login screen after deletion
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const LogInScreen()),
+      );
+
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('تم حذف الحساب بنجاح'),
+      ));
+    } catch (e) {
+      print('Error deleting account: $e');
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('حدث خطأ أثناء حذف الحساب'),
+      ));
+    }
+  }
   // Custom TextField widget
   Widget _buildCustomTextField({
     required TextEditingController controller,
