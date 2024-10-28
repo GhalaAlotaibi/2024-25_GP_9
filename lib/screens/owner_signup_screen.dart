@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:tracki/Utils/constants.dart';
 import 'login_screen.dart';
@@ -39,7 +40,18 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: const Color(0xFF674188),
+        backgroundColor:Color(0xFF674188),
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          MyIconButton(
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.pop(context); // This will return to the previous page
+            },
+          ),
+          const SizedBox(width: 15),
+        ],
       ),
       body: Column(
         children: [

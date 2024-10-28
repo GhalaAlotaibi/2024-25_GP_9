@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tracki/Utils/constants.dart';
@@ -86,9 +87,21 @@ class _CreateTruck2State extends State<CreateTruck2> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBannerColor,
-      appBar: AppBar(
-      backgroundColor: kBannerColor,
-      ),
+appBar: AppBar(
+  backgroundColor:Color(0xFF674188),
+  automaticallyImplyLeading: false,
+  elevation: 0,
+  actions: [
+    MyIconButton(
+      icon: Icons.arrow_forward_ios,
+      pressed: () {
+        Navigator.pop(context); // This will return to the previous page
+      },
+    ),
+    const SizedBox(width: 15),
+  ],
+),
+
       body: Column(
         children: [
           const Expanded(flex: 1, child: SizedBox(height: 5)),

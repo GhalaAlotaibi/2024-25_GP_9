@@ -208,11 +208,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           children: [
                             Row(
                               children: [
-                                const Text(
-                                  'تذكرني',
-                                  style: TextStyle(color: Colors.black45),
-                                ),
-                                Checkbox(
+                                                                Checkbox(
                                   value: rememberPassword,
                                   onChanged: (bool? value) {
                                     setState(() {
@@ -221,6 +217,10 @@ class _LogInScreenState extends State<LogInScreen> {
                                   },
                                   activeColor: kBannerColor,
                                 ),
+                                const Text(
+                                  'تذكرني',
+                                  style: TextStyle(color: Colors.black45),
+                                )
                               ],
                             ),
                             GestureDetector(
