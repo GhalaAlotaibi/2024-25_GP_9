@@ -134,7 +134,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
                       GestureDetector(
                         onTap: () {},
                         child: const Padding(
-                          padding: EdgeInsets.only(left: 20),
+                          padding: EdgeInsets.only(left: 20,right: 20),
                           child: Align(
                             alignment: Alignment.topLeft,
                             child: Text(

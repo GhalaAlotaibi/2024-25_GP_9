@@ -255,23 +255,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                       const SizedBox(height: 30),
                       // Logout button
-                      GestureDetector(
-                        onTap: _logout,
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 20),
-                          child: Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              'تسجيل خروج',
-                              style: TextStyle(
-                                color: Colors.red,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                      Row(mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: _logout,
+                            child: const Padding(
+                              padding: EdgeInsets.only(left: 20),
+                              child: Align(
+                                alignment: Alignment.topLeft,
+                                child: Text(
+                                  'تسجيل خروج',
+                                  style: TextStyle(
+                                    color: Colors.red,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                               ),
                             ),
-                          ),
-                        ),
-                      ), GestureDetector(
+                          ),GestureDetector(
                             onTap: _deleteAccount,
                             child: const Padding(
                               padding: EdgeInsets.only(left: 20),
@@ -288,6 +290,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ),
                             ),
                           ),
+                        ],
+                      ), 
 
                     ],
                   ),
