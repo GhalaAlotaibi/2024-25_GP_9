@@ -24,7 +24,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
   final CollectionReference categoriesItems = FirebaseFirestore.instance
       .collection("Food-Category"); //هنا عشان نطبع التصنيفات من قاعدة البيانات
-  //لجميع العناصر
+
   Query get filteredItems => FirebaseFirestore.instance
       .collection("Food_Truck")
       .where("category", isEqualTo: category);
@@ -234,17 +234,51 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
         MyIconButton(
           icon: Iconsax.logout_14,
           pressed: () async {
-            try {
-              await _authService.signOut(); // Sign out from Firebase
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LogInScreen()),
-              );
-            } catch (e) {
-              // Handle errors here, e.g., show a snackbar
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error signing out: $e')),
-              );
+            final shouldLogOut = await showDialog<bool>(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: const Text('تأكيد تسجيل الخروج'),
+                  ),
+                  content: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(false);
+                      },
+                      child: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: const Text('إلغاء'),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop(true);
+                      },
+                      child: const Text('تسجيل الخروج'),
+                    ),
+                  ],
+                );
+              },
+            );
+
+            if (shouldLogOut == true) {
+              try {
+                await _authService.signOut();
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LogInScreen()),
+                );
+              } catch (e) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error signing out: $e')),
+                );
+              }
             }
           },
         ),
@@ -258,33 +292,30 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
         ),
       ],
     );
-  }// Widget to display suggested trucks row
-  // Widget to display suggested trucks row with names below the pictures
+  }
+
   Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
       child: Row(
         children: trucks.map((e) {
-          // Assuming the image URL is stored in the field "truckImage" and the name in "truckName"
           final imageUrl = e['truckImage'];
-          final truckName = e['name']; // Field for truck's name
+          final truckName = e['name'];
           return Padding(
-            padding: const EdgeInsets.symmetric(
-                horizontal: 12.0), // Increased spacing between pictures
+            padding: const EdgeInsets.symmetric(horizontal: 12.0),
             child: Column(
               children: [
                 CircleAvatar(
-                  radius: 25, // Adjust the size as needed
+                  radius: 25,
                   backgroundImage: NetworkImage(imageUrl),
                   backgroundColor: Colors.grey[200],
                 ),
-                const SizedBox(height: 5), // Space between image and text
+                const SizedBox(height: 5),
                 Text(
                   truckName,
-                  style: const TextStyle(
-                      fontSize: 12), // Adjust text style as needed
+                  style: const TextStyle(fontSize: 12),
                   textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis, // Handle long text
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
@@ -293,5 +324,4 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
       ),
     );
   }
-
 }

@@ -14,14 +14,14 @@ class ItemsDisplayRight extends StatelessWidget {
       onTap: () {},
       child: Container(
         margin: const EdgeInsets.only(
-          left: 10, // Change to left margin to align to the right
+          left: 10, 
         ),
         width: 230,
         child: Stack(
           children: [
             Column(
               crossAxisAlignment:
-                  CrossAxisAlignment.end, // Align items to the right
+                  CrossAxisAlignment.end,  
               children: [
                 Container(
                   width: double.infinity,

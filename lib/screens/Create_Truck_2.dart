@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
 import 'Create_Truck_3.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class CreateTruck2 extends StatefulWidget {
-  final String ownerId;  
-  final String truckName;  
-  final String businessLogo;  
-  final String truckImage;  
-  final String selectedCategory;  
-  final String description;  
-  final String operatingHours; 
-  final String licenseNo; 
+  final String ownerId;
+  final String truckName;
+  final String businessLogo;
+  final String truckImage;
+  final String selectedCategory;
+  final String description;
+  final String operatingHours;
+  final String licenseNo;
 
   CreateTruck2({
     Key? key,
@@ -23,8 +25,8 @@ class CreateTruck2 extends StatefulWidget {
     required this.truckImage,
     required this.selectedCategory,
     required this.description,
-    required this.operatingHours, 
-    required this.licenseNo,  
+    required this.operatingHours,
+    required this.licenseNo,
   }) : super(key: key);
 
   @override
@@ -33,8 +35,9 @@ class CreateTruck2 extends StatefulWidget {
 
 class _CreateTruck2State extends State<CreateTruck2> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  LatLng _selectedLocation = LatLng(24.7136, 46.6753);  
+  LatLng _selectedLocation = LatLng(24.7136, 46.6753);
   late GoogleMapController _mapController;
+  final TextEditingController _searchController = TextEditingController();
 
   Future<void> _saveTruckDetails(BuildContext context) async {
     if (_formKey.currentState?.validate() ?? false) {
@@ -52,7 +55,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
         'ownerID': widget.ownerId,
         'location':
             '${_selectedLocation.latitude},${_selectedLocation.longitude}',
-        'licenseNo': widget.licenseNo,  
+        'licenseNo': widget.licenseNo,
         'rating': '0',
         'ratingsCount': 0,
         'item_names_list': [],
@@ -83,25 +86,43 @@ class _CreateTruck2State extends State<CreateTruck2> {
     _mapController = controller;
   }
 
+  Future<LatLng?> _searchLocation(String query) async {
+    final encodedQuery = Uri.encodeQueryComponent(query);
+   //هنا تحطين الكي 
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      if (data['results'].isNotEmpty) {
+        final location = data['results'][0]['geometry']['location'];
+        return LatLng(location['lat'], location['lng']);
+      } else {
+        print('No results found for query: $query');
+      }
+    } else {
+      print('Error: ${response.statusCode} - ${response.body}');
+    }
+    return null; // Return null if no location is found
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBannerColor,
-appBar: AppBar(
-  backgroundColor:Color(0xFF674188),
-  automaticallyImplyLeading: false,
-  elevation: 0,
-  actions: [
-    MyIconButton(
-      icon: Icons.arrow_forward_ios,
-      pressed: () {
-        Navigator.pop(context); // This will return to the previous page
-      },
-    ),
-    const SizedBox(width: 15),
-  ],
-),
-
+      appBar: AppBar(
+        backgroundColor: Color(0xFF674188),
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          MyIconButton(
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.pop(context); // This will return to the previous page
+            },
+          ),
+          const SizedBox(width: 15),
+        ],
+      ),
       body: Column(
         children: [
           const Expanded(flex: 1, child: SizedBox(height: 5)),
@@ -131,6 +152,35 @@ appBar: AppBar(
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 20.0),
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextField(
+                          controller: _searchController,
+                          textAlign: TextAlign.right,  
+                          decoration: InputDecoration(
+                            labelText:
+                                'ابحث عن موقع',  
+                            border: OutlineInputBorder(),
+                          ),
+                          onSubmitted: (value) async {
+                            final location = await _searchLocation(value);
+                            if (location != null) {
+                              setState(() {
+                                _selectedLocation = location;
+                                _mapController.animateCamera(
+                                  CameraUpdate.newLatLng(location),
+                                );
+                              });
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                    content: Text(
+                                        'لم يتم العثور على الموقع')), 
+                              );
+                            }
+                          },
+                        ),
+                      ),
 
                       // Google Maps Container
                       Container(
@@ -140,12 +190,11 @@ appBar: AppBar(
                           onMapCreated: _onMapCreated,
                           initialCameraPosition: CameraPosition(
                             target: _selectedLocation,
-                            zoom: 14,
+                            zoom: 15,
                           ),
                           onTap: (LatLng location) {
                             setState(() {
-                              _selectedLocation =
-                                  location;  
+                              _selectedLocation = location;
                             });
                           },
                           markers: {
@@ -166,7 +215,7 @@ appBar: AppBar(
                           onPressed: () {
                             _saveTruckDetails(context);
                           },
-                          child: const Text('التالي'),  
+                          child: const Text('التالي'),
                         ),
                       ),
                       const SizedBox(height: 20.0),

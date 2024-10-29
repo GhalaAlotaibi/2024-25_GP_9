@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Truck_Profile.dart'; // Import the Truck_Profile.dart file
+import 'Truck_Profile.dart';  
 
 class CreateTruck3 extends StatelessWidget {
   final String ownerId; // Owner ID
@@ -10,12 +10,10 @@ class CreateTruck3 extends StatelessWidget {
       : super(key: key);
 
   void _navigateToTruckProfile(BuildContext context) {
- 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            TruckProfile(truckId: truckId),  
+        builder: (context) => TruckProfile(truckId: truckId),
       ),
     );
   }
@@ -27,19 +25,17 @@ class CreateTruck3 extends StatelessWidget {
       backgroundColor: Colors.white,
       body: SafeArea(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,  
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-     
             SizedBox(
-              width: 350,  
-              height: 350,  
+              width: 350,
+              height: 350,
               child: Image.asset(
-                'assets/images/logo_Tracki.png', 
-                fit: BoxFit.contain, 
+                'assets/images/logo_Tracki.png',
+                fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 20),  
-          
+            const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 40.0),
               child: Center(
@@ -68,17 +64,15 @@ class CreateTruck3 extends StatelessWidget {
                 ),
               ),
             ),
-            const SizedBox(height: 20),  
-
+            const SizedBox(height: 20),
             InkWell(
-              onTap: () => _navigateToTruckProfile(context),  
+              onTap: () => _navigateToTruckProfile(context),
               child: const Text(
-                "التالي", 
+                "التالي",
                 style: TextStyle(
-                  color: Color(0xFF674188),  
-                  fontSize: 20,  
-                  decoration:
-                      TextDecoration.underline, 
+                  color: Color(0xFF674188),
+                  fontSize: 20,
+                  decoration: TextDecoration.underline,
                 ),
               ),
             ),

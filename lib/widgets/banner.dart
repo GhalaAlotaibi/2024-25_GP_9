@@ -31,22 +31,7 @@ class BannerToExplore extends StatelessWidget {
                       color: Colors.white),
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 33),
-                    backgroundColor: Colors.white,
-                    elevation: 0.5,
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    "اكتشف",
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
-                )
-              ],
+                ],
             ),
           ),
           Positioned(

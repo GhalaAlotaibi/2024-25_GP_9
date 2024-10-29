@@ -214,7 +214,9 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                     onTap: _toggleFavorite,
                     child: Icon(
                       isFavorite ? Icons.favorite : Icons.favorite_border,
-                      color: isFavorite ? Colors.red : Colors.black,
+                      color: isFavorite
+                          ? const Color.fromARGB(255, 204, 73, 63)
+                          : Colors.black,
                       size: 20,
                     ),
                   ),

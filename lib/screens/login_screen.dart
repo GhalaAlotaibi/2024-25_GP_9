@@ -110,7 +110,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 );
               },
             ),
-            const SizedBox(width: 340),
+            const SizedBox(width: 333),
           ],
         ),
         body: Column(
@@ -208,7 +208,7 @@ class _LogInScreenState extends State<LogInScreen> {
                           children: [
                             Row(
                               children: [
-                                                                Checkbox(
+                                Checkbox(
                                   value: rememberPassword,
                                   onChanged: (bool? value) {
                                     setState(() {

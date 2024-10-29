@@ -18,10 +18,10 @@ class OwnerMainScreen extends StatefulWidget {
 
 class _OwnerMainScreenState extends State<OwnerMainScreen> {
   int selectedIndex = 0;
-  late List<Widget> page; // Declare page as late
+  late List<Widget> page;
   double? latitude;
   double? longitude;
-  String? currentOwnerID; // Variable to hold the current owner/truck ID
+  String? currentOwnerID;
 
   @override
   void initState() {
@@ -30,9 +30,9 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
 
     page = [
       Center(child: CircularProgressIndicator()),
-      Center(child: CircularProgressIndicator()), // Placeholder for Profile
-      Center(child: CircularProgressIndicator()), // Placeholder for Map
-      Center(child: CircularProgressIndicator()), // Placeholder for Settings
+      Center(child: CircularProgressIndicator()),
+      Center(child: CircularProgressIndicator()),
+      Center(child: CircularProgressIndicator()),
     ];
 
     fetchLocation();
@@ -40,7 +40,6 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
 
   Future<void> fetchLocation() async {
     try {
-      // Retrieve Food_Truck data based on currentOwnerID
       DocumentSnapshot truckSnapshot = await FirebaseFirestore.instance
           .collection('Food_Truck')
           .doc(currentOwnerID)
@@ -61,14 +60,12 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
           print('Location key not found in Food Truck document.');
         }
       } else {
-        // Query Food_Truck collection for trucks owned by this owner
         QuerySnapshot foodTruckSnapshot = await FirebaseFirestore.instance
             .collection('Food_Truck')
             .where('ownerID', isEqualTo: currentOwnerID)
             .get();
 
         if (foodTruckSnapshot.docs.isNotEmpty) {
-          // Use the first food truck found
           var firstTruckDoc = foodTruckSnapshot.docs.first;
           currentOwnerID = firstTruckDoc.id;
           Map<String, dynamic> truckData =

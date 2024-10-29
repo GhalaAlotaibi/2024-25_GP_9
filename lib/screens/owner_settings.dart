@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import '../Utils/constants.dart'; // Assuming kbackgroundColor is defined here
+import '../Utils/constants.dart';  
 
 class OwnerSettings extends StatefulWidget {
   final String ownerID;
@@ -82,15 +82,7 @@ final FirebaseAuth _auth = FirebaseAuth.instance;
                 color: Color.fromARGB(255, 0, 0, 0)),
           ),
         ),
-        // actions: [
-        //   MyIconButton(
-        //     icon: Icons.arrow_forward_ios,
-        //     pressed: () {
-        //       Navigator.pop(context);
-        //     },
-        //   ),
-        //   const SizedBox(width: 15),
-        // ],
+        
       ),
       body: ownerData != null
           ? Padding(

@@ -92,21 +92,56 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             child: MyIconButton(
               icon: Iconsax.logout_14,
               pressed: () async {
-                try {
-                  await _authService.signOut(); // Sign out from Firebase
-                  Navigator.of(context).pushAndRemoveUntil(
-                    MaterialPageRoute(
+                // Show confirmation dialog before signing out
+                final shouldLogOut = await showDialog<bool>(
+                  context: context,
+                  builder: (BuildContext dialogContext) {
+                    return AlertDialog(
+                      title: Directionality(
+                        textDirection: TextDirection.rtl,
+                        child:
+                            const Text('تأكيد تسجيل الخروج'), // Confirm Logout
+                      ),
+                      content: const Text(
+                          'هل أنت متأكد أنك تريد تسجيل الخروج؟'), // Are you sure you want to log out?
+                      actions: <Widget>[
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext).pop(false); // Cancel
+                          },
+                          child: const Text('إلغاء'), // Cancel
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(dialogContext)
+                                .pop(true); // Confirm Logout
+                          },
+                          child: const Text('تسجيل الخروج'), // Logout
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                // If confirmed, proceed with sign-out
+                if (shouldLogOut == true) {
+                  try {
+                    await _authService.signOut(); // Sign out from Firebase
+                    Navigator.of(context).pushAndRemoveUntil(
+                      MaterialPageRoute(
                         builder: (context) =>
-                            const LogInScreen()), // Navigate to login page
-                    (Route<dynamic> route) =>
-                        route.settings.name ==
-                        '/welcome_screen', // Keep the welcome page in the stack
-                  );
-                } catch (e) {
-                  // Handle errors here, e.g., show a snackbar
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error signing out: $e')),
-                  );
+                            const LogInScreen(), // Navigate to login page
+                      ),
+                      (Route<dynamic> route) =>
+                          route.settings.name ==
+                          '/welcome_screen', // Keep the welcome page in the stack
+                    );
+                  } catch (e) {
+                    // Handle errors here, e.g., show a snackbar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error signing out: $e')),
+                    );
+                  }
                 }
               },
             ),
@@ -126,7 +161,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               ),
               const SizedBox(width: 10),
               buildBusinessLogo(logoUrl),
-              const SizedBox(height: 80),
             ],
           ),
         ],
@@ -202,9 +236,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               icon: Iconsax.location,
               title: 'الموقع الحالي',
               color: kBannerColor,
-              onTap: () {
-                // Navigate to location section
-              },
+              onTap: () {},
             ),
           ],
         ),
@@ -245,7 +277,8 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                   ),
                 ),
               ),
-              Align(//
+              Align(
+                //
                 alignment: Alignment.bottomLeft,
                 child: Padding(
                   padding: const EdgeInsets.all(20),
