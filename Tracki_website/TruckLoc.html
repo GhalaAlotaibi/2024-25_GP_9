@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع العربة</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+    <!-- Main Content -->
+    <div id="content">
+        <header> 
+            <div class="header">
+                <button id="logout-button">تسجيل الخروج</button>
+                <img src="images/TrackiLogo.png" alt="Logo">
+            </div>
+        </header> 
+        <p id="status">...التحقق من حالة تسجيل الدخول</p>
+        <h2>موقع العربة</h2>
+        
+        <!-- Location Section -->
+        <div id="location-container">
+            <div class="location-details">
+                <p id="location-text">جاري تحميل الموقع...</p>
+                <a id="google-map-link" class="map-link" href="#" target="_blank">عرض على الخريطة</a>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check authentication status on page load
+        onAuthStateChanged(auth, (user) => {
+            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];
+                statusElement.innerText = `! ${username} مرحبًا`;
+                displayLocation();
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "login.html";
+            }
+        });
+
+        // Log Out
+        document.getElementById('logout-button').addEventListener('click', () => {
+            signOut(auth).then(() => {
+                window.location.href = "login.html";
+            }).catch((error) => {
+                console.error("Error during logout: ", error);
+            });
+        });
+
+        // Location Functionality
+        function displayLocation() {
+            const params = new URLSearchParams(window.location.search);
+            const foodTruckLocation = params.get('location');
+
+            const locationText = document.getElementById('location-text');
+            const googleMapLink = document.getElementById('google-map-link');
+
+            if (foodTruckLocation) {
+                // Display the location as text
+                locationText.textContent = `الموقع: ${foodTruckLocation}`;
+                
+                // Create Google Maps link
+                const googleMapUrl = `https://www.google.com/maps?q=${encodeURIComponent(foodTruckLocation)}`;
+                googleMapLink.href = googleMapUrl;
+            } else {
+                locationText.textContent = "لم يتم توفير الموقع.";
+                googleMapLink.style.display = 'none'; // Hide the map link if no location
+            }
+        }
+    </script>
+</body>
+</html>

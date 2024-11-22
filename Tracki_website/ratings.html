@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>التقييمات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="style1.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div id="sidebar">
+        <div class="sidebar-logo">
+            <img src="images/TrackiLogo.png" alt="Logo"> 
+            <h1> Tracki مشرف</h1>
+        </div>
+        <!-- Menu Items -->
+        <div class="menu-item" onclick="navigateTo('admindashboard.html')"><i class="fas fa-tachometer-alt"></i>لوحة الإدارة</div>
+        <div class="menu-item" onclick="navigateTo('allTrucks.html')"><i class="fas fa-truck"></i>جميع العربات</div>
+        <div class="menu-item" style="background-color: #6f5d96;"><i class="fas fa-star"></i>التقييمات</div>
+        <div class="menu-item" onclick="navigateTo('complaints.html')"><i class="fas fa-exclamation-circle"></i>الشكاوي والإقتراحات</div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="content">
+        <header> 
+            <div class="header">
+                <button id="logout-button">تسجيل الخروج</button>
+                <img src="images/TrackiLogo.png" alt="Logo">
+                <button id="toggle-btn" onclick="toggleSidebar()"> <!-- Toggle Button -->
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header> 
+        <h2 id="pathHeading">التقييمات</h2>
+        <p id="status">...التحقق من حالة تسجيل الدخول</p>
+
+        <h2>التقييمات</h2>
+        </div>
+        
+    </div>
+
+    <script>
+        //Navigate to pages
+        function navigateTo(page) {
+        window.location.href = page; // Navigate to the provided page
+        }
+
+        // Sidebar toggle function
+        function toggleSidebar() {
+            document.body.classList.toggle("sidebar-open");
+            const sidebar = document.getElementById("sidebar");
+            sidebar.classList.toggle("expanded");
+            document.body.classList.toggle("sidebar-expanded");
+        }
+    </script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check authentication status on page load
+        onAuthStateChanged(auth, (user) => {
+            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];
+                statusElement.innerText = `! ${username} مرحبًا`;
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "login.html";
+            }
+        });
+    
+    //Log Out
+    document.getElementById('logout-button').addEventListener('click', () => {
+        signOut(auth).then(() => {
+            window.location.href = "login.html";
+        }).catch((error) => {
+            console.error("Error during logout: ", error);
+        });
+    });
+    </script>
+</body>
+</html>

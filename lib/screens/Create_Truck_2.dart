@@ -61,6 +61,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
         'item_names_list': [],
         'item_prices_list': [],
         'item_images_list': [],
+        'status': 'pending',
       };
 
       try {
@@ -88,7 +89,9 @@ class _CreateTruck2State extends State<CreateTruck2> {
 
   Future<LatLng?> _searchLocation(String query) async {
     final encodedQuery = Uri.encodeQueryComponent(query);
-   //هنا تحطين الكي 
+    //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedQuery&key=AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Replace with your API key
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

@@ -1,0 +1,299 @@
+/* Global Styling */
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif
+}
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    display: flex;
+    background-color: #f8f2f7;
+}
+
+/* Header ***************************/
+.header {
+    display: flex;
+    justify-content: flex-start; /* Align the logout button to the left */
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+#logout-button {
+    color: #776b9e;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+#logout-button:hover {
+   color: #1e0755;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap;
+}
+
+.header button {
+    background-color: #f8f2f7;
+    border: none;
+    padding: 10px 20px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin: 0 10px; /* Space out the buttons */
+}
+
+/* Logo Styles */
+header img {
+    width: 120px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto; 
+}
+
+/* Sidebar Menu Item Icons */
+.menu-item i {
+    margin-left: 10px; /* Space between the text and the icon */
+    order: 1; /* Ensures icon is on the right */
+    font-size: 1.2em;
+}
+
+.menu-item:hover {
+    background-color: #776b9e; /* Slightly lighter purple on hover */
+}
+
+/* Toggle Button */
+#toggle-btn {
+    font-size: 24px;
+    position: fixed; /* Use fixed to keep it in place while scrolling */
+    top: 20px; /* Adjust top position as needed */
+    right: 20px; /* Adjust right position for the button to be on the right side */
+    cursor: pointer;
+    z-index: 1001;
+    color: #5f4b8b;
+    background-color: #f8f2f7;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    transition: background 0.3s ease;
+}
+
+#toggle-btn:hover {
+    background-color: #E2BFD9;
+}
+
+#status {
+    padding-right: 20px;
+    color: #5f4b8b;
+    text-align: right;
+    font-size: 1.2em;
+}
+
+/* Sidebar styling */
+.sidebar-open #toggle-btn {
+    background-color: #f8f2f7; /* Change to white or your preferred color */
+}
+
+#sidebar {
+    height: 100vh;
+    width: 250px;
+    background-color: #5f4b8b; 
+    color: #f8f2f7;
+    position: fixed;
+    right: -250px;
+    top: 0;
+    transition: right 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Align items to the left for the sidebar */
+    padding-top: 20px;
+    z-index: 1000;
+}
+
+#sidebar.expanded {
+    right: 0; 
+}
+
+/* Sidebar Logo */
+.sidebar-logo {
+    margin-bottom: 20px;
+    text-align: center; 
+    width: 100%;
+}
+
+.sidebar-logo img {
+    width: 100px;
+    height: auto;
+    border-radius: 10px;
+}
+
+.sidebar-logo h1 {
+    font-size: 1.2em;
+    margin-top: 10px;
+}
+
+/* Sidebar Menu Items */
+.menu-item {
+    padding: 15px 25px; 
+    width: 100%;
+    text-decoration: none;
+    color: #f8f2f7;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; /* Ensure text is on the left */
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: 
+    background 0.3s;
+    position: relative;
+}
+
+/* Main Content Styling ****************************/
+#content {
+    margin-right: 0;
+    padding: 30px;
+    width: 100%;
+    transition: margin-right 0.3s ease;
+}
+
+.sidebar-expanded #content {
+    margin-right: 250px;
+    width: calc(100% - 250px);
+}
+
+h2 {
+    text-align: center;
+    color: #5f4b8b;
+}
+
+#pathHeading {
+    text-align: right;
+    color: #5f4b8b;
+}
+
+
+/* Food Trucks List Styling */
+ /* Table Styling */
+ .table-container {
+    max-width: 100%;
+    margin-top: 20px;
+    overflow-x: auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    direction: rtl; /* Right-to-left layout */
+}
+
+thead {
+    background-color: #5f4b8b; /* Header background color */
+    color: #fff;
+}
+
+th, td {
+    text-align: right; /* Align text to the right */
+    padding: 12px 15px;
+    font-size: 1rem;
+}
+
+tbody tr:nth-child(even) {
+    background-color: #f4f4f4; /* Alternating row color */
+}
+
+tbody tr:hover {
+    background-color: #e6e6fa; /* Light hover effect */
+}
+
+th {
+    position: sticky;
+    top: 0;
+    background-color: #5f4b8b; /* Sticky header background */
+    z-index: 1;
+}
+
+td {
+    border-bottom: 1px solid #ddd;
+    color: #333; /* Text color */
+}
+
+/* Responsive Table for Smaller Screens */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column; /* Stack items vertically on smaller screens */
+        text-align: center;
+    }
+    
+    .header button {
+        margin: 10px 0; /* Stack buttons with space in between */
+    }
+    
+    h2 {
+        margin-top: 10px;
+    }
+    
+    th, td {
+        font-size: 0.9rem; /* Reduce font size for smaller screens */
+        padding: 10px;
+    }
+}
+
+/**************************** TruckLoc Page ****************************/
+.location-details {
+    text-align: center;
+    color: #5f4b8b; /* Corrected color code to a valid hex format */
+    margin-top: 20px;
+    width: 90%;
+    max-width: 600px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+.location-details a {
+    color: #5f4b8b;
+    display: block;
+    margin-top: 10px;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/**************************** allTrucks Page ****************************/
+#filter-buttons {
+    margin: 20px 0;
+    text-align: right; /* Align buttons to the right */
+}
+
+.filter-button {
+    background-color: #E2BFD9;
+    color: white;
+    border: none;
+    padding: 5px 10px; /* Smaller padding */
+    margin: 0 5px;
+    cursor: pointer;
+    font-size: 14px; /* Smaller font size */
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.filter-button:hover {
+    background-color: #C8A1E0;
+}

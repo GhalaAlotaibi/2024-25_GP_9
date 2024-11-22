@@ -8,6 +8,8 @@ import 'customer_signup_screen.dart';
 import 'user_type_selection_screen.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tracki/screens/statusPending.dart';
+import 'package:tracki/screens/statusRejected.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -57,13 +59,44 @@ class _LogInScreenState extends State<LogInScreen> {
             .get();
 
         if (ownerDoc.exists) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => OwnerMainScreen(ownerID: userID),
-            ),
-          );
+          // Owner *****************************************
+          FirebaseFirestore.instance
+              .collection('Food_Truck')
+              .where('ownerID', isEqualTo: userID)
+              .get()
+              .then((querySnapshot) {
+            if (querySnapshot.docs.isNotEmpty) {
+              var foodTruckDoc = querySnapshot.docs.first;
+              String status = foodTruckDoc['status'];
+
+              if (status == 'accepted') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => OwnerMainScreen(ownerID: userID),
+                  ),
+                );
+              } else if (status == 'pending') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatusPending(),
+                  ),
+                );
+              } else if (status == 'rejected') {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => StatusRejected(ownerID: userID),
+                  ),
+                );
+              }
+            }
+          }).catchError((error) {
+            print('Error querying Food_Truck collection: $error');
+          });
         } else {
+          // Customer ***************************************************
           DocumentSnapshot customerDoc = await FirebaseFirestore.instance
               .collection('Customer')
               .doc(userID)

@@ -1,22 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'Truck_Profile.dart';
 
-class CreateTruck3 extends StatelessWidget {
-  final String ownerId; // Owner ID
-  final String truckId; // Truck ID
-
-  CreateTruck3({Key? key, required this.ownerId, required this.truckId})
-      : super(key: key);
-
-  void _navigateToTruckProfile(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => TruckProfile(truckId: truckId),
-      ),
-    );
-  }
+class StatusPending extends StatelessWidget {
 
   void _goHome(BuildContext context) {
     Navigator.popUntil(context, ModalRoute.withName('/')); // Pop to the root page
@@ -33,7 +17,7 @@ class CreateTruck3 extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Icon(
-              Icons.local_shipping,
+              Icons.timelapse, 
               size: 80,
               color: Color(0xFF674188),
             ),
@@ -46,16 +30,9 @@ class CreateTruck3 extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'تم إرسال طلب إضافة عربتك بنجاح',
+                        text: 'طلبك قيد الانتظار',
                         style: TextStyle(
                           fontSize: 30,
-                          color: Color(0xFF674188),
-                        ),
-                      ),
-                      TextSpan(
-                        text: '\n ...يرجى الإنتظار حتى يتم قبول عربتك',
-                        style: TextStyle(
-                          fontSize: 22,
                           color: Color(0xFF674188),
                         ),
                       ),
