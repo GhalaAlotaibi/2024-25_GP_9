@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 
@@ -16,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tracki App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: kprimaryColor),
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),

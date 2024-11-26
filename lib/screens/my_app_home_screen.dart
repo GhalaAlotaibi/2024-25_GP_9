@@ -23,7 +23,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   final FirebaseAuthService _authService = FirebaseAuthService();
 
   final CollectionReference categoriesItems = FirebaseFirestore.instance
-      .collection("Food-Category"); //هنا عشان نطبع التصنيفات من قاعدة البيانات
+      .collection("Food-Category"); 
 
   Query get filteredItems => FirebaseFirestore.instance
       .collection("Food_Truck")
@@ -61,7 +61,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                     ),
                     Directionality(
                       textDirection: TextDirection
-                          .rtl, // Right-to-left direction for التصنيفات
+                          .rtl,  
                       child: selectedCategory(),
                     ),
                     const SizedBox(
@@ -117,7 +117,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                   ),
                                 ),
                               ),
-                              // Add spacing and text above the suggested trucks row
+                              
                               const SizedBox(height: 20),
                               const Align(
                                 alignment: Alignment.centerRight,
@@ -141,9 +141,9 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                         return const Center(child: CircularProgressIndicator());
                       },
                     ),
-                    // Adding extra scroll space
+                    
                     const SizedBox(
-                      height: 100, // Adjust height as needed
+                      height: 100,  
                     ),
                   ],
                 ),
