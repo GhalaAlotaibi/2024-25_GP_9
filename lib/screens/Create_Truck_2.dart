@@ -61,6 +61,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
         'item_names_list': [],
         'item_prices_list': [],
         'item_images_list': [],
+        'status': 'pending',
       };
 
       try {
@@ -89,7 +90,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
   Future<LatLng?> _searchLocation(String query) async {
     final encodedQuery = Uri.encodeQueryComponent(query);
    //هنا تحطين الكي 
-    final response = await http.get(Uri.parse("AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA"));
+    final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
