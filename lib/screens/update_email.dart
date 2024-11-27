@@ -1,16 +1,16 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
 class UpdateEmail extends StatefulWidget {
   final String ID;
+  final String userType; // "owner" or "customer"
 
-  const UpdateEmail({Key? key, required this.ID}) : super(key: key);
+  const UpdateEmail({Key? key, required this.ID, required this.userType})
+      : super(key: key);
 
   @override
   _UpdateEmailState createState() => _UpdateEmailState();
@@ -28,16 +28,19 @@ class _UpdateEmailState extends State<UpdateEmail> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isLoading = true;
+  bool isPasswordVisible = false;
 
   Future<void> _fetchUserData() async {
     try {
+      String collection =
+          widget.userType == "owner" ? "Truck_Owner" : "Customer";
+      String syntax = widget.userType == "owner" ? "Email" : "email";
       DocumentSnapshot document =
-          await _firestore.collection('Customer').doc(widget.ID).get();
+          await _firestore.collection(collection).doc(widget.ID).get();
 
       if (document.exists) {
         setState(() {
-          nameController.text = document['Name'] ?? '';
-          currentEmailController.text = document['email'] ?? '';
+          currentEmailController.text = document[syntax] ?? '';
         });
       }
     } catch (e) {
@@ -51,11 +54,19 @@ class _UpdateEmailState extends State<UpdateEmail> {
 
   Future<void> _updateEmail() async {
     if (_formKey.currentState!.validate()) {
+      setState(() {
+        isLoading = true;
+      });
+
       try {
+        String collection =
+            widget.userType == "owner" ? "Truck_Owner" : "Customer";
+        String syntax = widget.userType == "owner" ? "Email" : "email";
+
         // Check if email already exists in Firestore
         final emailExists = await _firestore
-            .collection('Customer')
-            .where('email', isEqualTo: newEmailController.text)
+            .collection(collection)
+            .where(syntax, isEqualTo: newEmailController.text)
             .get();
 
         if (emailExists.docs.isNotEmpty) {
@@ -80,7 +91,6 @@ class _UpdateEmailState extends State<UpdateEmail> {
         );
 
         try {
-          // Reauthenticate with the provided credentials
           await user.reauthenticateWithCredential(credential);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -94,21 +104,24 @@ class _UpdateEmailState extends State<UpdateEmail> {
         await user.sendEmailVerification();
 
         await _firestore
-            .collection('Customer')
-            .doc(user.uid)
-            .update({'email': newEmailController.text});
+            .collection(collection)
+            .doc(widget.ID)
+            .update({syntax: newEmailController.text});
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("تم تحديث البريد الالكتروني بنجاح"),
+          content: Text("تم تحديث البريد الإلكتروني بنجاح"),
         ));
 
-        // Return to the previous screen
         Navigator.pop(context, true);
       } catch (e) {
         print('Error updating email: $e');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('حدث خطأ أثناء تحديث البريد الإلكتروني: $e'),
         ));
+      } finally {
+        setState(() {
+          isLoading = false;
+        });
       }
     }
   }
@@ -188,7 +201,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
                       const SizedBox(height: 20),
                       _buildCustomTextField(
                         controller: passwordController,
-                        labelText: 'كلمة المرور ',
+                        labelText: 'كلمة المرور', //كلمة المرور
                         hintText: '********',
                         icon: Icons.lock,
                         isPassword: true,
@@ -209,7 +222,6 @@ class _UpdateEmailState extends State<UpdateEmail> {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
                           ),
-                          //    elevation: 2,
                         ),
                         child: const Text(
                           'حفظ التغييرات',
@@ -236,6 +248,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
     bool isPassword = false,
     bool enabled = true,
     String? Function(String?)? validator,
+    Widget? suffixIcon,
   }) {
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -248,6 +261,7 @@ class _UpdateEmailState extends State<UpdateEmail> {
           labelText: labelText,
           hintText: hintText,
           prefixIcon: Icon(icon),
+          suffixIcon: suffixIcon,
           filled: true,
           fillColor: const Color(0xFFF6F6F6),
           border: OutlineInputBorder(

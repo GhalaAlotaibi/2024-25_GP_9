@@ -316,6 +316,7 @@ class _CustomerSettingsState extends State<CustomerSettings> {
                           MaterialPageRoute(
                             builder: (context) => UpdateEmail(
                               ID: widget.customerID,
+                              userType: "Customer",
                             ),
                           ),
                         );
