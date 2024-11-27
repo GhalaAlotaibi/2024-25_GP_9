@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
@@ -18,6 +19,61 @@ class FoodTruckProfileDisplay extends StatefulWidget {
 
 class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
   @override
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final favDoc = await _firestore
+          .collection('Favorite')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(widget.documentSnapshot.id)
+          .get();
+      setState(() {
+        isFavorite = favDoc.exists;
+      });
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final favRef = _firestore
+          .collection('Favorite')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(widget.documentSnapshot.id);
+
+      if (isFavorite) {
+        // Remove from favorites
+        await favRef.delete();
+      } else {
+        // Add to favorites
+        await favRef.set({
+          'truckId': widget.documentSnapshot.id,
+          'truckName': widget.documentSnapshot['name'],
+          'truckImage': widget.documentSnapshot['truckImage'],
+          'businessLogo': widget.documentSnapshot['businessLogo'],
+          'category': widget.documentSnapshot['category'],
+          'operatingHours': widget.documentSnapshot['operatingHours'],
+        });
+      }
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    }
+  }
+
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -348,14 +404,22 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
             ),
           ),
           const SizedBox(width: 10),
-          IconButton(
-            style: IconButton.styleFrom(
-              shape: CircleBorder(
-                side: BorderSide(color: kBannerColor, width: 1),
+          Container(
+            padding: EdgeInsets.all(5),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              border: Border.all(color: kBannerColor, width: 1),
+            ),
+            child: InkWell(
+              onTap: _toggleFavorite,
+              child: Icon(
+                isFavorite ? Iconsax.heart5 : Iconsax.heart,
+                color: isFavorite
+                    ? const Color.fromARGB(255, 204, 73, 63)
+                    : Colors.black,
+                size: 25,
               ),
             ),
-            onPressed: () {},
-            icon: const Icon(Iconsax.heart, color: kBannerColor),
           ),
         ],
       ),

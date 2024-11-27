@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:iconsax/iconsax.dart';
 
 import 'package:tracki/screens/food_truck_profile_display.dart';
 
@@ -28,7 +29,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     final user = _auth.currentUser;
     if (user != null) {
       final favDoc = await _firestore
-          .collection('users')
+          .collection('Favorite')
           .doc(user.uid)
           .collection('favorites')
           .doc(widget.documentSnapshot.id)
@@ -43,7 +44,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     final user = _auth.currentUser;
     if (user != null) {
       final favRef = _firestore
-          .collection('users')
+          .collection('Favorite')
           .doc(user.uid)
           .collection('favorites')
           .doc(widget.documentSnapshot.id);
@@ -213,7 +214,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                   child: InkWell(
                     onTap: _toggleFavorite,
                     child: Icon(
-                      isFavorite ? Icons.favorite : Icons.favorite_border,
+                      isFavorite ? Iconsax.heart5 : Iconsax.heart,
                       color: isFavorite
                           ? const Color.fromARGB(255, 204, 73, 63)
                           : Colors.black,

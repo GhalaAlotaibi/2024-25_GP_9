@@ -39,7 +39,7 @@ class ItemsDisplayRight extends StatelessWidget {
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment:
-                      MainAxisAlignment.end, // Align row content to the right
+                      MainAxisAlignment.end,  
                   children: [
                     const SizedBox(width: 10),
                     Text(

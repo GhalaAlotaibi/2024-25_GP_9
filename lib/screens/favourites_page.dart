@@ -11,6 +11,7 @@ class FavoritesPage extends StatefulWidget {
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
+//users
 class _FavoritesPageState extends State<FavoritesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -35,7 +36,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _firestore
-            .collection('users')
+            .collection('Favorite')
             .doc(_auth.currentUser!.uid)
             .collection('favorites')
             .snapshots(),
@@ -120,7 +121,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     final user = _auth.currentUser;
     if (user != null) {
       await _firestore
-          .collection('users')
+          .collection('Favorite')
           .doc(user.uid)
           .collection('favorites')
           .doc(truckId)
