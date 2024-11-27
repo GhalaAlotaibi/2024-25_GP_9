@@ -80,7 +80,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
             print('Location key not found in Food Truck document for owner.');
           }
         } else {
-          print('No food trucks found for ownerID: $currentOwnerID');
+          print('No food truck found for ownerID: $currentOwnerID');
         }
       }
     } catch (e) {
