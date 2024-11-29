@@ -49,8 +49,8 @@ class _CreateTruck2State extends State<CreateTruck2> {
       try {
         DocumentReference requestRef = await requests.add({
           'foodTruckId': '',
-          'message': 'طلب إضافة عربة جديد', 
-          'status': 'pending', 
+          'message': 'طلب إضافة عربة جديد',
+          'status': 'pending',
         });
         String requestId = requestRef.id;
 
@@ -74,14 +74,13 @@ class _CreateTruck2State extends State<CreateTruck2> {
         });
         String truckId = truckRef.id;
 
-        // Step 3: Update the Request document with the foodTruckId
+        //Update the Request document with the foodTruckId
         await requestRef.update({
-          'foodTruckId': truckId, // Link the truck to the request
+          'foodTruckId': truckId,
         });
 
         print(
             "Truck and request created successfully. Truck ID: $truckId, Request ID: $requestId");
-
 
         Navigator.push(
           context,
@@ -103,8 +102,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
   Future<LatLng?> _searchLocation(String query) async {
     final encodedQuery = Uri.encodeQueryComponent(query);
     //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
-    final url =
-        'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedQuery&key=AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Replace with your API key
+    final url = ''; // Replace with Ghala's API key later
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -118,7 +116,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
     }
-    return null; 
+    return null;
   }
 
   @override
@@ -133,7 +131,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
           MyIconButton(
             icon: Icons.arrow_forward_ios,
             pressed: () {
-              Navigator.pop(context); 
+              Navigator.pop(context);
             },
           ),
           const SizedBox(width: 15),
@@ -175,14 +173,14 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color:  Color.fromARGB(255, 152, 230, 171),
+                              color: Color.fromARGB(255, 152, 230, 171),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 30,
                             height: 2,
-                            color:   Color.fromARGB(255, 152, 230, 171),
+                            color: Color.fromARGB(255, 152, 230, 171),
                           ),
                           const SizedBox(width: 10),
                           Container(
@@ -190,14 +188,14 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color:   Color.fromARGB(255, 152, 230, 171),
+                              color: Color.fromARGB(255, 152, 230, 171),
                             ),
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 30,
                             height: 2,
-                            color:  Color.fromARGB(255, 152, 230, 171),
+                            color: Color.fromARGB(255, 152, 230, 171),
                           ),
                           const SizedBox(width: 10),
                           Container(
