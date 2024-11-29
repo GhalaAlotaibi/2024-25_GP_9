@@ -2,96 +2,67 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/favourites_page.dart';
 import 'package:tracki/screens/update_email.dart';
 import 'package:tracki/screens/update_password.dart';
-import 'package:tracki/screens/update_phone.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
-class OwnerSettings extends StatefulWidget {
-  final String ownerID;
+class CustomerSettings extends StatefulWidget {
+  final String customerID;
 
-  const OwnerSettings({super.key, required this.ownerID});
+  const CustomerSettings({Key? key, required this.customerID})
+      : super(key: key);
 
   @override
-  _OwnerSettingsState createState() => _OwnerSettingsState();
+  _CustomerSettingsState createState() => _CustomerSettingsState();
 }
 
-class _OwnerSettingsState extends State<OwnerSettings> {
+class _CustomerSettingsState extends State<CustomerSettings> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  String? ownerName;
-  String? truckOwnerID; // Store the ownerID for reuse
+  String? customerName;
   bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    _fetchOwnerData();
+    _fetchCustomerName();
   }
 
-  Future<void> _fetchOwnerData() async {
+  Future<void> _fetchCustomerName() async {
     try {
-      // Fetch the truck document using its ID
-      DocumentSnapshot truckDoc =
-          await _firestore.collection('Food_Truck').doc(widget.ownerID).get();
+      DocumentSnapshot document =
+          await _firestore.collection('Customer').doc(widget.customerID).get();
 
-      if (truckDoc.exists) {
-        // Retrieve the ownerID from the truck document
-        truckOwnerID = truckDoc['ownerID'];
-
-        if (truckOwnerID != null) {
-          // Fetch the owner document from the Truck_Owner collection
-          DocumentSnapshot ownerDoc = await _firestore
-              .collection('Truck_Owner')
-              .doc(truckOwnerID)
-              .get();
-
-          if (ownerDoc.exists) {
-            setState(() {
-              ownerName = ownerDoc['Name'];
-              isLoading = false;
-            });
-          } else {
-            _setError('لم يتم العثور على المالك');
-          }
-        } else {
-          _setError('لم يتم العثور على رقم المالك');
-        }
+      if (document.exists) {
+        setState(() {
+          customerName = document['Name'];
+          isLoading = false;
+        });
       } else {
-        _setError('لم يتم العثور على الشاحنة');
+        setState(() {
+          customerName = 'مستخدم غير معروف';
+          isLoading = false;
+        });
       }
     } catch (e) {
-      print('Error fetching owner data: $e');
-      _setError('خطأ في جلب البيانات');
-    }
-  }
-
-  void _setError(String errorMessage) {
-    setState(() {
-      ownerName = errorMessage;
-      isLoading = false;
-    });
-  }
-
-  Future<void> _updateOwnerName(String newName) async {
-    if (truckOwnerID == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('لم يتم العثور على رقم المالك.'),
-      ));
-      return;
-    }
-
-    try {
-      // Update the Name field in the Truck_Owner document
-      await _firestore
-          .collection('Truck_Owner')
-          .doc(truckOwnerID)
-          .update({'Name': newName});
-
+      print('Error fetching customer name: $e');
       setState(() {
-        ownerName = newName;
+        customerName = 'خطأ في جلب البيانات';
+        isLoading = false;
       });
+    }
+  }
 
+  Future<void> _updateCustomerName(String newName) async {
+    try {
+      await _firestore
+          .collection('Customer')
+          .doc(widget.customerID)
+          .update({'Name': newName});
+      setState(() {
+        customerName = newName;
+      });
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('تم تحديث الاسم بنجاح!'),
       ));
@@ -101,6 +72,85 @@ class _OwnerSettingsState extends State<OwnerSettings> {
         content: Text('حدث خطأ أثناء تحديث الاسم: $e'),
       ));
     }
+  }
+
+  void _showUpdateNameDialog() {
+    TextEditingController nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: kbackgroundColor,
+          title: const Text(
+            'تحديث الاسم',
+            textDirection: TextDirection.rtl,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          content: Directionality(
+            textDirection: TextDirection.rtl,
+            child: TextFormField(
+              controller: nameController,
+              decoration: InputDecoration(
+                labelText: 'الاسم الجديد',
+                labelStyle: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black,
+                ),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kBannerColor),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: kBannerColor),
+                ),
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              ),
+              style: const TextStyle(fontSize: 16, color: Colors.black),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'إلغاء',
+                style: TextStyle(
+                  fontSize: 16,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.trim().isNotEmpty) {
+                  _updateCustomerName(nameController.text.trim());
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kBannerColor,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              child: const Text(
+                'حفظ',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   void _showLogoutConfirmationDialog() {
@@ -115,7 +165,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
           content: const Text(
-            '  هل أنت متأكد أنك تريد تسجيل الخروج؟ هههه خرباان لا تستخدمونه',
+            'هل أنت متأكد أنك تريد تسجيل الخروج؟',
             textDirection: TextDirection.rtl,
           ),
           actions: [
@@ -176,8 +226,8 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                   Navigator.pop(context);
                   // Delete account from Firestore
                   await _firestore
-                      .collection('Truck_Owner')
-                      .doc(truckOwnerID)
+                      .collection('Customer')
+                      .doc(widget.customerID)
                       .delete();
                   // Navigate to login screen after deletion
                   Navigator.pushNamedAndRemoveUntil(
@@ -201,85 +251,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
       },
     );
   }
-
-  void _showUpdateNameDialog() {
-    TextEditingController nameController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: kbackgroundColor,
-          title: const Text(
-            'تحديث الاسم',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          content: Directionality(
-            textDirection: TextDirection.rtl,
-            child: TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: 'الاسم الجديد',
-                labelStyle: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black,
-                ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              ),
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'إلغاء',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.trim().isNotEmpty) {
-                  _updateOwnerName(nameController.text.trim());
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kBannerColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              child: const Text(
-                'حفظ',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
+  //مفضل
 
   @override
   Widget build(BuildContext context) {
@@ -289,15 +261,18 @@ class _OwnerSettingsState extends State<OwnerSettings> {
         backgroundColor: kbackgroundColor,
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: const Center(
-          child: Text(
-            "الإعدادات",
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
+        title: Row(
+          children: [
+            const SizedBox(width: 113),
+            const Text(
+              "       الإعدادات",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
             ),
-          ),
+          ],
         ),
       ),
       body: isLoading
@@ -314,7 +289,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                         children: [
                           const SizedBox(width: 10),
                           Text(
-                            'أهلًا ${ownerName ?? ''}',
+                            'أهلًا ${customerName ?? ''}',
                             style: const TextStyle(
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
@@ -330,25 +305,21 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                         ],
                       ),
                     ),
+
                     const SizedBox(height: 20),
+
+                    // First clickable rectangle (email update)
                     GestureDetector(
                       onTap: () {
-                        if (truckOwnerID != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UpdateEmail(
-                                ID: truckOwnerID!,
-                                userType: "owner",
-                              ),
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UpdateEmail(
+                              ID: widget.customerID,
+                              userType: "Customer",
                             ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('رقم المالك غير متوفر حالياً.')),
-                          );
-                        }
+                          ),
+                        );
                       },
                       child: Container(
                         padding: const EdgeInsets.all(15),
@@ -358,22 +329,72 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                           border: Border.all(color: Colors.black),
                         ),
                         child: Row(
-                          children: const [
-                            Padding(
+                          children: [
+                            const Padding(
                               padding: EdgeInsets.only(left: 20.0),
                               child: Icon(Icons.email,
                                   color: Color.fromARGB(200, 72, 72, 72)),
                             ),
-                            SizedBox(width: 10),
-                            Text(
+                            const SizedBox(width: 10),
+                            const Text(
                               'تحديث الإيميل',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
                             ),
-                            Spacer(),
-                            Padding(
+                            const Spacer(),
+                            const Padding(
+                              padding: EdgeInsets.only(right: 20.0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                color: Colors.black,
+                                size: 17,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+
+                    // Second clickable rectangle (password update)
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => UpdatePassword(
+                              ID: widget.customerID,
+                            ),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.all(15),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(color: Colors.black),
+                        ),
+                        child: Row(
+                          children: [
+                            const Padding(
+                              padding: EdgeInsets.only(left: 20.0),
+                              child: Icon(Icons.lock,
+                                  color: Color.fromARGB(200, 72, 72, 72)),
+                            ),
+                            const SizedBox(width: 10),
+                            const Text(
+                              'تحديث كلمة المرور',
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.black,
+                              ),
+                            ),
+                            const Spacer(),
+                            const Padding(
                               padding: EdgeInsets.only(right: 20.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -391,9 +412,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => UpdatePassword(
-                              ID: widget.ownerID,
-                            ),
+                            builder: (context) => const FavoritesPage(),
                           ),
                         );
                       },
@@ -405,22 +424,21 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                           border: Border.all(color: Colors.black),
                         ),
                         child: Row(
-                          children: const [
-                            Padding(
+                          children: [
+                            const Padding(
                               padding: EdgeInsets.only(left: 20.0),
-                              child: Icon(Icons.lock,
-                                  color: Color.fromARGB(200, 72, 72, 72)),
+                              child: Icon(Iconsax.heart5, color: kprimaryColor),
                             ),
-                            SizedBox(width: 10),
-                            Text(
-                              'تحديث كلمة المرور',
+                            const SizedBox(width: 10),
+                            const Text(
+                              "مفضلاتي",
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
                               ),
                             ),
-                            Spacer(),
-                            Padding(
+                            const Spacer(),
+                            const Padding(
                               padding: EdgeInsets.only(right: 20.0),
                               child: Icon(
                                 Icons.arrow_forward_ios,
@@ -432,60 +450,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {
-                        if (truckOwnerID != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UpdatePhone(
-                                ID: truckOwnerID!,
-                              ),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text('رقم المالك غير متوفر حالياً.')),
-                          );
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Row(
-                          children: const [
-                            Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Icon(Icons.email,
-                                  color: Color.fromARGB(200, 72, 72, 72)),
-                            ),
-                            SizedBox(width: 10),
-                            Text(
-                              'تحديث رقم الجوال',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            Spacer(),
-                            Padding(
-                              padding: EdgeInsets.only(right: 20.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+
                     const SizedBox(height: 220),
 
                     // Logout Button

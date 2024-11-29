@@ -10,6 +10,7 @@ import '../user_auth/firebase_auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracki/screens/statusPending.dart';
 import 'package:tracki/screens/statusRejected.dart';
+import 'package:tracki/screens/forget_password_screen.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
@@ -278,6 +279,14 @@ FirebaseFirestore.instance
                               ],
                             ),
                             GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          const ForgetPasswordScreen()),
+                                );
+                              },
                               child: const Text(
                                 'هل نسيت كلمة المرور؟',
                                 style: TextStyle(

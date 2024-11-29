@@ -214,7 +214,9 @@ class _CreateTruck2State extends State<CreateTruck2> {
                         child: TextField(
                           controller: _searchController,
                           textAlign: TextAlign.right,
+                          textAlign: TextAlign.right,
                           decoration: InputDecoration(
+                            labelText: 'ابحث عن موقع',
                             labelText: 'ابحث عن موقع',
                             border: OutlineInputBorder(),
                           ),
@@ -230,6 +232,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
+                                    content: Text('لم يتم العثور على الموقع')),
                                     content: Text('لم يتم العثور على الموقع')),
                               );
                             }
