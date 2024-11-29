@@ -141,6 +141,17 @@
             margin-top: 20px;
             font-size: 1.1em;
         }
+
+        .login-btn:hover {
+    background: #A078B0; 
+    transform: scale(1.05); 
+}
+
+
+.login-btn:active {
+    background: #704D7A; 
+    transform: scale(0.95); 
+}
     
         a {
             font-size: 14px;
@@ -244,20 +255,21 @@
 
         // Forgot Password function
         document.getElementById('forgot-password-link').addEventListener('click', async function(e) {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
+    e.preventDefault();
+    const email = document.getElementById('email').value;
 
-            if (email) {
-                try {
-                    await sendPasswordResetEmail(auth, email);
-                    alert("تم إرسال بريد إعادة تعيين كلمة المرور! تحقق من صندوق الوارد.");
-                } catch (error) {
-                    alert("فشل إرسال بريد إعادة تعيين كلمة المرور: " + error.message);
-                }
-            } else {
-                alert("يرجى إدخال عنوان البريد الإلكتروني أولاً.");
-            }
-        });
+    if (email) {
+        try {
+            await sendPasswordResetEmail(auth, email);
+            alert(`تم إرسال بريد إلى "${email}" لإعادة تعيين كلمة المرور! تحقق من صندوق الوارد.`);
+        } catch (error) {
+            alert("فشل إرسال بريد إعادة تعيين كلمة المرور: " + error.message);
+        }
+    } else {
+        alert("يرجى إدخال عنوان البريد الإلكتروني أولاً.");
+    }
+});
+
     </script>
 </body>
 </html>
