@@ -40,7 +40,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor:Color(0xFF674188),
+        backgroundColor: Color(0xFF674188),
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
@@ -84,6 +84,51 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      // Progress bar
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color.fromARGB(255, 247, 252, 187),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        ],
+                      ),
+
                       const SizedBox(height: 20.0),
 
                       // Name

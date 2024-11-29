@@ -43,32 +43,45 @@ class _CreateTruck2State extends State<CreateTruck2> {
     if (_formKey.currentState?.validate() ?? false) {
       CollectionReference trucks =
           FirebaseFirestore.instance.collection('Food_Truck');
-
-      // Create truck data to save
-      Map<String, dynamic> truckData = {
-        'name': widget.truckName,
-        'businessLogo': widget.businessLogo,
-        'truckImage': widget.truckImage,
-        'category': widget.selectedCategory,
-        'description': widget.description,
-        'operatingHours': widget.operatingHours,
-        'ownerID': widget.ownerId,
-        'location':
-            '${_selectedLocation.latitude},${_selectedLocation.longitude}',
-        'licenseNo': widget.licenseNo,
-        'rating': '0',
-        'ratingsCount': 0,
-        'item_names_list': [],
-        'item_prices_list': [],
-        'item_images_list': [],
-        'status': 'pending',
-      };
+      CollectionReference requests =
+          FirebaseFirestore.instance.collection('Request');
 
       try {
-        DocumentReference truckRef = await trucks.add(truckData);
+        DocumentReference requestRef = await requests.add({
+          'foodTruckId': '',
+          'message': 'طلب إضافة عربة جديد', 
+          'status': 'pending', 
+        });
+        String requestId = requestRef.id;
+
+        DocumentReference truckRef = await trucks.add({
+          'name': widget.truckName,
+          'businessLogo': widget.businessLogo,
+          'truckImage': widget.truckImage,
+          'categoryId': widget.selectedCategory, // Store category ID
+          'description': widget.description,
+          'operatingHours': widget.operatingHours,
+          'ownerID': widget.ownerId,
+          'location':
+              '${_selectedLocation.latitude},${_selectedLocation.longitude}',
+          'licenseNo': widget.licenseNo,
+          'rating': '0',
+          'ratingsCount': 0,
+          'item_names_list': [],
+          'item_prices_list': [],
+          'item_images_list': [],
+          'statusId': requestId, // Link to the Request document
+        });
         String truckId = truckRef.id;
 
-        print("Truck details saved successfully with ID: $truckId");
+        // Step 3: Update the Request document with the foodTruckId
+        await requestRef.update({
+          'foodTruckId': truckId, // Link the truck to the request
+        });
+
+        print(
+            "Truck and request created successfully. Truck ID: $truckId, Request ID: $requestId");
+
 
         Navigator.push(
           context,
@@ -78,7 +91,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
           ),
         );
       } catch (e) {
-        print("Error saving truck details: $e");
+        print("Error saving truck or request details: $e");
       }
     }
   }
@@ -105,7 +118,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     } else {
       print('Error: ${response.statusCode} - ${response.body}');
     }
-    return null; // Return null if no location is found
+    return null; 
   }
 
   @override
@@ -120,7 +133,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
           MyIconButton(
             icon: Icons.arrow_forward_ios,
             pressed: () {
-              Navigator.pop(context); // This will return to the previous page
+              Navigator.pop(context); 
             },
           ),
           const SizedBox(width: 15),
@@ -154,15 +167,57 @@ class _CreateTruck2State extends State<CreateTruck2> {
                         ),
                         textAlign: TextAlign.center,
                       ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color:  Color.fromARGB(255, 152, 230, 171),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color:   Color.fromARGB(255, 152, 230, 171),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color:   Color.fromARGB(255, 152, 230, 171),
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color:  Color.fromARGB(255, 152, 230, 171),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: const Color.fromARGB(255, 247, 252, 187),
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 20.0),
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: TextField(
                           controller: _searchController,
-                          textAlign: TextAlign.right,  
+                          textAlign: TextAlign.right,
                           decoration: InputDecoration(
-                            labelText:
-                                'ابحث عن موقع',  
+                            labelText: 'ابحث عن موقع',
                             border: OutlineInputBorder(),
                           ),
                           onSubmitted: (value) async {
@@ -177,8 +232,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
-                                    content: Text(
-                                        'لم يتم العثور على الموقع')), 
+                                    content: Text('لم يتم العثور على الموقع')),
                               );
                             }
                           },
