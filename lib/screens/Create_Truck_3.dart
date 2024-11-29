@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'Truck_Profile.dart';
+import 'package:tracki/screens/welcome_screen.dart';
 
 class CreateTruck3 extends StatelessWidget {
-  final String ownerId; // Owner ID
-  final String truckId; // Truck ID
+  final String ownerId; 
+  final String truckId;
 
   CreateTruck3({Key? key, required this.ownerId, required this.truckId})
       : super(key: key);
@@ -18,9 +19,6 @@ class CreateTruck3 extends StatelessWidget {
     );
   }
 
-  void _goHome(BuildContext context) {
-    Navigator.popUntil(context, ModalRoute.withName('/')); // Pop to the root page
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,16 +63,24 @@ class CreateTruck3 extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 40),
-            TextButton(
-              onPressed: () => _goHome(context),
-              child: Text(
-                'عودة إلى الصفحة الرئيسية',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFF674188),
-                ),
-              ),
-            ),
+TextButton(
+  onPressed: () {
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => WelcomeScreen(),
+      ),
+    );
+  },
+  child: Text(
+    'عودة إلى الصفحة الرئيسية',
+    style: TextStyle(
+      fontSize: 18,
+      color: Color(0xFF674188),
+    ),
+  ),
+),
+
           ],
         ),
       ),

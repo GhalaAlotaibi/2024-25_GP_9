@@ -112,123 +112,178 @@
             }
         });
         
-        
-    // Fetching food trucks from the database
-        async function fetchData() {
-            try {
-                const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-                foodTrucksTableBody.innerHTML = '';
-                
-                const querySnapshot = await getDocs(collection(db, "Food_Truck"));
-                
-                if (querySnapshot.empty) {
-                    const noDataRow = document.createElement('tr');
-                    noDataRow.innerHTML = `<td colspan="10" style="text-align: center;">لا توجد بيانات</td>`;
-                    foodTrucksTableBody.appendChild(noDataRow);
-                    return;
-                }
-                
-                for (const docSnapshot of querySnapshot.docs) {
-                    const data = docSnapshot.data();
-                    const ownerID = data.ownerID;
-                    const ownerDocRef = doc(db, "Truck_Owner", ownerID);
-                    const ownerDoc = await getDoc(ownerDocRef);
-                    
-                    const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
-                    const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
-                    const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
-                    
-                    // Modify the status display
-                    let statusText = data.status; 
-                    if (data.status === 'pending') {
-                        statusText = 'قيد الإنتظار';
-                    } else if (data.status === 'accepted') {
-                        statusText = 'مقبولة';
-                    } else if (data.status === 'rejected') {
-                        statusText = 'مرفوضة';
-                    }
-                    else {
-                        statusText = 'غير محددة';
-                    }
-                    
-                    // Icons for accept and decline
-                    const acceptIcon = `<i class="fas fa-check-circle" style="color: green; cursor: pointer;" onclick="acceptFoodTruck('${docSnapshot.id}')"></i>`;
-                    const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="declineFoodTruck('${docSnapshot.id}')"></i>`;
-                    
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                    <td>${data.name}</td>
-                    <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
-                    <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
-                    <td>${data.licenseNo}</td>
-                    <td><a href="TruckLoc.html?location=${encodeURIComponent(data.location)}" target="_blank">عرض</a></td>
-                    <td>
-                        <div class="owner-details">
-                            <p><strong>الاسم:</strong> ${ownerName}</p>
-                            <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
-                            <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
-                        </div>
-                    </td>
-                    <td>${data.description}</td>
-                    <td>${data.category}</td>
-                    <td>${data.operatingHours}</td>
-                    <td>${statusText}</td>
-                    <td>${acceptIcon} ${declineIcon}</td>
-                    `;
-                    foodTrucksTableBody.appendChild(row);
-                }
-            } catch (error) {
-                console.error("Error fetching food trucks:", error);
-            }
+// Fetching food trucks from the database
+async function fetchData() {
+    try {
+        const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
+        foodTrucksTableBody.innerHTML = '';
+
+        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+
+        if (querySnapshot.empty) {
+            const noDataRow = document.createElement('tr');
+            noDataRow.innerHTML = `<td colspan="10" style="text-align: center;">لا توجد بيانات</td>`;
+            foodTrucksTableBody.appendChild(noDataRow);
+            return;
         }
-    //Ends fetching 
 
-    //Accept the food truck
-    async function acceptFoodTruck(docId) {
-        const isConfirmed = window.confirm("هل أنت متأكد من قبول العربة؟");
-              if (isConfirmed) {
-                try {
-                    const foodTruckRef = doc(db, "Food_Truck", docId);
-                    await updateDoc(foodTruckRef, {
-                        status: 'accepted'
-                        });
-                        alert("تم قبول العربة بنجاح!");
-                        fetchData(); 
-                    } catch (error) {
-                        console.error("خطأ في قبول العربة:", error);
-                    }
-                } else {
-                    alert("تم إلغاء قبول العربة.");
-                    }
-    }
+        for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            const ownerID = data.ownerID;
+            const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+            const ownerDoc = await getDoc(ownerDocRef);
 
-    //Decline the food truck
-    async function declineFoodTruck(docId) {
-        const isConfirmed = window.confirm("هل أنت متأكد من رفض العربة؟");
-        
-        if (isConfirmed) {
-            const rejectReason = prompt("يرجى إدخال سبب الرفض:"); 
-            
-            if (rejectReason) {
-                try {
-                    const foodTruckRef = doc(db, "Food_Truck", docId); 
-                    await updateDoc(foodTruckRef, {
-                        status: 'rejected', 
-                        RejectMsg: rejectReason 
-                        });
-                        
-                        alert("تم رفض العربة بنجاح!");
-                        fetchData();
-                    } catch (error) {
-                        console.error("خطأ في رفض العربة:", error);
-                    }
-                } else {
-                    alert("لم يتم إدخال سبب الرفض.");
-                    }
-                } else {
-                    alert("تم إلغاء رفض العربة."); // When the user cancels the action
+            const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
+            const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
+            const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+
+            //Fetching status from Request Collection
+            const statusId = data.statusId;
+            let statusText = 'غير محددة'; // Default value for statusText
+
+            if (statusId) {
+                const requestDocRef = doc(db, "Request", statusId);
+                const requestDoc = await getDoc(requestDocRef);
+
+                if (requestDoc.exists()) {
+                    const requestData = requestDoc.data();
+                    if (requestData.status === 'pending') {
+                        statusText = 'قيد الإنتظار';
+                    } else if (requestData.status === 'accepted') {
+                        statusText = 'مقبولة';    
+                    } else if (requestData.status === 'rejected') {
+                        statusText = 'مرفوضة';   
                     }
                 }
+            }
+
+            //Fetching category from Catefory Collection
+            const categoryId = data.categoryId;
+            let categoryText = 'غير محددة'; // Default value for categoryText
+
+            if (categoryId) {
+                const categoryDocRef = doc(db, "Food-Category", categoryId);
+                const categoryDo = await getDoc(categoryDocRef);
+
+                if (categoryDo.exists()) {
+                    const categoryData = categoryDo.data();
+                    categoryText = categoryData.name;
+                }
+            }
+
+            // Icons for accept and decline
+            const acceptIcon = `<i class="fas fa-check-circle" style="color: green; cursor: pointer;" onclick="acceptFoodTruck('${docSnapshot.id}')"></i>`;
+            const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="DeclineFoodTruck('${docSnapshot.id}')"></i>`;
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${data.name}</td>
+                <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
+                <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
+                <td>${data.licenseNo}</td>
+                <td><a href="TruckLoc.html?location=${encodeURIComponent(data.location)}" target="_blank">عرض</a></td>
+                <td>
+                    <div class="owner-details">
+                        <p><strong>الاسم:</strong> ${ownerName}</p>
+                        <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
+                        <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
+                    </div>
+                </td>
+                <td>${data.description}</td>
+                <td>${categoryText}</td>
+                <td>${data.operatingHours}</td>
+                <td>${statusText}</td>  <!-- This will now display the correct status -->
+                <td>
+                    ${statusText === 'قيد الإنتظار' 
+                    ? `${acceptIcon} ${declineIcon}` 
+                    : statusText === 'مقبولة' 
+                    ? 'مقبولة' 
+                    : statusText === 'مرفوضة' 
+                    ? 'مرفوضة' 
+                    : ''}
+                </td>
+
+            `;
+            foodTrucksTableBody.appendChild(row);
+        }
+    } catch (error) {
+        console.error(":خطأ في إستعادة البيانات", error);
+    }
+}
+
+//Ends fetching 
+
+
+// Accept the food truck
+async function acceptFoodTruck(docId) {
+    const isConfirmed = window.confirm("هل أنت متأكد من قبول العربة؟");
+
+    if (isConfirmed) {
+        const foodTruckRef = doc(db, "Food_Truck", docId);
+        const foodTruckDoc = await getDoc(foodTruckRef);
+
+        if (foodTruckDoc.exists()) {
+            const statusId = foodTruckDoc.data().statusId;
+
+            // Access the Request collection using statusId
+            const requestDocRef = doc(db, "Request", statusId);
+            const requestDoc = await getDoc(requestDocRef);
+            
+            if (requestDoc.exists()) {
+                await updateDoc(requestDocRef, {
+                    status: "accepted",
+                });
+                alert("تم قبول العربة.");
+            } else {
+                print(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
+            }
+        } else {
+            console.log("لم يتم العثور على مستند العربة");
+        }
+
+    } else {
+        alert("تم إلغاء قبول العربة.");
+    }
+}
+
+
+// Decline the food truck
+async function DeclineFoodTruck(docId) {
+    const isConfirmed = window.confirm("هل أنت متأكد من رفض العربة؟");
+
+    if (isConfirmed) {
+        const reason = prompt("يرجى إدخال سبب الرفض:");
+
+        if (reason && reason.trim() !== "") {
+            const foodTruckRef = doc(db, "Food_Truck", docId);
+            const foodTruckDoc = await getDoc(foodTruckRef);
+
+            if (foodTruckDoc.exists()) {
+                const statusId = foodTruckDoc.data().statusId;
+
+                const requestDocRef = doc(db, "Request", statusId);
+                const requestDoc = await getDoc(requestDocRef);
+
+                if (requestDoc.exists()) {
+                    await updateDoc(requestDocRef, {
+                        status: "rejected",
+                        message: reason.trim(),
+                    });
+                    alert("تم رفض العربة.");
+                } else {
+                    print(`:لا يوجد طلب تحت هذا المعرف ${statusId}`);
+                }
+            } else {
+                console.log("لم يتم العثور على مستند العربة");
+            }
+        } else {
+            alert("يجب إدخال سبب للرفض.");
+        }
+    } else {
+        alert("تم إلغاء رفض العربة.");
+    }
+}
+
 
     //Log Out
     document.getElementById('logout-button').addEventListener('click', () => {
@@ -241,7 +296,7 @@
 
     // Attach function to the global scope
     window.acceptFoodTruck = acceptFoodTruck;
-    window.declineFoodTruck = declineFoodTruck;
+    window.DeclineFoodTruck = DeclineFoodTruck;
     </script>
 </body>
 </html>

@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/welcome_screen.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import 'customer_signup_screen.dart'; // Import your customer signup screen
-import 'owner_signup_screen.dart'; // Import your owner signup screen
+import 'customer_signup_screen.dart';
+import 'owner_signup_screen.dart'; 
 
 class UserTypeSelectionPage extends StatelessWidget {
   const UserTypeSelectionPage({super.key});
