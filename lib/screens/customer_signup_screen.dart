@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/user_type_selection_screen.dart';
 import 'package:tracki/screens/welcome_screen.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
@@ -254,7 +255,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   );
                                 }
                               },
-                              child: const Text('انشاء حساب جديد'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: kBannerColor,
+                              ),
+                              child: const Text(
+                                'انشاء حساب جديد',
+                                style: TextStyle(color: Colors.white),
+                              ),
                             ),
                           ),
                           const SizedBox(height: 30.0),

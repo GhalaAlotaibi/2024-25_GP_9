@@ -354,9 +354,9 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                             child: const Text(
                               "حـفظ التغييرات",
                               style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 16),
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ),

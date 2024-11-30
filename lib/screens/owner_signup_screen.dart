@@ -80,7 +80,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF674188),
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -93,7 +93,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color.fromARGB(255, 247, 252, 187),
+                              color: kBannerColor,
                             ),
                           ),
                           const SizedBox(width: 10),
@@ -133,8 +133,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
 
                       // Name
                       Row(
-                        mainAxisAlignment: MainAxisAlignment
-                            .spaceBetween, // Adjust alignment if needed
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Directionality(
@@ -303,7 +302,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                       ),
                       const SizedBox(height: 25.0),
 
-                      // I agree to the processing
+                      //I agree to the processing
                       Row(
                         textDirection: TextDirection.rtl,
                         children: [
@@ -314,8 +313,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                                 agreePersonalData = value!;
                               });
                             },
-                            activeColor:
-                                const Color.fromARGB(255, 105, 99, 197),
+                            activeColor: kBannerColor,
                           ),
                           const Text(
                             'أوافق على السماح بمعالجة البيانات الشخصية',
@@ -329,6 +327,10 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
+                          // Disable button if loading
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: kBannerColor),
+
                           onPressed: () async {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
@@ -370,8 +372,8 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
-                                      content: Text(result ??
-                                          'فشل انشاء الحساب')), // Display error message
+                                      content:
+                                          Text(result ?? 'فشل انشاء الحساب')),
                                 );
                               }
                             } else if (!agreePersonalData) {
@@ -383,7 +385,10 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                               );
                             }
                           },
-                          child: const Text('انشاء حساب جديد'),
+                          child: const Text(
+                            'انشاء حساب جديد',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 30.0),
@@ -392,10 +397,10 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text(
-                              'هل لديك حساب بالفعل؟ ',
-                              style: TextStyle(color: Colors.black45),
-                            ),
+                            const Text('هل لديك حساب بالفعل؟ ',
+                                style: TextStyle(
+                                  color: Color.fromARGB(255, 0, 0, 0),
+                                )),
                             const SizedBox(width: 5),
                             GestureDetector(
                               onTap: () {
@@ -410,7 +415,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                                 'تسجيل الدخول',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  color: Color.fromARGB(255, 139, 65, 174),
+                                  color: kprimaryColor,
                                 ),
                               ),
                             ),
@@ -441,8 +446,6 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
       'تسجيل الدخول غير مفعل',
       'المستخدم غير موجود'
           'كلمة المرور خاطئة',
-
-      // Add more error messages as needed
     ];
 
     return errorMessages.contains(message);

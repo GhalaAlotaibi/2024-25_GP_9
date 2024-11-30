@@ -65,7 +65,7 @@ class _UpdatePhoneState extends State<UpdatePhone> {
       if (querySnapshot.docs.isNotEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('رقم الجوال هذا مستخدم بالفعل'),
+            content: Text('رقم الهاتف هذا مستخدم بالفعل'),
           ),
         );
         return; // Stop further processing if phone number is not unique
@@ -82,13 +82,13 @@ class _UpdatePhoneState extends State<UpdatePhone> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('تم تحديث رقم الجوال بنجاح!'),
+        content: Text('تم تحديث رقم الهاتف بنجاح!'),
       ));
       Navigator.pop(context, true);
     } catch (e) {
       print('Error updating phone number: $e');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('حدث خطأ أثناء تحديث رقم الجوال: $e'),
+        content: Text('حدث خطأ أثناء تحديث رقم الهاتف: $e'),
       ));
     }
   }
@@ -103,7 +103,7 @@ class _UpdatePhoneState extends State<UpdatePhone> {
   String? _validatePhoneNumber(String? value) {
     // Check if the value is not empty and follows the correct format
     if (value == null || value.isEmpty) {
-      return 'يرجى إدخال رقم الجوال.';
+      return 'يرجى إدخال رقم الهاتف.';
     }
     // Validate phone number format (starts with 05 and contains exactly 10 digits)
     if (!RegExp(r'^05[0-9]{8}$').hasMatch(value)) {
@@ -124,7 +124,7 @@ class _UpdatePhoneState extends State<UpdatePhone> {
           children: [
             const SizedBox(width: 103),
             const Text(
-              "تحديث رقم الجوال",
+              "تحديث رقم الهاتف",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -156,8 +156,8 @@ class _UpdatePhoneState extends State<UpdatePhone> {
                         ? const Center(child: CircularProgressIndicator())
                         : _buildCustomTextField(
                             controller: _currentPhoneController!,
-                            labelText: 'رقم الجوال الحالي',
-                            hintText: 'أدخل رقم الجوال الحالي',
+                            labelText: 'رقم الهاتف الحالي',
+                            hintText: 'أدخل رقم الهاتف الحالي',
                             icon: Icons.phone,
                             enabled: false,
                           ),
@@ -166,8 +166,8 @@ class _UpdatePhoneState extends State<UpdatePhone> {
                     // New Phone Number TextField
                     _buildCustomTextField(
                       controller: _phoneController,
-                      labelText: 'رقم الجوال الجديد',
-                      hintText: 'أدخل رقم الجوال الجديد',
+                      labelText: 'رقم الهاتف الجديد',
+                      hintText: 'أدخل رقم الهاتف الجديد',
                       icon: Icons.phone,
                       validator: _validatePhoneNumber,
                     ),
@@ -181,7 +181,7 @@ class _UpdatePhoneState extends State<UpdatePhone> {
                         } else {
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('يرجى إدخال رقم الجوال الجديد.'),
+                              content: Text('يرجى إدخال رقم الهاتف الجديد.'),
                             ),
                           );
                         }

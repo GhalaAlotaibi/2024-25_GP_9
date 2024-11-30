@@ -39,7 +39,7 @@ class _MenuUpdateState extends State<MenuUpdate> {
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Item deleted successfully")),
+        const SnackBar(content: Text("تم حذف الصنف بنجاح")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -54,33 +54,32 @@ class _MenuUpdateState extends State<MenuUpdate> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor:
-              const Color.fromARGB(68, 136, 65, 65).withOpacity(0.9),
+          backgroundColor: kbackgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
           title: const Text(
             "تأكيد عملية الحذف",
             style: TextStyle(
-              color: Colors.white,
+              color: Color.fromARGB(255, 0, 0, 0),
               fontSize: 20,
               fontWeight: FontWeight.bold,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.end,
           ),
           content: const Text(
             "هل أنت متأكد من رغبتك في حذف هذا الصنف؟ \n !لا يمكنك التراجع بعد التأكيد",
             style: TextStyle(
-              color: Colors.white70,
+              color: Color.fromARGB(179, 0, 0, 0),
               fontSize: 16,
             ),
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.end,
           ),
           actionsAlignment: MainAxisAlignment.spaceAround,
           actions: [
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.8),
+                backgroundColor: kbackgroundColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
@@ -100,7 +99,7 @@ class _MenuUpdateState extends State<MenuUpdate> {
             ),
             TextButton(
               style: TextButton.styleFrom(
-                backgroundColor: Colors.white.withOpacity(0.8),
+                backgroundColor: kBannerColor,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 shape: RoundedRectangleBorder(
@@ -110,7 +109,7 @@ class _MenuUpdateState extends State<MenuUpdate> {
               child: const Text(
                 'تآكيد',
                 style: TextStyle(
-                  color: Color.fromARGB(255, 136, 65, 65),
+                  color: Color.fromARGB(255, 255, 255, 255),
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),

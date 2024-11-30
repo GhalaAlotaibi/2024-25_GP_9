@@ -31,6 +31,8 @@ class _CreateTruck1State extends State<CreateTruck1> {
 
   List<Map<String, String>> categories = [];
   final List<String> timeList = [];
+  bool isLogoMissing = false;
+  bool isImageMissing = false;
 
   @override
   void initState() {
@@ -39,27 +41,28 @@ class _CreateTruck1State extends State<CreateTruck1> {
     fetchCategories();
   }
 
+//elevated
   Future<void> fetchCategories() async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('Food-Category').get();
+      QuerySnapshot snapshot =
+          await FirebaseFirestore.instance.collection('Food-Category').get();
 
       List<Map<String, String>> fetchedCategories = snapshot.docs.map((doc) {
         return {
-          'id': doc.id, 
-          'name': doc['name'] as String,  
+          'id': doc.id,
+          'name': doc['name'] as String,
         };
       }).toList();
 
       setState(() {
-        categories = fetchedCategories; 
+        categories = fetchedCategories;
       });
     } catch (e) {
       print('Error fetching categories: $e');
     }
   }
 
-
-  // Method to pick and upload image
+  // method to pick and upload image
   Future<void> _pickAndUploadImage({required bool isBusinessLogo}) async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -101,20 +104,20 @@ class _CreateTruck1State extends State<CreateTruck1> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBannerColor,
-appBar: AppBar(
-  backgroundColor:Color(0xFF674188),
-  automaticallyImplyLeading: false,
-  elevation: 0,
-  actions: [
-    MyIconButton(
-      icon: Icons.arrow_forward_ios,
-      pressed: () {
-        Navigator.pop(context);
-      },
-    ),
-    const SizedBox(width: 15),
-  ],
-),
+      appBar: AppBar(
+        backgroundColor: Color(0xFF674188),
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          MyIconButton(
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.pop(context);
+            },
+          ),
+          const SizedBox(width: 15),
+        ],
+      ),
       body: Column(
         children: [
           const Expanded(
@@ -142,59 +145,54 @@ appBar: AppBar(
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF674188),
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         textAlign: TextAlign.center,
                       ),
 
-                                            Row(
-  mainAxisAlignment: MainAxisAlignment.center,
-  children: [
-
-    Container(
-      width: 20,
-      height: 20,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Color.fromARGB(255, 152, 230, 171),
-      ),
-    ),
-    const SizedBox(width: 10),
-
-    Container(
-      width: 30,
-      height: 2,
-      color:  Color.fromARGB(255, 152, 230, 171),
-    ),
-    const SizedBox(width: 10),
-
-    Container(
-      width: 20,
-      height: 20,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color:const Color.fromARGB(255, 247, 252, 187),
-      ),
-    ),
-    const SizedBox(width: 10),
-
-    Container(
-      width: 30,
-      height: 2,
-      color: Colors.grey[300],
-    ),
-    const SizedBox(width: 10),
-
-    Container(
-      width: 20,
-      height: 20,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.grey[300],
-      ),
-    ),
-  ],
-),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: kprimaryColor,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color: kprimaryColor,
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: kBannerColor,
+                            ),
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 30,
+                            height: 2,
+                            color: Colors.grey[300],
+                          ),
+                          const SizedBox(width: 10),
+                          Container(
+                            width: 20,
+                            height: 20,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey[300],
+                            ),
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 20.0),
 
                       Directionality(
@@ -263,46 +261,48 @@ appBar: AppBar(
 
                       const SizedBox(height: 25.0),
 //category
-Directionality(
-  textDirection: TextDirection.rtl,
-  child: DropdownButtonFormField<String>(
-    value: selectedCategory,
-    validator: (value) {
-      if (value == null) {
-        return 'الرجاء اختيار تصنيف العربة';
-      }
-      return null;
-    },
-    decoration: InputDecoration(
-      label: const Text('تصنيف العربة',
-          textAlign: TextAlign.right),
-      border: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-    ),
-    onChanged: (String? newValue) {
-      setState(() {
-        selectedCategory = newValue;
-      });
-    },
-    items: categories.map((category) {
-      return DropdownMenuItem<String>(
-        value: category['id'], 
-        child: Text(category['name']!), 
-      );
-    }).toList(),
-  ),
-),
-
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: DropdownButtonFormField<String>(
+                          value: selectedCategory,
+                          validator: (value) {
+                            if (value == null) {
+                              return 'الرجاء اختيار تصنيف العربة';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                            label: const Text('تصنيف العربة',
+                                textAlign: TextAlign.right),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategory = newValue;
+                            });
+                          },
+                          items: categories.map((category) {
+                            return DropdownMenuItem<String>(
+                              value: category['id'],
+                              child: Text(category['name']!),
+                            );
+                          }).toList(),
+                        ),
+                      ),
 
                       const SizedBox(height: 25.0),
 
-//Images
+//Images => validation required
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -315,7 +315,12 @@ Directionality(
                                   height: 100,
                                   width: 100,
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: Colors.black26),
+                                    border: Border.all(
+                                      color: isLogoMissing
+                                          ? const Color.fromARGB(
+                                              255, 189, 65, 56)
+                                          : Colors.black26,
+                                    ),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: businessLogo != null
@@ -342,7 +347,11 @@ Directionality(
                                   width: 100,
                                   decoration: BoxDecoration(
                                     border: Border.all(
-                                        color: Colors.black26), 
+                                      color: isImageMissing
+                                          ? const Color.fromARGB(
+                                              255, 189, 65, 56)
+                                          : Colors.black26,
+                                    ),
                                     borderRadius: BorderRadius.circular(10),
                                   ),
                                   child: truckImage != null
@@ -361,7 +370,6 @@ Directionality(
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 25.0),
 
                       Directionality(
@@ -399,152 +407,180 @@ Directionality(
                       const SizedBox(height: 25.0),
 
 //operating hrs
-                     Container(
-  padding: const EdgeInsets.all(10.0), 
-  decoration: BoxDecoration(
-    border: Border.all(color: Colors.black12), 
-    borderRadius: BorderRadius.circular(10), 
-  ),
-  child: Column(
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-     const Text(
-        'اختر أوقات العمل', 
-        style: TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-             color: Colors.grey,
-        ),
-        textAlign: TextAlign.right, 
-      ),
-      const SizedBox(height: 10), 
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
+                      Container(
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.black12),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            const Text(
+                              'اختر أوقات العمل',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                              ),
+                              textAlign: TextAlign.right,
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                //closing hrs
 
- //closing hrs
- 
-Expanded(
-  child: Directionality(
-    textDirection: TextDirection.rtl,
-    child: DropdownButtonFormField<String>(
-      value: closingTime,
-      validator: (value) {
-        if (value == null) {
-          return 'الرجاء الإختيار'; 
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'إلى', 
-        border: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), 
-      ),
-      onChanged: (String? newValue) {
-        setState(() {
-          closingTime = newValue;
-        });
-      },
-      items: timeList.map((String time) {
-        return DropdownMenuItem<String>(
-          value: time,
-          child: Text(time, textAlign: TextAlign.right), 
-        );
-      }).toList(),
-    ),
-  ),
-),
+                                Expanded(
+                                  child: Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: DropdownButtonFormField<String>(
+                                      value: closingTime,
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'الرجاء الإختيار';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: 'إلى',
+                                        border: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.black12),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.black12),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
+                                      ),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          closingTime = newValue;
+                                        });
+                                      },
+                                      items: timeList.map((String time) {
+                                        return DropdownMenuItem<String>(
+                                          value: time,
+                                          child: Text(time,
+                                              textAlign: TextAlign.right),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
 
-                  const SizedBox(width: 15),
+                                const SizedBox(width: 15),
 
 //opening hrs
-Expanded(
-  child: Directionality(
-    textDirection: TextDirection.rtl, 
-    child: DropdownButtonFormField<String>(
-      value: openingTime,
-      validator: (value) {
-        if (value == null) {
-          return 'الرجاء الإختيار'; 
-        }
-        return null;
-      },
-      decoration: InputDecoration(
-        labelText: 'من', 
-        border: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderSide: const BorderSide(color: Colors.black12),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10), 
-      ),
-      onChanged: (String? newValue) {
-        setState(() {
-          openingTime = newValue;
-        });
-      },
-      items: timeList.map((String time) {
-        return DropdownMenuItem<String>(
-          value: time,
-          child: Text(time, textAlign: TextAlign.right), 
-        );
-      }).toList(),
-    ),
-  ),
-),
-
-        ],
-      ),
-    ],
-  ),
-),
+                                Expanded(
+                                  child: Directionality(
+                                    textDirection: TextDirection.rtl,
+                                    child: DropdownButtonFormField<String>(
+                                      value: openingTime,
+                                      validator: (value) {
+                                        if (value == null) {
+                                          return 'الرجاء الإختيار';
+                                        }
+                                        return null;
+                                      },
+                                      decoration: InputDecoration(
+                                        labelText: 'من',
+                                        border: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.black12),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderSide: const BorderSide(
+                                              color: Colors.black12),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 10),
+                                      ),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          openingTime = newValue;
+                                        });
+                                      },
+                                      items: timeList.map((String time) {
+                                        return DropdownMenuItem<String>(
+                                          value: time,
+                                          child: Text(time,
+                                              textAlign: TextAlign.right),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
 
 //Operating hrs
                       const SizedBox(height: 30.0),
 // Submit Button
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child:
+// ElevatedButton with Validation ==> DONE AND CHECKED
+                            ElevatedButton(
                           onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) {
-                                    // Combine opening and closing times outside the widget parameters
-                                    String operatingHours =
-                                        '$openingTime-$closingTime';
+                            setState(() {
+                              // Check if images are missing
+                              isLogoMissing = businessLogo == null;
+                              isImageMissing = truckImage == null;
 
-                                    return CreateTruck2(
-                                      ownerId: widget.ownerId,
-                                      truckName: truckName,
-                                      licenseNo: licenseNo,
-                                      businessLogo: businessLogoUrl,
-                                      truckImage: truckImageUrl,
-                                      selectedCategory: selectedCategory!,
-                                      description: description,
-                                      operatingHours: operatingHours,
-                                    );
-                                  },
-                                ),
-                              );
-                            }
+                              if (!isLogoMissing &&
+                                  !isImageMissing &&
+                                  _formKey.currentState!.validate()) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) {
+                                      // Navigation logic here
+                                      return CreateTruck2(
+                                        ownerId: widget.ownerId,
+                                        truckName: truckName,
+                                        licenseNo: licenseNo,
+                                        businessLogo: businessLogoUrl,
+                                        truckImage: truckImageUrl,
+                                        selectedCategory: selectedCategory!,
+                                        description: description,
+                                        operatingHours:
+                                            '$openingTime-$closingTime',
+                                      );
+                                    },
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'الرجاء التأكد من أن كل إدخال البيانات كاملة'),
+                                  ),
+                                );
+                              }
+                            });
                           },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kBannerColor,
+                          ),
                           child: const Text(
                             'التالي',
-                            style: TextStyle(
-                              color: Color(0xFF674188),
-                            ),
+                            style: TextStyle(color: Colors.white),
                           ),
                         ),
                       ),

@@ -44,7 +44,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
           await user.reauthenticateWithCredential(credential);
         } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('كلمة المرور الحالية غير صحيحة')),
+            const SnackBar(content: Text('الرمز السري الحالي غير صحيح')),
           );
           return;
         }
@@ -53,14 +53,14 @@ class _UpdatePasswordState extends State<UpdatePassword> {
         await user.updatePassword(newPasswordController.text);
 
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text("تم تحديث كلمة المرور بنجاح"),
+          content: Text("تم تحديث الرمز السري بنجاح"),
         ));
 
         Navigator.pop(context);
       } catch (e) {
         print('Error updating password: $e');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('حدث خطأ أثناء تحديث كلمة المرور: $e'),
+          content: Text('حدث خطأ أثناء تحديث الرمز السري: $e'),
         ));
       }
     }
@@ -78,7 +78,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
           children: [
             const SizedBox(width: 110),
             const Text(
-              "تحديث كلمة المرور",
+              "تحديث الرمز السري",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -108,13 +108,13 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                 const SizedBox(height: 20),
                 _buildCustomTextField(
                   controller: currentPasswordController,
-                  labelText: 'كلمة المرور الحالية',
+                  labelText: 'الرمز السري الحالي',
                   hintText: '********',
                   icon: Icons.lock_outline,
                   isPassword: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'الرجاء إدخال كلمة المرور الحالية';
+                      return 'الرجاء إدخال الرمز السري الحالي';
                     }
                     return null;
                   },
@@ -122,16 +122,16 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                 const SizedBox(height: 20),
                 _buildCustomTextField(
                   controller: newPasswordController,
-                  labelText: 'كلمة المرور الجديدة',
+                  labelText: 'الرمز السري الجديدة',
                   hintText: '********',
                   icon: Icons.lock,
                   isPassword: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'الرجاء إدخال كلمة المرور الجديدة';
+                      return 'الرجاء إدخال الرمز السري الجديدة';
                     }
                     if (value.length < 8) {
-                      return 'يجب أن تكون كلمة المرور 8 ارقام أو أكثر';
+                      return 'يجب أن يكون الرمز السري 8 ارقام أو أكثر';
                     }
                     return null;
                   },
@@ -139,16 +139,16 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                 const SizedBox(height: 20),
                 _buildCustomTextField(
                   controller: confirmPasswordController,
-                  labelText: 'تأكيد كلمة المرور',
+                  labelText: 'تأكيد الرمز السري',
                   hintText: '********',
                   icon: Icons.lock_outline,
                   isPassword: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'الرجاء تأكيد كلمة المرور';
+                      return 'الرجاء تأكيد الرمز السري';
                     }
                     if (value != newPasswordController.text) {
-                      return 'كلمتا المرور غير متطابقتين';
+                      return 'كلمتا السر غير متطابقتين';
                     }
                     return null;
                   },

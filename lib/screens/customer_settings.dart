@@ -354,7 +354,7 @@ class _CustomerSettingsState extends State<CustomerSettings> {
                             ),
                             const SizedBox(width: 10),
                             const Text(
-                              'تحديث الإيميل',
+                              'تحديث البريد الالكتروني',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
@@ -404,7 +404,7 @@ class _CustomerSettingsState extends State<CustomerSettings> {
                             ),
                             const SizedBox(width: 10),
                             const Text(
-                              'تحديث كلمة المرور',
+                              'تحديث الرمز السري',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
