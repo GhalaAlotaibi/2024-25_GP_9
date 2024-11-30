@@ -23,11 +23,39 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isFavorite = false;
+  String categoryName = '';
 
   @override
   void initState() {
     super.initState();
     _checkIfFavorite();
+    _loadCategoryName();
+  }
+
+  // Load the category name based on the categoryId
+  Future<void> _loadCategoryName() async {
+    final categoryId = widget.documentSnapshot['categoryId'];
+    final name = await getCategoryNameById(categoryId);
+    setState(() {
+      categoryName = name;
+    });
+  }
+
+  // Fetch category name by categoryId from Firestore
+  Future<String> getCategoryNameById(String categoryId) async {
+    try {
+      final categoryDoc =
+          await _firestore.collection('Food-Category').doc(categoryId).get();
+
+      if (categoryDoc.exists) {
+        return categoryDoc['name'] ?? 'Unknown Category';
+      } else {
+        return 'Unknown Category';
+      }
+    } catch (e) {
+      print('Error fetching category name: $e');
+      return 'Error loading category';
+    }
   }
 
   Future<void> _checkIfFavorite() async {
@@ -64,7 +92,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
           'truckName': widget.documentSnapshot['name'],
           'truckImage': widget.documentSnapshot['truckImage'],
           'businessLogo': widget.documentSnapshot['businessLogo'],
-          'category': widget.documentSnapshot['category'],
+          'category': categoryName,
           'operatingHours': widget.documentSnapshot['operatingHours'],
         });
       }
@@ -172,7 +200,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              "${widget.documentSnapshot['category']}",
+                              categoryName,
                               style: const TextStyle(
                                 color: Colors.grey,
                                 fontSize: 14,
@@ -326,23 +354,23 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                 ],
               ),
             ),
-            Positioned(
-              top: 25,
-              left: 11,
-              right: 11,
-              child: Row(
-                children: [
-                  MyIconButton(
-                    icon: Icons.arrow_back_ios_new,
-                    pressed: () {
-                      Navigator.pop(context);
-                    },
-                  ),
-                  const Spacer(),
-                  // MyIconButton(icon: Iconsax.notification, pressed: () {})
-                ],
-              ),
-            ),
+            // Positioned(
+            //   top: 25,
+            //   left: 11,
+            //   right: 11,
+            //   child: Row(
+            //     children: [
+            //       MyIconButton(
+            //         icon: Icons.arrow_back_ios_new,
+            //         pressed: () {
+            //           Navigator.pop(context);
+            //         },
+            //       ),
+            //       const Spacer(),
+            //       // MyIconButton(icon: Iconsax.notification, pressed: () {})
+            //     ],
+            //   ),
+            // ),
           ],
         ),
       ),

@@ -14,14 +14,13 @@ class ItemsDisplayRight extends StatelessWidget {
       onTap: () {},
       child: Container(
         margin: const EdgeInsets.only(
-          left: 10, 
+          left: 10,
         ),
         width: 230,
         child: Stack(
           children: [
             Column(
-              crossAxisAlignment:
-                  CrossAxisAlignment.end,  
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Container(
                   width: double.infinity,
@@ -38,8 +37,7 @@ class ItemsDisplayRight extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Row(
-                  mainAxisAlignment:
-                      MainAxisAlignment.end,  
+                  mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     const SizedBox(width: 10),
                     Text(
@@ -86,13 +84,38 @@ class ItemsDisplayRight extends StatelessWidget {
                       color: Colors.grey,
                     ),
                     const SizedBox(width: 5),
-                    Text(
-                      "${documentSnapshot['category']}",
-                      style: const TextStyle(
-                        color: Colors.grey,
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    FutureBuilder<DocumentSnapshot>(
+                      future: FirebaseFirestore.instance
+                          .collection('Food-Category')
+                          .doc(documentSnapshot['categoryId'])
+                          .get(),
+                      builder: (context, snapshot) {
+                        if (snapshot.connectionState ==
+                            ConnectionState.waiting) {
+                          return const CircularProgressIndicator();
+                        }
+                        if (!snapshot.hasData || snapshot.data == null) {
+                          return const Text(
+                            'Category not found',
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          );
+                        }
+                        final categoryData = snapshot.data!;
+                        final categoryName =
+                            categoryData['name'] ?? 'No Category';
+                        return Text(
+                          categoryName,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 10,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        );
+                      },
                     ),
                     const SizedBox(width: 10),
                     const Icon(

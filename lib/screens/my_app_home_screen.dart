@@ -22,15 +22,11 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
   final FirebaseAuthService _authService = FirebaseAuthService();
 
-  final CollectionReference categoriesItems = FirebaseFirestore.instance
-      .collection("Food-Category"); 
+  final CollectionReference categoriesItems =
+      FirebaseFirestore.instance.collection("Food-Category");
 
-  Query get filteredItems => FirebaseFirestore.instance
-      .collection("Food_Truck")
-      .where("category", isEqualTo: category);
   Query get allItems => FirebaseFirestore.instance.collection("Food_Truck");
   Query get selectedTrucks => category == "الكل" ? allItems : filteredItems;
-  @override
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,8 +56,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                       ),
                     ),
                     Directionality(
-                      textDirection: TextDirection
-                          .rtl,  
+                      textDirection: TextDirection.rtl,
                       child: selectedCategory(),
                     ),
                     const SizedBox(
@@ -117,7 +112,6 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                   ),
                                 ),
                               ),
-                              
                               const SizedBox(height: 20),
                               const Align(
                                 alignment: Alignment.centerRight,
@@ -141,9 +135,8 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                         return const Center(child: CircularProgressIndicator());
                       },
                     ),
-                    
                     const SizedBox(
-                      height: 100,  
+                      height: 100,
                     ),
                   ],
                 ),
@@ -155,6 +148,12 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     );
   }
 
+  Query get filteredItems => FirebaseFirestore.instance
+      .collection("Food_Truck")
+      .where("categoryId", isEqualTo: selectedCategoryId); // Use categoryId now
+
+  String selectedCategoryId = ""; // Stores the selected category's document ID
+
   StreamBuilder<QuerySnapshot<Object?>> selectedCategory() {
     return StreamBuilder(
       stream: categoriesItems.snapshots(),
@@ -165,34 +164,41 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
             child: Row(
               children: List.generate(
                 streamSnapshot.data!.docs.length,
-                (index) => GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      category = streamSnapshot.data!.docs[index]["name"];
-                    });
-                  },
-                  child: Container(
-                    decoration: BoxDecoration(
+                (index) {
+                  final categoryDoc = streamSnapshot.data!.docs[index];
+                  final categoryName = categoryDoc["name"];
+                  final categoryId = categoryDoc.id; // Use the document ID
+
+                  return GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        selectedCategoryId =
+                            categoryId; // Update the categoryId
+                        category = categoryName; // Optionally, store the name
+                      });
+                    },
+                    child: Container(
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(25),
-                        color:
-                            category == streamSnapshot.data!.docs[index]["name"]
-                                ? kprimaryColor
-                                : Colors.white),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    margin: const EdgeInsets.only(right: 1, left: 15),
-                    child: Text(
-                      streamSnapshot.data!.docs[index]["name"],
-                      style: TextStyle(
-                        fontWeight: FontWeight.w500,
-                        color:
-                            category == streamSnapshot.data!.docs[index]["name"]
-                                ? Colors.white
-                                : Colors.grey,
+                        color: selectedCategoryId == categoryId
+                            ? kprimaryColor
+                            : Colors.white,
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      margin: const EdgeInsets.only(right: 1, left: 15),
+                      child: Text(
+                        categoryName,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w500,
+                          color: selectedCategoryId == categoryId
+                              ? Colors.white
+                              : Colors.grey,
+                        ),
                       ),
                     ),
-                  ),
-                ),
+                  );
+                },
               ),
             ),
           );

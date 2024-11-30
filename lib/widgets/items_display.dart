@@ -18,13 +18,16 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   bool isFavorite = false;
+  String categoryName = '';
 
   @override
   void initState() {
     super.initState();
     _checkIfFavorite();
+    _loadCategoryName();
   }
 
+  // Check if the food truck is in the user's favorites
   Future<void> _checkIfFavorite() async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -40,6 +43,33 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     }
   }
 
+  // Load the category name based on the categoryId
+  Future<void> _loadCategoryName() async {
+    final categoryId = widget.documentSnapshot['categoryId'];
+    final name = await getCategoryNameById(categoryId);
+    setState(() {
+      categoryName = name;
+    });
+  }
+
+  // Fetch category name by categoryId from Firestore
+  Future<String> getCategoryNameById(String categoryId) async {
+    try {
+      final categoryDoc =
+          await _firestore.collection('Food-Category').doc(categoryId).get();
+
+      if (categoryDoc.exists) {
+        return categoryDoc['name'] ?? 'Unknown Category';
+      } else {
+        return 'Unknown Category';
+      }
+    } catch (e) {
+      print('Error fetching category name: $e');
+      return 'Error loading category';
+    }
+  }
+
+ 
   Future<void> _toggleFavorite() async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -50,16 +80,16 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
           .doc(widget.documentSnapshot.id);
 
       if (isFavorite) {
-        // Remove from favorites
+     
         await favRef.delete();
       } else {
-        // Add to favorites
+ 
         await favRef.set({
           'truckId': widget.documentSnapshot.id,
           'truckName': widget.documentSnapshot['name'],
           'truckImage': widget.documentSnapshot['truckImage'],
           'businessLogo': widget.documentSnapshot['businessLogo'],
-          'category': widget.documentSnapshot['category'],
+          'category': categoryName,
           'operatingHours': widget.documentSnapshot['operatingHours'],
         });
       }
@@ -174,7 +204,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                                   size: 15, color: Colors.grey),
                               const SizedBox(width: 5),
                               Text(
-                                "${widget.documentSnapshot['category']}",
+                                categoryName,
                                 style: const TextStyle(
                                   color: Colors.grey,
                                   fontSize: 10,
