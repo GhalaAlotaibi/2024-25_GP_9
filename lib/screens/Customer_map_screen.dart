@@ -10,16 +10,18 @@ class CustomerMapScreen extends StatefulWidget {
 }
 
 class _CustomerMapScreenState extends State<CustomerMapScreen> {
-  LatLng myCurrentLocation = const LatLng(24.7136, 46.6753); // Default location
-  late GoogleMapController googleMapController;
-  Set<Marker> markers = {}; // Holds all markers
-  List<Map<String, dynamic>> foodTrucks = []; // Truck data for bottom sheet
+  LatLng myCurrentLocation =
+      const LatLng(24.7136, 46.6753); // Default Riyadh location
+  GoogleMapController? googleMapController;
+  final Set<Marker> markers = {}; // Holds all markers
+  final List<Map<String, dynamic>> foodTrucks =
+      []; // Truck data for bottom sheet
   int? selectedTruckIndex; // Tracks the selected truck index
 
   @override
   void initState() {
     super.initState();
-    fetchFoodTruckLocations(); // Fetch food truck locations on initialization
+    fetchFoodTruckLocations();
   }
 
   Future<void> fetchFoodTruckLocations() async {
@@ -28,40 +30,34 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
           await FirebaseFirestore.instance.collection('Food_Truck').get();
 
       for (var doc in querySnapshot.docs) {
-        String location = doc['location'] ?? ''; // Default to empty if null
-        String name = doc['name'] ?? 'Unknown Truck'; // Default name
-        String businessLogo = doc['businessLogo'] ??
-            'https://via.placeholder.com/150'; // Default logo
-        String operatingHours =
-            doc['operatingHours'] ?? 'Not Available'; // Default hours
+        final location = doc['location'] as String? ?? '';
+        final name = doc['name'] as String? ?? 'Unknown Truck';
+        final businessLogo =
+            doc['businessLogo'] as String? ?? 'https://via.placeholder.com/150';
+        final operatingHours =
+            doc['operatingHours'] as String? ?? 'Not Available';
 
         if (location.contains(',')) {
-          List<String> latLng = location.split(',');
-
+          final latLng = location.split(',');
           if (latLng.length == 2) {
-            double? latitude = double.tryParse(latLng[0]);
-            double? longitude = double.tryParse(latLng[1]);
+            final latitude = double.tryParse(latLng[0]);
+            final longitude = double.tryParse(latLng[1]);
 
             if (latitude != null && longitude != null) {
-              LatLng position = LatLng(latitude, longitude);
-              Marker marker = Marker(
-                markerId: MarkerId(doc.id),
-                position: position,
-                infoWindow: InfoWindow(title: name),
-                onTap: () {
-                  googleMapController.animateCamera(
-                    CameraUpdate.newLatLngZoom(position, 16),
-                  );
-                  setState(() {
-                    selectedTruckIndex = foodTrucks.indexWhere(
-                      (truck) => truck['location'] == position,
-                    );
-                  });
-                },
-              );
+              final position = LatLng(latitude, longitude);
 
               setState(() {
-                markers.add(marker); // Add marker to the map
+                markers.add(
+                  Marker(
+                    markerId: MarkerId(doc.id),
+                    position: position,
+                    infoWindow: InfoWindow(title: name),
+                    onTap: () {
+                      _onMarkerTap(position);
+                    },
+                  ),
+                );
+
                 foodTrucks.add({
                   'name': name,
                   'businessLogo': businessLogo,
@@ -79,6 +75,16 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
     }
   }
 
+  void _onMarkerTap(LatLng position) {
+    googleMapController
+        ?.animateCamera(CameraUpdate.newLatLngZoom(position, 16));
+    setState(() {
+      selectedTruckIndex = foodTrucks.indexWhere(
+        (truck) => truck['location'] == position,
+      );
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,9 +93,9 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
           GoogleMap(
             myLocationButtonEnabled: false,
             markers: markers,
-            onMapCreated: (GoogleMapController controller) {
+            onMapCreated: (controller) {
               googleMapController = controller;
-              googleMapController.animateCamera(
+              googleMapController?.animateCamera(
                 CameraUpdate.newLatLng(myCurrentLocation),
               );
             },
@@ -112,15 +118,7 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      googleMapController.animateCamera(
-                        CameraUpdate.newLatLngZoom(
-                          foodTruck['location'],
-                          14,
-                        ),
-                      );
-                      setState(() {
-                        selectedTruckIndex = index;
-                      });
+                      _onTruckCardTap(index);
                     },
                     child: AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
@@ -128,9 +126,8 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
                       margin: const EdgeInsets.symmetric(horizontal: 8.0),
                       padding: const EdgeInsets.all(16.0),
                       decoration: BoxDecoration(
-                        color: isSelected
-                            ? const Color(0xFFE0E0E0) // Highlight color
-                            : Colors.white,
+                        color:
+                            isSelected ? const Color(0xFFE0E0E0) : Colors.white,
                         borderRadius: BorderRadius.circular(12.0),
                         boxShadow: [
                           BoxShadow(
@@ -200,5 +197,18 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
         ],
       ),
     );
+  }
+
+  void _onTruckCardTap(int index) {
+    final selectedTruck = foodTrucks[index];
+    googleMapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(
+        selectedTruck['location'],
+        14,
+      ),
+    );
+    setState(() {
+      selectedTruckIndex = index;
+    });
   }
 }

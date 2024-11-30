@@ -33,17 +33,18 @@ class _CustomerSettingsState extends State<CustomerSettings> {
     try {
       DocumentSnapshot document =
           await _firestore.collection('Customer').doc(widget.customerID).get();
-
-      if (document.exists) {
-        setState(() {
-          customerName = document['Name'];
-          isLoading = false;
-        });
-      } else {
-        setState(() {
-          customerName = 'مستخدم غير معروف';
-          isLoading = false;
-        });
+      if (mounted) {
+        if (document.exists) {
+          setState(() {
+            customerName = document['Name'];
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            customerName = 'مستخدم غير معروف';
+            isLoading = false;
+          });
+        }
       }
     } catch (e) {
       print('Error fetching customer name: $e');
@@ -153,8 +154,8 @@ class _CustomerSettingsState extends State<CustomerSettings> {
     );
   }
 
-  void _showLogoutConfirmationDialog() {
-    showDialog(
+  void _showLogoutConfirmationDialog() async {
+    final shouldLogout = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -170,19 +171,14 @@ class _CustomerSettingsState extends State<CustomerSettings> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, false),
               child: const Text(
                 'إلغاء',
                 style: TextStyle(fontSize: 16),
               ),
             ),
             ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Perform logout
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              },
+              onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
                 backgroundColor: kBannerColor,
               ),
@@ -195,10 +191,15 @@ class _CustomerSettingsState extends State<CustomerSettings> {
         );
       },
     );
+
+    if (shouldLogout == true) {
+      // Perform logout
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
   }
 
-  void _showDeleteAccountConfirmationDialog() {
-    showDialog(
+  void _showDeleteAccountConfirmationDialog() async {
+    final shouldDelete = await showDialog<bool>(
       context: context,
       builder: (context) {
         return AlertDialog(
@@ -214,30 +215,14 @@ class _CustomerSettingsState extends State<CustomerSettings> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(context, false),
               child: const Text(
                 'إلغاء',
                 style: TextStyle(fontSize: 16),
               ),
             ),
             ElevatedButton(
-              onPressed: () async {
-                try {
-                  Navigator.pop(context);
-                  // Delete account from Firestore
-                  await _firestore
-                      .collection('Customer')
-                      .doc(widget.customerID)
-                      .delete();
-                  // Navigate to login screen after deletion
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (route) => false);
-                } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('حدث خطأ أثناء حذف الحساب: $e'),
-                  ));
-                }
-              },
+              onPressed: () => Navigator.pop(context, true),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Color.fromARGB(255, 152, 25, 25),
               ),
@@ -250,8 +235,22 @@ class _CustomerSettingsState extends State<CustomerSettings> {
         );
       },
     );
+
+    if (shouldDelete == true) {
+      try {
+        // Delete account from Firestore
+        await _firestore.collection('Customer').doc(widget.customerID).delete();
+        // Navigate to login screen after deletion
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('حدث خطأ أثناء حذف الحساب: $e'),
+          ),
+        );
+      }
+    }
   }
-  //مفضل
 
   @override
   Widget build(BuildContext context) {

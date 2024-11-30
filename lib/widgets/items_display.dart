@@ -27,29 +27,41 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     _loadCategoryName();
   }
 
-  // Check if the food truck is in the user's favorites
   Future<void> _checkIfFavorite() async {
     final user = _auth.currentUser;
     if (user != null) {
-      final favDoc = await _firestore
-          .collection('Favorite')
-          .doc(user.uid)
-          .collection('favorites')
-          .doc(widget.documentSnapshot.id)
-          .get();
-      setState(() {
-        isFavorite = favDoc.exists;
-      });
+      try {
+        final favDoc = await _firestore
+            .collection('Favorite')
+            .doc(user.uid)
+            .collection('favorites')
+            .doc(widget.documentSnapshot.id)
+            .get();
+
+        if (mounted) {
+          setState(() {
+            isFavorite = favDoc.exists;
+          });
+        }
+      } catch (e) {
+        print('Error checking favorite status: $e');
+      }
     }
   }
 
-  // Load the category name based on the categoryId
   Future<void> _loadCategoryName() async {
     final categoryId = widget.documentSnapshot['categoryId'];
-    final name = await getCategoryNameById(categoryId);
-    setState(() {
-      categoryName = name;
-    });
+    try {
+      final name = await getCategoryNameById(categoryId);
+
+      if (mounted) {
+        setState(() {
+          categoryName = name;
+        });
+      }
+    } catch (e) {
+      print('Error loading category name: $e');
+    }
   }
 
   // Fetch category name by categoryId from Firestore
@@ -69,7 +81,6 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     }
   }
 
- 
   Future<void> _toggleFavorite() async {
     final user = _auth.currentUser;
     if (user != null) {
@@ -80,10 +91,8 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
           .doc(widget.documentSnapshot.id);
 
       if (isFavorite) {
-     
         await favRef.delete();
       } else {
- 
         await favRef.set({
           'truckId': widget.documentSnapshot.id,
           'truckName': widget.documentSnapshot['name'],

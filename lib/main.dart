@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Tracki App',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: kprimaryColor),
+        colorScheme: ColorScheme.fromSeed(seedColor: kBannerColor),
         useMaterial3: true,
       ),
       home: const WelcomeScreen(),

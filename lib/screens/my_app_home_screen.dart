@@ -150,9 +150,9 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
   Query get filteredItems => FirebaseFirestore.instance
       .collection("Food_Truck")
-      .where("categoryId", isEqualTo: selectedCategoryId); // Use categoryId now
+      .where("categoryId", isEqualTo: selectedCategoryId);  
 
-  String selectedCategoryId = ""; // Stores the selected category's document ID
+  String selectedCategoryId = "";  
 
   StreamBuilder<QuerySnapshot<Object?>> selectedCategory() {
     return StreamBuilder(
@@ -167,14 +167,14 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                 (index) {
                   final categoryDoc = streamSnapshot.data!.docs[index];
                   final categoryName = categoryDoc["name"];
-                  final categoryId = categoryDoc.id; // Use the document ID
+                  final categoryId = categoryDoc.id; 
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
                         selectedCategoryId =
-                            categoryId; // Update the categoryId
-                        category = categoryName; // Optionally, store the name
+                            categoryId;  
+                        category = categoryName;  
                       });
                     },
                     child: Container(
@@ -290,7 +290,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
         ),
         const Spacer(),
         const Text(
-          //To be changed, into what IDK
+         
           "ما هي عربة \nالطعام التي تبحث عنها؟",
           style:
               TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1),
