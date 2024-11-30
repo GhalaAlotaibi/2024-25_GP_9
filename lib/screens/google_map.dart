@@ -27,7 +27,7 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
     marker = Marker(
       markerId: const MarkerId('static_marker'),
       position: myCurrentLocation,
-      draggable: false, // Marker is not draggable
+      draggable: false,
     );
   }
 
@@ -54,8 +54,8 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
             bottom: 30,
             left: MediaQuery.of(context).size.width / 2 - 75,
             child: Container(
-              width: 150, // Set a larger width
-              height: 60, // Set a larger height
+              width: 150,
+              height: 60,
               child: ElevatedButton(
                 onPressed: () {
                   print('Marker location: ${marker.position}');
