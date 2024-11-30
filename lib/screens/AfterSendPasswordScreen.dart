@@ -24,7 +24,6 @@ class AfterSendPasswordScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // You can add a Lottie animation or an image here like in the example
             Lottie.network(
               'https://lottie.host/ed3e5b4c-6271-4fed-bbea-1ab5fe98c64c/cbjmYHW7Tz.json',
               width: 200,

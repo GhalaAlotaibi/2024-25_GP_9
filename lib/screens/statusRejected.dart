@@ -47,7 +47,7 @@ class StatusRejected extends StatelessWidget {
       Navigator.push(
         context,
         MaterialPageRoute(
-         builder: (context) => Resubmit_Truck(ownerID: ownerID),
+          builder: (context) => Resubmit_Truck(ownerID: ownerID),
         ),
       );
     } catch (e) {
@@ -55,95 +55,94 @@ class StatusRejected extends StatelessWidget {
     }
   }
 
-void _deleteAccount(BuildContext context) async {
-  bool? confirmed = await showDialog<bool>(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(
-          'تأكيد',
-          textAlign: TextAlign.right,
-          style: TextStyle(
-            color: Color(0xFF674188),
-            fontSize: 30,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        content: Text('هل أنت متأكد أنك ترغب في حذف حسابك والعربة؟'),
-        actions: <Widget>[
-          TextButton(
-            child: Text('إلغاء'),
-            onPressed: () {
-              Navigator.pop(context, false);
-            },
-          ),
-          TextButton(
-            child: Text('نعم'),
-            onPressed: () {
-              Navigator.pop(context, true);
-            },
-          ),
-        ],
-      );
-    },
-  );
-
-  if (confirmed == true) {
-    try {
-      QuerySnapshot foodTruckQuery = await FirebaseFirestore.instance
-          .collection('Food_Truck')
-          .where('ownerID', isEqualTo: ownerID)
-          .get();
-
-      if (foodTruckQuery.docs.isNotEmpty) {
-        var foodTruckDoc = foodTruckQuery.docs.first;
-        String? statusId = foodTruckDoc['statusId'];
-
-        if (statusId != null && statusId.isNotEmpty) {
-          await FirebaseFirestore.instance
-              .collection('Request')
-              .doc(statusId)
-              .delete();
-        }
-
-        await FirebaseFirestore.instance
-            .collection('Food_Truck')
-            .doc(foodTruckDoc.id)
-            .delete();
-
-        await FirebaseFirestore.instance
-            .collection('Truck_Owner')
-            .doc(ownerID)
-            .delete();
-
-        await FirebaseAuth.instance.currentUser?.delete();
-
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'تم حذف حسابك والعربة بنجاح!',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 18),
+  void _deleteAccount(BuildContext context) async {
+    bool? confirmed = await showDialog<bool>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'تأكيد',
+            textAlign: TextAlign.right,
+            style: TextStyle(
+              color: Color(0xFF674188),
+              fontSize: 30,
+              fontWeight: FontWeight.bold,
             ),
-            backgroundColor: Color(0xFF674188),
           ),
+          content: Text('هل أنت متأكد أنك ترغب في حذف حسابك والعربة؟'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('إلغاء'),
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+            ),
+            TextButton(
+              child: Text('نعم'),
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+            ),
+          ],
         );
+      },
+    );
 
-        await Future.delayed(Duration(seconds: 2));
+    if (confirmed == true) {
+      try {
+        QuerySnapshot foodTruckQuery = await FirebaseFirestore.instance
+            .collection('Food_Truck')
+            .where('ownerID', isEqualTo: ownerID)
+            .get();
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => WelcomeScreen(),
-          ),
-        );
+        if (foodTruckQuery.docs.isNotEmpty) {
+          var foodTruckDoc = foodTruckQuery.docs.first;
+          String? statusId = foodTruckDoc['statusId'];
+
+          if (statusId != null && statusId.isNotEmpty) {
+            await FirebaseFirestore.instance
+                .collection('Request')
+                .doc(statusId)
+                .delete();
+          }
+
+          await FirebaseFirestore.instance
+              .collection('Food_Truck')
+              .doc(foodTruckDoc.id)
+              .delete();
+
+          await FirebaseFirestore.instance
+              .collection('Truck_Owner')
+              .doc(ownerID)
+              .delete();
+
+          await FirebaseAuth.instance.currentUser?.delete();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                'تم حذف حسابك والعربة بنجاح!',
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
+              backgroundColor: Color(0xFF674188),
+            ),
+          );
+
+          await Future.delayed(Duration(seconds: 2));
+
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => WelcomeScreen(),
+            ),
+          );
+        }
+      } catch (e) {
+        print('Error deleting account: $e');
       }
-    } catch (e) {
-      print('Error deleting account: $e');
     }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +170,8 @@ void _deleteAccount(BuildContext context) async {
                 ),
               );
             } else {
-              final rejectMsg = snapshot.data ?? 'لم يتم العثور على رسالة الرفض.';
+              final rejectMsg =
+                  snapshot.data ?? 'لم يتم العثور على رسالة الرفض.';
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -209,25 +209,24 @@ void _deleteAccount(BuildContext context) async {
                     ),
                   ),
                   const SizedBox(height: 40),
-ElevatedButton(
-  onPressed: () {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => WelcomeScreen(),
-      ),
-    );
-  },
-  style: ElevatedButton.styleFrom(
-    backgroundColor: Colors.white,
-    textStyle: TextStyle(
-      fontSize: 18,
-      color: Colors.white,
-    ),
-  ),
-  child: const Text('عودة إلى الصفحة الرئيسية'),
-),
-
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => WelcomeScreen(),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      textStyle: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                    child: const Text('عودة إلى الصفحة الرئيسية'),
+                  ),
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () => _resubmitFoodTruck(context),

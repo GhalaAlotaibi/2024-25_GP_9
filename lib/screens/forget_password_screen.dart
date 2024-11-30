@@ -95,7 +95,6 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                     width: 400,
                     height: 350,
                     fit: BoxFit.contain,
-                    // Maintain aspect ratio
                   ),
                   const SizedBox(height: 0),
                   const Text(

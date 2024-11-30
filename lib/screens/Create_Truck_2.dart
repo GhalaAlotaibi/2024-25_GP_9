@@ -103,9 +103,9 @@ class _CreateTruck2State extends State<CreateTruck2> {
     final encodedQuery = Uri.encodeQueryComponent(query);
 
     //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
-    final url = ''; // Replace with Ghala's API key later
+    final url =
+        ''; // Replace with Ghala's API key later
     final response = await http.get(Uri.parse(url));
-
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
@@ -216,10 +216,8 @@ class _CreateTruck2State extends State<CreateTruck2> {
                         child: TextField(
                           controller: _searchController,
                           textAlign: TextAlign.right,
-                          
                           decoration: InputDecoration(
                             labelText: 'ابحث عن موقع',
-                            
                             border: OutlineInputBorder(),
                           ),
                           onSubmitted: (value) async {
@@ -235,7 +233,6 @@ class _CreateTruck2State extends State<CreateTruck2> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                     content: Text('لم يتم العثور على الموقع')),
-                                     
                               );
                             }
                           },
