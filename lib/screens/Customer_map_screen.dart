@@ -30,6 +30,7 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
           await FirebaseFirestore.instance.collection('Food_Truck').get();
 
       for (var doc in querySnapshot.docs) {
+        final statusId = doc['statusId']; // Get the statusId field
         final location = doc['location'] as String? ?? '';
         final name = doc['name'] as String? ?? 'Unknown Truck';
         final businessLogo =
@@ -37,7 +38,17 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
         final operatingHours =
             doc['operatingHours'] as String? ?? 'Not Available';
 
-        if (location.contains(',')) {
+        // Fetch the request document using the statusId
+        DocumentSnapshot requestDoc = await FirebaseFirestore.instance
+            .collection('Request')
+            .doc(statusId)
+            .get();
+
+        final status = requestDoc['status'] as String? ??
+            'pending'; // Default to pending if no status is found
+
+        // Proceed only if the status is "accepted"
+        if (status == 'accepted' && location.contains(',')) {
           final latLng = location.split(',');
           if (latLng.length == 2) {
             final latitude = double.tryParse(latLng[0]);

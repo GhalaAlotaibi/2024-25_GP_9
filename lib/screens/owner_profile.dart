@@ -7,10 +7,23 @@ import 'package:tracki/screens/owner_main_screen.dart';
 import 'package:tracki/screens/truck_details_update.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
-class OwnerProfile extends StatelessWidget {
+class OwnerProfile extends StatefulWidget {
   final String ownerID;
 
   const OwnerProfile({Key? key, required this.ownerID}) : super(key: key);
+
+  @override
+  _OwnerProfileState createState() => _OwnerProfileState();
+}
+
+class _OwnerProfileState extends State<OwnerProfile> {
+  String categoryName = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadCategoryName();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +42,7 @@ class OwnerProfile extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => TruckDetailsUpdate(
-                    ownerID: ownerID,
+                    ownerID: widget.ownerID,
                   ),
                 ),
               );
@@ -43,7 +56,7 @@ class OwnerProfile extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => OwnerMainScreen(
-                    ownerID: ownerID,
+                    ownerID: widget.ownerID,
                   ),
                 ),
               );
@@ -53,7 +66,7 @@ class OwnerProfile extends StatelessWidget {
         ],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
-        future: getOwnerFoodTruckData(ownerID),
+        future: getOwnerFoodTruckData(widget.ownerID),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
@@ -65,7 +78,6 @@ class OwnerProfile extends StatelessWidget {
             final truckData = snapshot.data!;
             final logoUrl = truckData['businessLogo'] ?? '';
             final truckName = truckData['name'] ?? 'Unnamed Truck';
-            final truckCategory = truckData['category'] ?? 'No Category';
             final truckDescription =
                 truckData['description'] ?? 'No description available';
             final rating = truckData['rating'] ?? 0.0;
@@ -117,7 +129,7 @@ class OwnerProfile extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              truckCategory,
+                              categoryName,
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w300,
@@ -376,6 +388,7 @@ class OwnerProfile extends StatelessWidget {
                       );
                     },
                   ),
+                  SizedBox(height: 60),
                 ],
               ),
             );
@@ -385,15 +398,73 @@ class OwnerProfile extends StatelessWidget {
     );
   }
 
-  Future<Map<String, dynamic>> getOwnerFoodTruckData(String docId) async {
-    final snapshot = await FirebaseFirestore.instance
-        .collection('Food_Truck')
-        .doc(docId)
-        .get();
+  // Future<Map<String, dynamic>> getOwnerFoodTruckData(String docId) async {
+  //   final snapshot = await FirebaseFirestore.instance
+  //       .collection('Food_Truck')
+  //       .doc(docId)
+  //       .get();
 
-    if (snapshot.exists) {
-      return snapshot.data() as Map<String, dynamic>;
-    } else {
+  //   if (snapshot.exists) {
+  //     return snapshot.data() as Map<String, dynamic>;
+  //   } else {
+  //     return {};
+  //   }
+  // }
+
+  Future<void> _loadCategoryName() async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Food_Truck')
+          .doc(widget.ownerID)
+          .get();
+
+      if (snapshot.exists) {
+        final categoryId = snapshot.data()?['categoryId'] ?? '';
+        final name = await getCategoryNameById(categoryId);
+        setState(() {
+          categoryName = name;
+        });
+      }
+    } catch (e) {
+      print('Error loading category name: $e');
+      setState(() {
+        categoryName = 'Unknown Category';
+      });
+    }
+  }
+
+  Future<String> getCategoryNameById(String categoryId) async {
+    try {
+      final categoryDoc = await FirebaseFirestore.instance
+          .collection('Food-Category')
+          .doc(categoryId)
+          .get();
+
+      if (categoryDoc.exists) {
+        return categoryDoc.data()?['name'] ?? 'Unknown Category';
+      } else {
+        return 'Unknown Category';
+      }
+    } catch (e) {
+      print('Error fetching category name: $e');
+      return 'Error loading category';
+    }
+  }
+
+  Future<Map<String, dynamic>> getOwnerFoodTruckData(String docId) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('Food_Truck')
+          .doc(docId)
+          .get();
+
+      if (snapshot.exists) {
+        return snapshot.data() as Map<String, dynamic>;
+      } else {
+        return {};
+      }
+    } catch (e) {
+      print('Error fetching food truck data: $e');
       return {};
     }
   }

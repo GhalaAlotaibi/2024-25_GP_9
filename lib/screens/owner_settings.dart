@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/update_email.dart';
 import 'package:tracki/screens/update_password.dart';
 import 'package:tracki/screens/update_phone.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
+import '../user_auth/firebase_auth_services.dart';
 
 class OwnerSettings extends StatefulWidget {
   final String ownerID;
@@ -18,6 +20,7 @@ class OwnerSettings extends StatefulWidget {
 
 class _OwnerSettingsState extends State<OwnerSettings> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuthService _authService = FirebaseAuthService();
 
   String? ownerName;
   String? truckOwnerID; // Store the ownerID for reuse
@@ -103,48 +106,63 @@ class _OwnerSettingsState extends State<OwnerSettings> {
     }
   }
 
-  void _showLogoutConfirmationDialog() {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: kbackgroundColor,
-          title: const Text(
-            'تأكيد تسجيل الخروج',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          content: const Text(
-            '  هل أنت متأكد أنك تريد تسجيل الخروج؟ هههه خرباان لا تستخدمونه',
-            textDirection: TextDirection.rtl,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'إلغاء',
-                style: TextStyle(fontSize: 16),
+  Future<void> _showLogoutConfirmationDialog() async {
+    bool shouldLogOut = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              backgroundColor: kbackgroundColor,
+              title: const Text(
+                'تأكيد تسجيل الخروج',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
-                // Perform logout
-                Navigator.pushNamedAndRemoveUntil(
-                    context, '/login', (route) => false);
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kBannerColor,
+              content: const Text(
+                'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+                textDirection: TextDirection.rtl,
               ),
-              child: const Text(
-                'تأكيد',
-                style: TextStyle(fontSize: 16, color: Colors.white),
-              ),
-            ),
-          ],
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(false); // User cancels logout
+                  },
+                  child: Directionality(
+                    textDirection: TextDirection.rtl,
+                    child: const Text('إلغاء'),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop(true); // User confirms logout
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kBannerColor,
+                  ),
+                  child: const Text(
+                    'تسجيل الخروج',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ],
+            );
+          },
+        ) ??
+        false; // Default to false if dialog is closed without a response
+
+    // Proceed with sign-out if the user confirmed the logout
+    if (shouldLogOut) {
+      try {
+        await _authService.signOut();
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const LogInScreen()),
         );
-      },
-    );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Error signing out: $e')),
+        );
+      }
+    }
   }
 
   void _showDeleteAccountConfirmationDialog() {
@@ -520,8 +538,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                         style: const TextStyle(
                           fontSize: 16,
                           color: Color.fromARGB(255, 152, 25, 25),
-                          decoration: TextDecoration
-                              .underline, // Optional for clickable text
+                          decoration: TextDecoration.underline,
                         ),
                         textAlign: TextAlign.center,
                       ),

@@ -7,7 +7,7 @@ import 'package:tracki/widgets/my_icon_button.dart';
 import 'add_item.dart';
 import 'edit_item.dart';
 import 'owner_main_screen.dart';
-
+// Not used !
 class TruckProfile extends StatefulWidget {
   final String truckId;
 
@@ -22,28 +22,28 @@ class _TruckProfileState extends State<TruckProfile> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color.fromRGBO(239, 241, 247, 1),
-appBar: AppBar(
-  backgroundColor: kbackgroundColor,
-  automaticallyImplyLeading: false,
-  elevation: 0,
-  title: Row(
-    mainAxisAlignment: MainAxisAlignment.end, 
-    children: [
-      MyIconButton(
-        icon: Icons.arrow_forward_ios,
-        pressed: () {
-          Navigator.pop(context);
-        },
+      appBar: AppBar(
+        backgroundColor: kbackgroundColor,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            MyIconButton(
+              icon: Icons.arrow_forward_ios,
+              pressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            const SizedBox(width: 15),
+            const Text(
+              "",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.right,
+            ),
+          ],
+        ),
       ),
-      const SizedBox(width: 15), 
-      const Text(
-        "", 
-        style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-        textAlign: TextAlign.right,
-      ),
-    ],
-  ),
-),
       body: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance
             .collection("Food_Truck")

@@ -150,9 +150,9 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
   Query get filteredItems => FirebaseFirestore.instance
       .collection("Food_Truck")
-      .where("categoryId", isEqualTo: selectedCategoryId);  
+      .where("categoryId", isEqualTo: selectedCategoryId);
 
-  String selectedCategoryId = "";  
+  String selectedCategoryId = "";
 
   StreamBuilder<QuerySnapshot<Object?>> selectedCategory() {
     return StreamBuilder(
@@ -167,14 +167,13 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                 (index) {
                   final categoryDoc = streamSnapshot.data!.docs[index];
                   final categoryName = categoryDoc["name"];
-                  final categoryId = categoryDoc.id; 
+                  final categoryId = categoryDoc.id;
 
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedCategoryId =
-                            categoryId;  
-                        category = categoryName;  
+                        selectedCategoryId = categoryId;
+                        category = categoryName;
                       });
                     },
                     child: Container(
@@ -238,59 +237,76 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     return Row(
       children: [
         MyIconButton(
-          icon: Iconsax.logout_14,
-          pressed: () async {
-            final shouldLogOut = await showDialog<bool>(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  title: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: const Text('تأكيد تسجيل الخروج'),
-                  ),
-                  content: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(false);
-                      },
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: const Text('إلغاء'),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).pop(true);
-                      },
-                      child: const Text('تسجيل الخروج'),
-                    ),
-                  ],
-                );
-              },
-            );
+            icon: Iconsax.logout_14,
+            pressed: () async {
+              final shouldLogOut = await showDialog<bool>(
+                    context: context,
+                    builder: (BuildContext dialogContext) {
+                      return AlertDialog(
+                        backgroundColor:
+                            kbackgroundColor, // Set background color
+                        title: const Text(
+                          'تأكيد تسجيل الخروج',
+                          textDirection: TextDirection.rtl,
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        content: const Text(
+                          'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
+                          textDirection: TextDirection.rtl,
+                        ),
+                        actions: <Widget>[
+                          // Cancel Button
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext)
+                                  .pop(false); // Cancel action
+                            },
+                            child: Directionality(
+                              textDirection: TextDirection.rtl,
+                              child: const Text('إلغاء'),
+                            ),
+                          ),
 
-            if (shouldLogOut == true) {
-              try {
-                await _authService.signOut();
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LogInScreen()),
-                );
-              } catch (e) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Error signing out: $e')),
-                );
+                          // Confirm Logout Button with banner color
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(dialogContext)
+                                  .pop(true); // Confirm Logout action
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  kBannerColor, // Set button color to banner color
+                            ),
+                            child: const Text(
+                              'تسجيل الخروج',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ) ??
+                  false; // Default to false if dialog is closed without a response
+
+              // Proceed with sign-out if the user confirmed the logout
+              if (shouldLogOut) {
+                try {
+                  await _authService.signOut();
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const LogInScreen()),
+                  );
+                } catch (e) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Error signing out: $e')),
+                  );
+                }
               }
-            }
-          },
-        ),
+            }),
         const Spacer(),
         const Text(
-         
           "ما هي عربة \nالطعام التي تبحث عنها؟",
           style:
               TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1),

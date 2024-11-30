@@ -16,15 +16,41 @@ class ItemsDisplay extends StatefulWidget {
 class _ItemsDisplayState extends State<ItemsDisplay> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference requestCollection =
+      FirebaseFirestore.instance.collection("Request");
 
   bool isFavorite = false;
   String categoryName = '';
+  bool isTruckAccepted = false;
 
   @override
   void initState() {
     super.initState();
     _checkIfFavorite();
     _loadCategoryName();
+    _checkTruckStatus();
+  }
+
+  Future<void> _checkTruckStatus() async {
+    final statusId = widget.documentSnapshot['statusId'];
+    try {
+      final requestDoc = await requestCollection.doc(statusId).get();
+
+      if (requestDoc.exists && requestDoc['status'] == 'accepted') {
+        setState(() {
+          isTruckAccepted = true;
+        });
+      } else {
+        setState(() {
+          isTruckAccepted = false;
+        });
+      }
+    } catch (e) {
+      print('Error checking truck status: $e');
+      setState(() {
+        isTruckAccepted = false; // In case of any error, default to false
+      });
+    }
   }
 
   Future<void> _checkIfFavorite() async {
@@ -64,7 +90,6 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     }
   }
 
-  // Fetch category name by categoryId from Firestore
   Future<String> getCategoryNameById(String categoryId) async {
     try {
       final categoryDoc =
@@ -110,6 +135,12 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
 
   @override
   Widget build(BuildContext context) {
+    // Check if the truck status is "accepted"
+    if (!isTruckAccepted) {
+      return SizedBox
+          .shrink(); // Return an empty widget if truck is not accepted
+    }
+
     return Directionality(
       textDirection: TextDirection.rtl,
       child: GestureDetector(
@@ -176,7 +207,8 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: Colors.grey.withOpacity(0.2),
+                                      color: const Color.fromARGB(255, 69, 0, 0)
+                                          .withOpacity(0.2),
                                       spreadRadius: 2,
                                       blurRadius: 5,
                                       offset: const Offset(0, 2),

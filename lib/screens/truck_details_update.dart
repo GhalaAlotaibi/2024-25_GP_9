@@ -20,19 +20,21 @@ class TruckDetailsUpdate extends StatefulWidget {
 
 class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
   final _formKey = GlobalKey<FormState>();
-  String? truckName, truckCategory, truckDescription, logoUrl;
+  String? truckName, truckCategory, truckCategoryId, truckDescription, logoUrl;
   String? rating;
   int? ratingsCount;
   List<dynamic> itemImagesList = [];
   List<dynamic> itemNamesList = [];
   List<dynamic> itemPricesList = [];
   List<String> categories = [];
+  List<String> categoryIds = [];
 
   @override
   void initState() {
     super.initState();
-    _getOwnerFoodTruckData(widget.ownerID);
-    _fetchCategories();
+    _fetchCategories().then((_) {
+      _getOwnerFoodTruckData(widget.ownerID);
+    });
   }
 
   Future<void> _getOwnerFoodTruckData(String docId) async {
@@ -46,7 +48,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
 
       setState(() {
         truckName = data['name'] ?? '';
-        truckCategory = data['category'] ?? '';
+        truckCategoryId = data['categoryId'] ?? '';
         truckDescription = data['description'] ?? '';
         logoUrl = data['businessLogo'] ?? '';
         rating = data['rating'] ?? '0';
@@ -54,6 +56,10 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
         itemImagesList = data['item_images_list'] ?? [];
         itemNamesList = data['item_names_list'] ?? [];
         itemPricesList = data['item_prices_list'] ?? [];
+        int index = categoryIds.indexOf(truckCategoryId!);
+        if (index != -1) {
+          truckCategory = categories[index];
+        }
       });
     }
   }
@@ -64,6 +70,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
 
     setState(() {
       categories = snapshot.docs.map((doc) => doc['name'] as String).toList();
+      categoryIds = snapshot.docs.map((doc) => doc.id).toList();
     });
   }
 
@@ -97,13 +104,17 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
   Future<void> _updateTruckDetails() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
+      int index = categories.indexOf(truckCategory!);
+      if (index != -1) {
+        truckCategoryId = categoryIds[index];
+      }
 
       await FirebaseFirestore.instance
           .collection('Food_Truck')
           .doc(widget.ownerID)
           .update({
         'name': truckName,
-        'category': truckCategory,
+        'categoryId': truckCategoryId,
         'description': truckDescription,
       });
 
@@ -146,7 +157,15 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
           MyIconButton(
             icon: Icons.arrow_forward_ios,
             pressed: () {
-              Navigator.pop(context);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => OwnerProfile(
+                    ownerID: widget
+                        .ownerID, // Ensure `ownerID` is properly passed here
+                  ),
+                ),
+              );
             },
           ),
           const SizedBox(width: 15),
@@ -227,7 +246,7 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                       const SizedBox(height: 16),
                       categories.isNotEmpty
                           ? DropdownButtonFormField<String>(
-                              value: truckCategory,
+                              value: truckCategory, // Current selected category
                               decoration: InputDecoration(
                                 labelText: 'تحديث تصنيف العربة',
                                 border: OutlineInputBorder(

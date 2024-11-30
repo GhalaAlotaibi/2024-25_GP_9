@@ -7,7 +7,7 @@ import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/owner_reviews.dart'; // Make sure to import your OwnerReviews page
 import 'package:tracki/screens/profile_map.dart';
-
+// Customers' side 
 class FoodTruckProfileDisplay extends StatefulWidget {
   final DocumentSnapshot<Object?> documentSnapshot;
   const FoodTruckProfileDisplay({super.key, required this.documentSnapshot});

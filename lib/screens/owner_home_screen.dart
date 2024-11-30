@@ -94,34 +94,69 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               pressed: () async {
                 // Show confirmation dialog before signing out
                 final shouldLogOut = await showDialog<bool>(
-                  context: context,
-                  builder: (BuildContext dialogContext) {
-                    return AlertDialog(
-                      title: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child:
-                            const Text('تأكيد تسجيل الخروج'), // Confirm Logout
-                      ),
-                      content: const Text(
-                          'هل أنت متأكد أنك تريد تسجيل الخروج؟'), // Are you sure you want to log out?
-                      actions: <Widget>[
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop(false); // Cancel
-                          },
-                          child: const Text('إلغاء'), // Cancel
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(dialogContext)
-                                .pop(true); // Confirm Logout
-                          },
-                          child: const Text('تسجيل الخروج'), // Logout
-                        ),
-                      ],
+                      context: context,
+                      builder: (BuildContext dialogContext) {
+                        return AlertDialog(
+                          backgroundColor: kbackgroundColor,
+                          title: const Text(
+                            'تأكيد تسجيل الخروج',
+                            textDirection: TextDirection.rtl,
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                          content: const Text(
+                            'هل أنت متأكد أنك تريد تسجيل الخروج؟',
+                            textDirection: TextDirection.rtl,
+                          ),
+                          actions: <Widget>[
+                            // Cancel Button
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext)
+                                    .pop(false); // Cancel action
+                              },
+                              child: Directionality(
+                                textDirection: TextDirection.rtl,
+                                child: const Text('إلغاء'),
+                              ),
+                            ),
+
+                            // Confirm Logout Button with banner color
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(dialogContext)
+                                    .pop(true); // Confirm Logout action
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    kBannerColor, // Set button color to banner color
+                              ),
+                              child: const Text(
+                                'تسجيل الخروج',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ) ??
+                    false; // Default to false if dialog is closed without a response
+
+                // Proceed with sign-out if the user confirmed the logout
+                if (shouldLogOut) {
+                  try {
+                    await _authService.signOut();
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => const LogInScreen()),
                     );
-                  },
-                );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error signing out: $e')),
+                    );
+                  }
+                }
 
                 // If confirmed, proceed with sign-out
                 if (shouldLogOut == true) {
@@ -133,11 +168,9 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                             const LogInScreen(), // Navigate to login page
                       ),
                       (Route<dynamic> route) =>
-                          route.settings.name ==
-                          '/welcome_screen', // Keep the welcome page in the stack
+                          route.settings.name == '/welcome_screen',
                     );
                   } catch (e) {
-                    // Handle errors here, e.g., show a snackbar
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(content: Text('Error signing out: $e')),
                     );
@@ -146,8 +179,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               },
             ),
           ),
-
-          // Greeting Text and Business Logo on the Right
           Row(
             children: [
               Text(
