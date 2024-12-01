@@ -122,7 +122,7 @@ class _UpdatePasswordState extends State<UpdatePassword> {
                 const SizedBox(height: 20),
                 _buildCustomTextField(
                   controller: newPasswordController,
-                  labelText: 'الرمز السري الجديدة',
+                  labelText: 'الرمز السري الجديد',
                   hintText: '********',
                   icon: Icons.lock,
                   isPassword: true,

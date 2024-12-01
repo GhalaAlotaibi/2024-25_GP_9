@@ -83,75 +83,90 @@ class _CustomerSettingsState extends State<CustomerSettings> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          backgroundColor: kbackgroundColor,
-          title: const Text(
-            'تحديث الاسم',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          content: Directionality(
-            textDirection: TextDirection.rtl,
-            child: TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: 'الاسم الجديد',
-                labelStyle: const TextStyle(
-                  fontSize: 16,
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              backgroundColor: kbackgroundColor,
+              title: const Text(
+                'تحديث الاسم',
+                textDirection: TextDirection.rtl,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
-                ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               ),
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'إلغاء',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.trim().isNotEmpty) {
-                  _updateCustomerName(nameController.text.trim());
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kBannerColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-              ),
-              child: const Text(
-                'حفظ',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
+              content: SingleChildScrollView(
+                child: SizedBox(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          controller: nameController,
+                          decoration: InputDecoration(
+                            labelText: 'الاسم الجديد',
+                            labelStyle: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black,
+                            ),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: kBannerColor),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: const BorderSide(color: kBannerColor),
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 15),
+                          ),
+                          style: const TextStyle(
+                              fontSize: 16, color: Colors.black),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-            ),
-          ],
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(
+                    'إلغاء',
+                    style: TextStyle(
+                      fontSize: 16,
+                    ),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (nameController.text.trim().isNotEmpty) {
+                      _updateCustomerName(nameController.text.trim());
+                      Navigator.pop(context);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kBannerColor,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 20, vertical: 10),
+                  ),
+                  child: const Text(
+                    'حفظ',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
         );
       },
     );
@@ -273,6 +288,7 @@ class _CustomerSettingsState extends State<CustomerSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       backgroundColor: kbackgroundColor,
       appBar: AppBar(
         backgroundColor: kbackgroundColor,
@@ -297,220 +313,220 @@ class _CustomerSettingsState extends State<CustomerSettings> {
           : Padding(
               padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
               child: Directionality(
-                textDirection: TextDirection.rtl,
-                child: Column(
-                  children: [
-                    Align(
-                      alignment: Alignment.topRight,
-                      child: Row(
-                        children: [
-                          const SizedBox(width: 10),
-                          Text(
-                            'أهلًا ${customerName ?? ''}',
+                  textDirection: TextDirection.rtl,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Align(
+                          alignment: Alignment.topRight,
+                          child: Row(
+                            children: [
+                              const SizedBox(width: 10),
+                              Text(
+                                'أهلًا ${customerName ?? ''}',
+                                style: const TextStyle(
+                                  fontSize: 24,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              IconButton(
+                                icon: const Icon(
+                                  Iconsax.edit,
+                                  size: 20,
+                                ),
+                                onPressed: _showUpdateNameDialog,
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdateEmail(
+                                  ID: widget.customerID,
+                                  userType: "Customer",
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            child: Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 20.0),
+                                  child: Icon(Icons.email,
+                                      color: Color.fromARGB(200, 72, 72, 72)),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'تحديث البريد الإلكتروني',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const Spacer(),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 20.0),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black,
+                                    size: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => UpdatePassword(
+                                  ID: widget.customerID,
+                                ),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            child: Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 20.0),
+                                  child: Icon(Icons.lock,
+                                      color: Color.fromARGB(200, 72, 72, 72)),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  'تحديث الرمز السري',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const Spacer(),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 20.0),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black,
+                                    size: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const FavoritesPage(),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(15),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(30),
+                              border: Border.all(color: Colors.black),
+                            ),
+                            child: Row(
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.only(left: 20.0),
+                                  child: Icon(Iconsax.heart5,
+                                      color: kprimaryColor),
+                                ),
+                                const SizedBox(width: 10),
+                                const Text(
+                                  "مفضلاتي",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                const Spacer(),
+                                const Padding(
+                                  padding: EdgeInsets.only(right: 20.0),
+                                  child: Icon(
+                                    Icons.arrow_forward_ios,
+                                    color: Colors.black,
+                                    size: 17,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 220),
+
+                        // Logout Button
+                        ElevatedButton(
+                          onPressed: _showLogoutConfirmationDialog,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kBannerColor,
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'تسجيل الخروج',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        // Delete Account Button
+                        GestureDetector(
+                          onTap: _showDeleteAccountConfirmationDialog,
+                          child: Text(
+                            'حذف الحساب',
                             style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
+                              fontSize: 16,
+                              color: Color.fromARGB(255, 152, 25, 25),
+                              decoration: TextDecoration
+                                  .underline, // Optional for clickable text
                             ),
-                          ),
-                          IconButton(
-                            icon: const Icon(
-                              Iconsax.edit,
-                              size: 20,
-                            ),
-                            onPressed: _showUpdateNameDialog,
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // First clickable rectangle (email update)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UpdateEmail(
-                              ID: widget.customerID,
-                              userType: "Customer",
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Icon(Icons.email,
-                                  color: Color.fromARGB(200, 72, 72, 72)),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              'تحديث البريد الالكتروني',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const Spacer(),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 20.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-
-                    // Second clickable rectangle (password update)
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => UpdatePassword(
-                              ID: widget.customerID,
-                            ),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Icon(Icons.lock,
-                                  color: Color.fromARGB(200, 72, 72, 72)),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              'تحديث الرمز السري',
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const Spacer(),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 20.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const FavoritesPage(),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.all(15),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black),
-                        ),
-                        child: Row(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.only(left: 20.0),
-                              child: Icon(Iconsax.heart5, color: kprimaryColor),
-                            ),
-                            const SizedBox(width: 10),
-                            const Text(
-                              "مفضلاتي",
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: Colors.black,
-                              ),
-                            ),
-                            const Spacer(),
-                            const Padding(
-                              padding: EdgeInsets.only(right: 20.0),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: Colors.black,
-                                size: 17,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 220),
-
-                    // Logout Button
-                    ElevatedButton(
-                      onPressed: _showLogoutConfirmationDialog,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: kBannerColor,
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'تسجيل الخروج',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            textAlign: TextAlign.center,
                           ),
                         ),
-                      ),
+                      ],
                     ),
-
-                    const SizedBox(height: 15),
-
-                    // Delete Account Button
-                    GestureDetector(
-                      onTap: _showDeleteAccountConfirmationDialog,
-                      child: Text(
-                        'حذف الحساب',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          color: Color.fromARGB(255, 152, 25, 25),
-                          decoration: TextDecoration
-                              .underline, // Optional for clickable text
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  )),
             ),
     );
   }

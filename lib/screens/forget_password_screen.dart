@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/Utils/constants.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
@@ -59,11 +60,11 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
   @override
   Widget build(BuildContext context) {
     return Directionality(
-      textDirection: TextDirection.rtl, // Correct the semicolon here
+      textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: Colors.white, // Set background color to white
+        backgroundColor: kbackgroundColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF674188),
+          backgroundColor: kbackgroundColor,
           automaticallyImplyLeading: false,
           elevation: 0,
           actions: [
@@ -98,15 +99,15 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   ),
                   const SizedBox(height: 0),
                   const Text(
-                    'نسيت كلمة السر؟',
+                    'نسيت كلمة المرور',
                     style: TextStyle(
-                      fontSize: 24.0, // زيادة الحجم
+                      fontSize: 24.0, // زيادة
                       fontWeight: FontWeight.bold,
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const Text(
-                    'لا تخاف! كل اللي عليك تدخل بريدك الإلكتروني. وراح نرسلك رابط لتغيير كلمة السر.',
+                    'لا تخاف! كل اللي عليك تدخل بريدك الإلكتروني. وراح نرسلك رابط لتغييرها.',
                     style: TextStyle(fontSize: 16.0),
                     textAlign: TextAlign.center,
                   ),
@@ -140,10 +141,9 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                   ElevatedButton(
                     onPressed: isLoading ? null : sendResetEmail,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 149, 112, 182),
+                      backgroundColor: kBannerColor,
                       shape: RoundedRectangleBorder(
-                        borderRadius:
-                            BorderRadius.circular(20.0), // انحناء الزوايا
+                        borderRadius: BorderRadius.circular(20.0),
                       ),
                       padding: const EdgeInsets.symmetric(
                           vertical: 16.0, horizontal: 20.0),
@@ -158,7 +158,7 @@ class _ForgetPasswordScreenState extends State<ForgetPasswordScreen> {
                             'إرسال الرابط ',
                             style: TextStyle(
                               color: Colors.white,
-                              fontSize: 16.0, // حجم الخط
+                              fontSize: 16.0,
                             ),
                           ),
                   )
