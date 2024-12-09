@@ -17,6 +17,7 @@ class OwnerSettings extends StatefulWidget {
   @override
   _OwnerSettingsState createState() => _OwnerSettingsState();
 }
+//تحديث
 
 class _OwnerSettingsState extends State<OwnerSettings> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -431,7 +432,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'تحديث كلمة المرور',
+                              'تحديث الرمز السري',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
@@ -485,7 +486,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'تحديث رقم الجوال',
+                              'تحديث رقم الهاتف',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,

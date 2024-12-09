@@ -103,8 +103,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     final encodedQuery = Uri.encodeQueryComponent(query);
 
     //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
-    final url =
-        ''; // Replace with Ghala's API key later
+    final url = ''; // Replace with Ghala's API key later
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -163,7 +162,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                         style: TextStyle(
                           fontSize: 27.0,
                           fontWeight: FontWeight.w600,
-                          color: Color(0xFF674188),
+                          color: Color.fromARGB(255, 0, 0, 0),
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -175,14 +174,14 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color.fromARGB(255, 152, 230, 171),
+                              color: kprimaryColor,
                             ),
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 30,
                             height: 2,
-                            color: Color.fromARGB(255, 152, 230, 171),
+                            color: kprimaryColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
@@ -190,14 +189,14 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Color.fromARGB(255, 152, 230, 171),
+                              color: kprimaryColor,
                             ),
                           ),
                           const SizedBox(width: 10),
                           Container(
                             width: 30,
                             height: 2,
-                            color: Color.fromARGB(255, 152, 230, 171),
+                            color: kprimaryColor,
                           ),
                           const SizedBox(width: 10),
                           Container(
@@ -205,12 +204,12 @@ class _CreateTruck2State extends State<CreateTruck2> {
                             height: 20,
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: const Color.fromARGB(255, 247, 252, 187),
+                              color: kBannerColor,
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 20.0),
+                      const SizedBox(height: 14.0),
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: TextField(
@@ -218,7 +217,13 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           textAlign: TextAlign.right,
                           decoration: InputDecoration(
                             labelText: 'ابحث عن موقع',
-                            border: OutlineInputBorder(),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              borderSide: const BorderSide(
+                                color: Colors.black,
+                                width: 2.0,
+                              ),
+                            ),
                           ),
                           onSubmitted: (value) async {
                             final location = await _searchLocation(value);
@@ -238,7 +243,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           },
                         ),
                       ),
-
+                      const SizedBox(height: 5.0),
                       // Google Maps Container
                       Container(
                         height: 400,
@@ -263,16 +268,21 @@ class _CreateTruck2State extends State<CreateTruck2> {
                         ),
                       ),
 
-                      const SizedBox(height: 30.0),
+                      const SizedBox(height: 10.0),
 
                       // Button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor: kBannerColor),
                           onPressed: () {
                             _saveTruckDetails(context);
                           },
-                          child: const Text('التالي'),
+                          child: const Text(
+                            'التالي',
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                       const SizedBox(height: 20.0),

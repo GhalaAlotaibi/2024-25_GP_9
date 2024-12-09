@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/forget_password_screen.dart';
 
@@ -12,8 +13,9 @@ class AfterSendPasswordScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: kbackgroundColor,
       appBar: AppBar(
+        backgroundColor: kbackgroundColor,
         automaticallyImplyLeading: false, // Disable back button
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
@@ -42,7 +44,7 @@ class AfterSendPasswordScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             Text(
-              'لقد تم إرسال الرابط إلى بريدك الإلكتروني $email\nقم بالتحقق من بريدك لتغيير كلمة السر',
+              'لقد تم إرسال الرابط إلى بريدك الإلكتروني $email\nقم بالتحقق من بريدك لتغيير كلمة المرور',
               style: const TextStyle(fontSize: 16.0, color: Colors.black54),
               textAlign: TextAlign.center,
             ),
@@ -55,8 +57,7 @@ class AfterSendPasswordScreen extends StatelessWidget {
                 );
               },
               style: ElevatedButton.styleFrom(
-                backgroundColor: const Color.fromARGB(
-                    255, 149, 112, 182), // Set background color
+                backgroundColor: kBannerColor,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20.0), // Rounded corners
                 ),

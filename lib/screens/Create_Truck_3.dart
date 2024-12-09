@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/Truck_Profile.dart';
 import 'package:tracki/screens/StatusRejected.dart';
 import 'login_screen.dart';
@@ -77,7 +78,7 @@ class _CreateTruck3State extends State<CreateTruck3> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
+      backgroundColor: kbackgroundColor,
       body: SafeArea(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -98,18 +99,18 @@ class _CreateTruck3State extends State<CreateTruck3> {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: 'تم إرسال طلب إضافة عربتك بنجاح',
+                        text: "تم إرسال طلبك بنجاح",
                         style: TextStyle(
-                          fontSize: 30,
-                          color: Color(0xFF674188),
-                        ),
+                            fontSize: 28,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold),
                       ),
                       TextSpan(
-                        text: '\n ...يرجى الإنتظار حتى يتم قبول عربتك',
+                        text: '\n يرجى الإنتظار حتى تتم مراجعة طلبك',
                         style: TextStyle(
-                          fontSize: 22,
-                          color: Color(0xFF674188),
-                        ),
+                            fontSize: 17,
+                            color: Color(0xFF674188),
+                            fontWeight: FontWeight.w700),
                       ),
                     ],
                   ),
@@ -117,22 +118,41 @@ class _CreateTruck3State extends State<CreateTruck3> {
               ),
             ),
             const SizedBox(height: 40),
-            TextButton(
-              onPressed: () {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => LogInScreen(),
+            Column(
+              children: [
+                Text(
+                  "", // Question text outside the button
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.black,
                   ),
-                );
-              },
-              child: Text(
-                'لاتريد الانتظار؟ عودة إلى  صفحه تسجيل الدخول',
-                style: TextStyle(
-                  fontSize: 18,
-                  color: Color(0xFF674188),
                 ),
-              ),
+                const SizedBox(height: 8),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kBannerColor,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                  ),
+                  onPressed: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => LogInScreen(),
+                      ),
+                    );
+                  },
+                  child: const Text(
+                    'عودة إلى صفحه تسجيل الدخول',
+                    style: TextStyle(
+                      color: Colors.white, // White text color
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

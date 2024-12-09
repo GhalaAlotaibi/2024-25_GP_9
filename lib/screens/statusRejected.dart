@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/welcome_screen.dart';
 import 'package:tracki/screens/Resubmit_Truck.dart';
 
@@ -148,7 +149,7 @@ class StatusRejected extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBodyBehindAppBar: true,
-      backgroundColor: Colors.white,
+      backgroundColor: kbackgroundColor,
       body: SafeArea(
         child: FutureBuilder<String?>(
           future: _fetchRejectMessage(),
@@ -179,7 +180,7 @@ class StatusRejected extends StatelessWidget {
                   Icon(
                     Icons.sentiment_dissatisfied,
                     size: 80,
-                    color: Color(0xFF674188),
+                    color: kBannerColor,
                   ),
                   const SizedBox(height: 20),
                   Container(
@@ -192,15 +193,25 @@ class StatusRejected extends StatelessWidget {
                             TextSpan(
                               text: 'نعتذر منك، تم رفض طلبك\n',
                               style: TextStyle(
-                                fontSize: 30,
-                                color: Color(0xFF674188),
+                                fontWeight: FontWeight.w500,
+                                fontSize: 25,
+                                color: Color.fromARGB(255, 0, 0, 0),
                               ),
                             ),
                             TextSpan(
                               text: rejectMsg,
                               style: TextStyle(
                                 fontSize: 22,
-                                color: Colors.red,
+                                color: kprimaryColor,
+                              ),
+                            ),
+                            const TextSpan(
+                              text:
+                                  '\nللمزيد من المعلومات يرجى التواصل مع \n track1ad@gmail.com',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w300,
+                                fontSize: 11,
+                                color: Color.fromARGB(111, 0, 0, 0),
                               ),
                             ),
                           ],

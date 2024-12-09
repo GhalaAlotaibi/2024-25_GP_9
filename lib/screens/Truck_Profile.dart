@@ -7,6 +7,7 @@ import 'package:tracki/widgets/my_icon_button.dart';
 import 'add_item.dart';
 import 'edit_item.dart';
 import 'owner_main_screen.dart';
+
 // Not used !
 class TruckProfile extends StatefulWidget {
   final String truckId;
@@ -209,31 +210,35 @@ class _TruckProfileState extends State<TruckProfile> {
                 ),
                 const SizedBox(height: 20),
 
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => OwnerMainScreen(
-                          ownerID: widget.truckId,
+                Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width *
+                        0.8,  
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => OwnerMainScreen(
+                              ownerID: widget.truckId,
+                            ),
+                          ),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBannerColor,
+                      
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
                         ),
                       ),
-                    );
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: kBannerColor,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 20, vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
-                  child: const Text(
-                    "انتهيت",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
+                      child: const Text(
+                        "انتهيت",
+                        style: TextStyle(
+                          fontSize: 15,  
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
                   ),
                 ),
