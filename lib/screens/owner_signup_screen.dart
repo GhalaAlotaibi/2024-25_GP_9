@@ -96,7 +96,7 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                               color: kBannerColor,
                             ),
                           ),
-                          const SizedBox(width: 10),
+                          const SizedBox(width: 30),
                           Container(
                             width: 30,
                             height: 2,

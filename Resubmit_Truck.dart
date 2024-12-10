@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tracki/screens/welcome_screen.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
-import 'welcome_screen.dart';
 
 class Resubmit_Truck extends StatefulWidget {
   final String ownerID;

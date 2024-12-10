@@ -150,6 +150,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                         textAlign: TextAlign.center,
                       ),
 
+                      //Progress Bar
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -103,7 +103,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     final encodedQuery = Uri.encodeQueryComponent(query);
 
     //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
-    final url = ''; // Replace with Ghala's API key later
+    final url = 'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedQuery&key=AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Replace with Ghala's API key later
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {

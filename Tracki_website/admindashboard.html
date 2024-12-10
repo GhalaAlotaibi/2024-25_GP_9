@@ -285,14 +285,21 @@ async function DeclineFoodTruck(docId) {
 }
 
 
-    //Log Out
-    document.getElementById('logout-button').addEventListener('click', () => {
+
+
+    // Log Out with confirmation
+document.getElementById('logout-button').addEventListener('click', () => {
+    const isConfirmed = window.confirm("هل انت متأكد انك تريد تسجيل الخروج؟");
+    if (isConfirmed) {
         signOut(auth).then(() => {
             window.location.href = "login.html";
         }).catch((error) => {
             console.error("Error during logout: ", error);
         });
-    });
+    } else {
+        alert("تم إلغاء تسجيل الخروج.");
+    }
+});
 
     // Attach function to the global scope
     window.acceptFoodTruck = acceptFoodTruck;
