@@ -220,24 +220,24 @@ class _OwnerSettingsState extends State<OwnerSettings> {
       },
     );
   }
-
-  void _showUpdateNameDialog() {
-    TextEditingController nameController = TextEditingController();
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          backgroundColor: kbackgroundColor,
-          title: const Text(
-            'تحديث الاسم',
-            textDirection: TextDirection.rtl,
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
+void _showUpdateNameDialog() {
+  TextEditingController nameController = TextEditingController();
+  showDialog(
+    context: context,
+    builder: (context) {
+      return AlertDialog(
+        backgroundColor: kbackgroundColor,
+        title: const Text(
+          'تحديث الاسم',
+          textDirection: TextDirection.rtl,
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
           ),
-          content: Directionality(
+        ),
+        content: SingleChildScrollView(
+          child: Directionality(
             textDirection: TextDirection.rtl,
             child: TextFormField(
               controller: nameController,
@@ -261,44 +261,45 @@ class _OwnerSettingsState extends State<OwnerSettings> {
               style: const TextStyle(fontSize: 16, color: Colors.black),
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'إلغاء',
-                style: TextStyle(
-                  fontSize: 16,
-                ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text(
+              'إلغاء',
+              style: TextStyle(
+                fontSize: 16,
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (nameController.text.trim().isNotEmpty) {
-                  _updateOwnerName(nameController.text.trim());
-                  Navigator.pop(context);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: kBannerColor,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              if (nameController.text.trim().isNotEmpty) {
+                _updateOwnerName(nameController.text.trim());
+                Navigator.pop(context);
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: kBannerColor,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
-              child: const Text(
-                'حفظ',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            ),
+            child: const Text(
+              'حفظ',
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.white,
               ),
             ),
-          ],
-        );
-      },
-    );
-  }
+          ),
+        ],
+      );
+    },
+  );
+}
 
   @override
   Widget build(BuildContext context) {

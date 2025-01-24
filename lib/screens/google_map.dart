@@ -50,23 +50,23 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
               zoom: 14,
             ),
           ),
-          Positioned(
-            bottom: 30,
-            left: MediaQuery.of(context).size.width / 2 - 75,
-            child: Container(
-              width: 150,
-              height: 60,
-              child: ElevatedButton(
-                onPressed: () {
-                  print('Marker location: ${marker.position}');
-                },
-                style: ElevatedButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 15),
-                ),
-                child: const Text('تحديث الموقع'),
-              ),
-            ),
-          ),
+          //   Positioned(
+          //     bottom: 30,
+          //     left: MediaQuery.of(context).size.width / 2 - 75,
+          //     child: Container(
+          //       width: 150,
+          //       height: 60,
+          //       child: ElevatedButton(
+          //         onPressed: () {
+          //           print('Marker location: ${marker.position}');
+          //         },
+          //         style: ElevatedButton.styleFrom(
+          //           textStyle: const TextStyle(fontSize: 15),
+          //         ),
+          //         child: const Text('تحديث الموقع'),
+          //       ),
+          //     ),
+          //   ),
         ],
       ),
     );

@@ -7,11 +7,13 @@ import 'package:tracki/screens/food_truck_profile_display.dart';
 
 class ItemsDisplay extends StatefulWidget {
   final DocumentSnapshot<Object?> documentSnapshot;
-  const ItemsDisplay({super.key, required this.documentSnapshot});
+  final customerID;
+  const ItemsDisplay(
+      {super.key, required this.documentSnapshot, required this.customerID});
 
   @override
   State<ItemsDisplay> createState() => _ItemsDisplayState();
-}
+} //FoodTruckProfileDisplay
 
 class _ItemsDisplayState extends State<ItemsDisplay> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -149,7 +151,8 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
             context,
             MaterialPageRoute(
               builder: (context) => FoodTruckProfileDisplay(
-                  documentSnapshot: widget.documentSnapshot),
+                  documentSnapshot: widget.documentSnapshot,
+                  customerID: widget.customerID),
             ),
           );
         },
@@ -196,7 +199,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                               ),
                             ),
                           ),
-                        ),
+                        ), //
                         const SizedBox(height: 10),
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 10),
@@ -207,7 +210,8 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color: const Color.fromARGB(255, 69, 0, 0)
+                                      color: const Color.fromARGB(
+                                              255, 255, 255, 255)
                                           .withOpacity(0.2),
                                       spreadRadius: 2,
                                       blurRadius: 5,
