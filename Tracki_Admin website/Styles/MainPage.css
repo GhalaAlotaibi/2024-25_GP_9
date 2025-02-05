@@ -1,0 +1,5 @@
+#foodTruckChart {
+    width: 100%; /* Makes the chart responsive to the width of its container */
+    max-width: 800px; /* Sets a maximum width */
+    height: 400px; /* Fixed height */
+}

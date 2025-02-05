@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Tracki - All Trucks </title>
+    <link rel="stylesheet" href="Styles/Style.css">
+    <link rel="stylesheet" href="Styles/AllTrucks.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="headerOfBar">
+                <img src="images/TrackiLogo.png" alt="Logo">
+                <h1>Tracki</h1>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 20px 0;">
+                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
+                <li><a href="AllTrucks.html"
+                        style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
+                            class="fas fa-truck"></i> جميع العربات</a></li>
+                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
+                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
+                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+            </ul>
+        </div>
+
+        <section class="status-section">
+            <div class="left-actions">
+                <p id="status">مرحبًا!</p>
+            </div>
+            <div class="right-actions">
+                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+            </div>
+        </section>
+
+        <div class="content">
+            <h2> جميع العربات </h2>
+            <!-- Search and Filter Section -->
+            <div class="filter-section">
+                <input type="text" id="search-bar" placeholder="ابحث عن عربة...">
+                <select id="category-filter" onchange="">
+                </select>
+            </div>
+
+            <div class="table-container">
+                <table id="food-trucks-table">
+                    <thead>
+                        <tr>
+                            <th>الاسم</th>
+                            <th>الشعار</th>
+                            <th>صورة العربة</th>
+                            <th>رقم الترخيص</th>
+                            <th>المالك</th>
+                            <th>الفئة</th>
+                            <th>الحالة</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Food truck rows will be added here dynamically -->
+                    </tbody>
+                </table>
+
+                <div id="pagination-controls" style="text-align: center; margin-top: 20px;"></div>
+            </div>
+            <div class="loading" id="loading-message">
+                <img src="images/WaitingTruck2.png" alt="Loading Food Truck">
+                <p> الرجاء الإنتظار...</p>
+            </div> 
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs, doc,  getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+    authDomain: "trucki-database.firebaseapp.com",
+    projectId: "trucki-database",
+    storageBucket: "trucki-database.appspot.com",
+    messagingSenderId: "283818817351",
+    appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+onAuthStateChanged(auth, (user) => {
+    const statusElement = document.getElementById('status');
+    if (user) {
+        const username = user.email.split('@')[0];
+        statusElement.innerText = `مرحبًا ${username} !`;
+        fetchFoodTrucks(); // Fetch the trucks
+    } else {
+        statusElement.innerText = "لم يتم تسجيل الدخول";
+        window.location.href = "WelcomePage.html";
+    }
+});
+
+const logoutIcon = document.getElementById('logout-icon');
+logoutIcon.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        alert("تم تسجيل الخروج بنجاح!");
+        window.location.href = "WelcomePage.html";
+    } catch (error) {
+        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+    }
+});
+
+//*****************************-- Search Function
+let originalRows = [];
+
+function searchTrucks() {
+    const searchTerm = document.getElementById('search-bar').value.toLowerCase(); 
+
+    if (searchTerm !== "") {
+        const filteredRows = originalRows.filter(row => {
+            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            return name.includes(searchTerm);
+        });
+
+        allRows = filteredRows;
+        displayPage(1);
+    } else {
+        allRows = [...originalRows];
+        displayPage(1);
+    }
+}
+document.getElementById('search-bar').addEventListener('keyup', searchTrucks);
+
+let currentPage = 1;
+const rowsPerPage = 6;
+let allRows = [];
+originalRows = [];
+
+async function fetchFoodTrucks() {
+    try {
+        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+
+        if (querySnapshot.empty) {
+            const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
+            foodTrucksTableBody.innerHTML = ''; 
+            const noDataRow = document.createElement('tr');
+            noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+            foodTrucksTableBody.appendChild(noDataRow);
+            return;
+        }
+
+        allRows = [];
+        for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            const truckId = docSnapshot.id; //****************NEW FOR FOOD TRUCK PROFILE
+
+            const ownerID = data.ownerID;
+            const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+            const ownerDoc = await getDoc(ownerDocRef);
+
+            const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
+            const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
+            const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+
+            const statusId = data.statusId;
+            let statusText = 'غير محددة';
+
+            if (statusId) {
+                const requestDocRef = doc(db, "Request", statusId);
+                const requestDoc = await getDoc(requestDocRef);
+
+                if (requestDoc.exists()) {
+                    const requestData = requestDoc.data();
+                    if (requestData.status === 'pending') {
+                        statusText = 'قيد الإنتظار';
+                    } else if (requestData.status === 'accepted') {
+                        statusText = 'مقبولة';
+                    } else if (requestData.status === 'rejected') {
+                        statusText = 'مرفوضة';
+                    }
+                }
+            }
+
+            const categoryId = data.categoryId;
+            let categoryText = 'غير محددة';
+
+            if (categoryId) {
+                const categoryDocRef = doc(db, "Food-Category", categoryId);
+                const categoryDoc = await getDoc(categoryDocRef);
+
+                if (categoryDoc.exists()) {
+                    const categoryData = categoryDoc.data();
+                    categoryText = categoryData.name;
+                }
+            }
+
+            const row = document.createElement('tr');
+            row.addEventListener('click', () => { //****************NEW FOR FOOD TRUCK PROFILE
+            window.location.href = `TruckProfile.html?truckId=${truckId}`;
+        });
+
+                    if (statusText === 'مقبولة') {
+                        row.classList.add('active-row');
+                    } else {
+                        row.classList.add('inactive-row');
+                    }
+
+                    row.innerHTML = `
+                        <td>${data.name}</td>
+                        <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
+                        <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
+                        <td>${data.licenseNo}</td>
+                        <td>
+                            <div class="owner-details">
+                                <p><strong>الاسم:</strong> ${ownerName}</p>
+                                <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
+                                <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
+                            </div>
+                        </td>
+                        <td>${categoryText}</td>
+                        <td>${statusText}</td>
+                    `;
+
+                    allRows.push(row);
+                    originalRows.push(row);
+                }
+
+                // After successful fetching, hide loading message and show content
+                document.getElementById('loading-message').style.display = 'none'; // Hide loading message
+                document.querySelector('.content').style.display = 'block'; // Show content
+
+                displayPage(currentPage);
+            } catch (error) {
+                console.error("Error fetching food trucks:", error);
+                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات."; // Error message
+            }
+        }
+
+        function displayPage(page) {
+            const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
+            foodTrucksTableBody.innerHTML = '';
+
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const rowsToDisplay = allRows.slice(start, end);
+
+            rowsToDisplay.forEach((row) => foodTrucksTableBody.appendChild(row));
+
+            updatePaginationControls();
+        }
+
+        function updatePaginationControls() {
+            const paginationContainer = document.getElementById('pagination-controls');
+            paginationContainer.innerHTML = '';
+
+            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+
+            const prevLink = document.createElement('span');
+            prevLink.textContent = '<';
+            prevLink.classList.add('pagination-link');
+            if (currentPage === 1) {
+                prevLink.classList.add('disabled');
+            } else {
+                prevLink.addEventListener('click', () => {
+                    currentPage--;
+                    displayPage(currentPage);
+                });
+            }
+            paginationContainer.appendChild(prevLink);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement('span');
+                pageLink.textContent = i;
+                pageLink.classList.add('pagination-link');
+                if (i === currentPage) {
+                    pageLink.classList.add('active-page');
+                }
+                pageLink.addEventListener('click', () => {
+                    currentPage = i;
+                    displayPage(currentPage);
+                });
+                paginationContainer.appendChild(pageLink);
+            }
+
+            const nextLink = document.createElement('span');
+            nextLink.textContent = '>';
+            nextLink.classList.add('pagination-link');
+            if (currentPage === totalPages) {
+                nextLink.classList.add('disabled');
+            } else {
+                nextLink.addEventListener('click', () => {
+                    currentPage++;
+                    displayPage(currentPage);
+                });
+            }
+            paginationContainer.appendChild(nextLink);
+        }
+    </script>
+</body>
+</html>

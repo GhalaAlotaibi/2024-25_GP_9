@@ -1,0 +1,147 @@
+/* General Styles */
+body {
+    font-family: 'Zain', sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #fff, #faf3f0);
+    color: #5B3E5B; /* نص أرجواني داكن */
+    display: flex;
+    flex-direction: column; /* Stack children vertically */
+    align-items: center; /* Center items horizontally */
+}
+
+/* Content Container */
+.content {
+    display: flex;
+    align-items: stretch;  /* Ensure the items stretch to fill the height */
+    justify-content: center;
+    width: 80%;
+    max-width: 1200px;
+    background: #EBD4E0; /* لون وردي فاتح */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+/* Image Container */
+.image-container {
+    flex: 1;
+    background: #FAF3F0; /* خلفية بيج */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0; /* Ensure no extra space is added */
+}
+
+.image-container img {
+    width: 380px;
+    height: auto;
+    margin: auto;
+    border-radius: 10px; /* Rounded edges */
+    transition: transform 0.3s ease; /* Zoom effect */
+}
+
+.image-container img:hover {
+    transform: scale(1.1); /* Zoom in effect */
+}
+
+
+/* Login Container */
+.login-container {
+    flex: 1;
+    padding: 20px; /* Reduced padding */
+    box-sizing: border-box;
+    text-align: center;
+    margin-right: 0; /* Remove the margin to eliminate space */
+    width: 100%; /* Make sure the container fills the available space */
+}
+
+.login-container h1 {
+    margin-bottom: 20px;
+    font-size: 30px;
+    color: #5B3E5B; /* لون النص */
+    text-align: center; /* مركز النص */
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 5px;
+    color: #5B3E5B; /* لون النص */
+    font-size: 18px;
+    text-align: center;
+}
+
+.input-group input {
+    width: 70%;
+    padding: 14px;
+    border: 2px solid #D1B3C8;
+    border-radius: 10px;
+    background-color: #FAF3F0;
+    color: #5B3E5B;
+    font-size: 16px;
+    box-sizing: border-box;
+    transition: all 0.3s ease; /* Smooth transitions */
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #7A557A;
+    box-shadow: 0 0 5px rgba(122, 85, 122, 0.5); /* Subtle glow effect */
+}
+
+.input-group input::placeholder {
+    color: #D1B3C8; /* نص الإرشاد */
+}
+
+/* Button Styles */
+.btn {
+    width: 70%;
+    padding: 12px;
+    background-color: #7A557A;
+    color: #FAF3F0;
+    border: none;
+    border-radius: 15px; /* More rounded */
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition */
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+.btn:hover {
+    background-color: #5B3E5B;
+    transform: scale(1.05); /* Slight scale effect */
+}
+
+
+/* Register Link */
+.register-link {
+    text-align: center; 
+    margin-top: 15px;
+    font-size: 14px;
+    color: #5B3E5B; /* لون النص */
+}
+
+.register-link a {
+    color: #7A557A; /* لون الروابط */
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+}
+
+.logo-container {
+    display: flex; /* Use flexbox for precise alignment */
+    justify-content: flex-end; /* Align items to the right */
+    margin: 10px 20px 20px; /* Adjust spacing around the logo */
+}
+
+.logo {
+    max-width: 150px; /* Adjust the size of the logo */
+    height: auto;
+}

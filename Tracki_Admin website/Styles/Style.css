@@ -1,0 +1,257 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Zain', sans-serif;
+}
+
+/* Body Styling */
+body {
+    font-family: 'Arial', sans-serif; /* Modern Arabic-friendly font */
+    background: linear-gradient(135deg, #fff, #f7f7f7);
+    color: #5B3E5B; /* Dark purple text */
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure footer stays at the bottom */
+    overflow-x: hidden; /* Remove horizontal scroll */
+}
+
+/* Status Section !*/
+.status-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 20px 30px;
+    border-bottom: 2px solid #e6d8de;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    margin: 1px;
+    direction: rtl;
+    font-weight: bold; /* Make text bold */
+    color: #5B3E5B; /* Set the color of the text (dark purple in this example) */
+}
+
+.left-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.right-actions {
+    display: flex;
+    align-items: center; /* Ensure icons are vertically centered */
+    gap: 15px; /* Space between icons */
+}
+
+.notification-icon, .logout-icon {
+    font-size: 20px; /* Example size for notification icon */
+    transition: transform 0.3s ease, font-size 0.3s ease; /* Smooth transition */
+}
+
+.notification-icon:hover, .logout-icon:hover {
+    transform: scale(1.3); /* Increase size by 30% */
+    font-size: 20px; /* You can adjust this value based on how big you want them */
+}
+
+
+/* Status Text */
+#status {
+    font-size: 16px;
+    color: #5B3E5B;
+    margin: 0;
+}
+
+/* Header of Bar Styling */
+
+.headerOfBar {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.headerOfBar img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Circular logo */
+    object-fit: cover;
+}
+
+.headerOfBar h1 {
+    font-size: 22px;
+    margin: 0;
+    color: #faf3f0; /* Light beige text */
+}
+
+/* Main Container */
+.main-container {
+    margin-right: 174px; /* Offset content to account for fixed sidebar on the right */
+    flex: 1;
+    gap: 20px;
+    padding: 20px; /* Add spacing inside content area */
+}
+
+/* Sidebar Styling */
+.sidebar {
+    position: fixed; /* Fix the sidebar in place */
+    top: 0;
+    right: 0; /* Move the sidebar to the right side */
+    width: 14%;
+    height: 100vh; /* Full height of the viewport */
+    background: linear-gradient(135deg, rgba(154, 119, 154, 0.9), rgba(122, 85, 122, 0.9));
+    color: #faf3f0; /* Light beige text */
+    padding: 20px;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.2); /* Shadow to the left */
+    z-index: 1000; /* Ensure it stays above other elements */
+    overflow-y: auto; /* Enable scrolling if content exceeds height */
+    border-radius: 0; /* Remove any rounding for a clean edge */
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    margin: 10px 0;
+}
+
+.sidebar a {
+    display: flex;
+    align-items: center;
+    color: #faf3f0; /* Light beige text */
+    text-decoration: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 16px;
+    gap: 10px; /* Space between icon and text */
+}
+
+.sidebar a i {
+    font-size: 18px;
+}
+
+.sidebar a:hover {
+    background-color: rgba(255, 255, 255, 0.15); /* Subtle hover effect */
+    transform: scale(1.05); /* Slight zoom effect */
+}
+
+/* Content Styling */
+.content {
+    flex: 1;
+    padding: 25px;
+    background-color: #ffffff; /* Clean white background */
+    color: #5B3E5B; /* Dark purple text */
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px; /* Smooth edges */
+}
+
+.content h1 {
+    font-size: 28px;
+    color: #7A557A; /* Dark purple */
+    margin-bottom: 20px;
+}
+
+.content p {
+    font-size: 16px;
+    color: #5B3E5B;
+}
+
+/* Footer Section */
+.footer {
+    margin-right: 14%; /* Align footer with the content */
+    background: linear-gradient(135deg, rgba(154, 119, 154, 0.9), rgba(122, 85, 122, 0.9));
+    color: #FAF3F0; /* Light beige text */
+    text-align: center;
+    padding: 15px;
+    font-size: 14px;
+    border-top: 2px solid #5B3E5B;
+}
+/* Buttons */
+/*
+button {
+    background: linear-gradient(to right, #7A557A, #5B3E5B);
+    border: none;
+    color: #FAF3F0;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 25px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+*/
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .main-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%; /* Sidebar takes full width on small screens */
+        margin-bottom: 20px;
+        box-shadow: none;
+    }
+
+    .content {
+        margin-top: 0;
+    }
+}
+
+/********************---Loading---********************/
+.loading {
+    display: flex;
+    flex-direction: column; 
+    justify-content: center;
+    align-items: center;
+    position: absolute; 
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%; 
+    background-color: #ffffff; 
+    z-index: 1000; 
+}
+
+.content {
+    position: relative; 
+}
+
+.loading img {
+    width: 60px;
+    animation: moveTruck 2s linear infinite; 
+}
+
+.loading p {
+    margin-top: 10px; 
+    font-size: 20px; 
+    color: #674188;
+}
+
+@keyframes moveTruck {
+    0% { transform: translateX(-100px); }
+    50% { transform: translateX(0); }
+    100% { transform: translateX(100px); }
+}
