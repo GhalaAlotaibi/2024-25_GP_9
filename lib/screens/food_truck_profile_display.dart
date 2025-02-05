@@ -5,12 +5,15 @@ import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import 'package:tracki/screens/owner_reviews.dart'; // Make sure to import your OwnerReviews page
+import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/screens/profile_map.dart';
-// Customers' side 
+
+// Customers' side
 class FoodTruckProfileDisplay extends StatefulWidget {
   final DocumentSnapshot<Object?> documentSnapshot;
-  const FoodTruckProfileDisplay({super.key, required this.documentSnapshot});
+  final customerID;
+  const FoodTruckProfileDisplay(
+      {super.key, required this.documentSnapshot, required this.customerID});
 
   @override
   State<FoodTruckProfileDisplay> createState() =>
@@ -24,84 +27,60 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
 
   bool isFavorite = false;
   String categoryName = '';
+  double averageRating = 0.0;
+  int reviewsCount = 0;
+  double totalRating = 0.0;
+  int count = 0;
 
   @override
   void initState() {
     super.initState();
     _checkIfFavorite();
     _loadCategoryName();
+    _fetchReviews();
   }
 
-  // Load the category name based on the categoryId
-  Future<void> _loadCategoryName() async {
-    final categoryId = widget.documentSnapshot['categoryId'];
-    final name = await getCategoryNameById(categoryId);
-    setState(() {
-      categoryName = name;
-    });
-  }
-
-  // Fetch category name by categoryId from Firestore
-  Future<String> getCategoryNameById(String categoryId) async {
+  Future<void> _fetchReviews() async {
     try {
-      final categoryDoc =
-          await _firestore.collection('Food-Category').doc(categoryId).get();
+      // Stream to fetch reviews from Firestore
+      Stream<QuerySnapshot<Map<String, dynamic>>> _reviewsStream = _firestore
+          .collection('Review')
+          .where('foodTruckId', isEqualTo: widget.documentSnapshot.id)
+          .snapshots();
 
-      if (categoryDoc.exists) {
-        return categoryDoc['name'] ?? 'Unknown Category';
-      } else {
-        return 'Unknown Category';
-      }
+      // Listening to the stream
+      _reviewsStream
+          .listen((QuerySnapshot<Map<String, dynamic>> reviewsSnapshot) {
+        if (reviewsSnapshot.docs.isNotEmpty) {
+          double totalRating = 0.0;
+          int count = reviewsSnapshot.docs.length;
+
+          for (var doc in reviewsSnapshot.docs) {
+            // Safely parse the rating from Firestore
+            double rating =
+                double.tryParse(doc.data()['rating'].toString()) ?? 0.0;
+            totalRating += rating;
+          }
+
+          // Update the UI with calculated values
+          setState(() {
+            averageRating = totalRating / count;
+            reviewsCount = count;
+          });
+        } else {
+          // Handle case with no reviews
+          setState(() {
+            averageRating = 0.0;
+            reviewsCount = 0;
+          });
+        }
+      });
     } catch (e) {
-      print('Error fetching category name: $e');
-      return 'Error loading category';
+      print('Error fetching reviews: $e');
     }
   }
 
-  Future<void> _checkIfFavorite() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final favDoc = await _firestore
-          .collection('Favorite')
-          .doc(user.uid)
-          .collection('favorites')
-          .doc(widget.documentSnapshot.id)
-          .get();
-      setState(() {
-        isFavorite = favDoc.exists;
-      });
-    }
-  }
-
-  Future<void> _toggleFavorite() async {
-    final user = _auth.currentUser;
-    if (user != null) {
-      final favRef = _firestore
-          .collection('Favorite')
-          .doc(user.uid)
-          .collection('favorites')
-          .doc(widget.documentSnapshot.id);
-
-      if (isFavorite) {
-        // Remove from favorites
-        await favRef.delete();
-      } else {
-        // Add to favorites
-        await favRef.set({
-          'truckId': widget.documentSnapshot.id,
-          'truckName': widget.documentSnapshot['name'],
-          'truckImage': widget.documentSnapshot['truckImage'],
-          'businessLogo': widget.documentSnapshot['businessLogo'],
-          'category': categoryName,
-          'operatingHours': widget.documentSnapshot['operatingHours'],
-        });
-      }
-      setState(() {
-        isFavorite = !isFavorite;
-      });
-    }
-  }
-
+  @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
@@ -233,20 +212,20 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                         const SizedBox(height: 10),
                         Row(
                           children: [
-                            const SizedBox(width: 10),
                             const Icon(
                               Iconsax.star1,
                               color: Colors.amberAccent,
                             ),
-                            const Text("5/"),
+                            Text("5/"),
                             Text(
-                              widget.documentSnapshot['rating'],
+                              averageRating.toStringAsFixed(
+                                  1), // Correctly display the average rating
                               style:
                                   const TextStyle(fontWeight: FontWeight.bold),
                             ),
                             const SizedBox(width: 5),
                             Text(
-                              "( ${widget.documentSnapshot['ratingsCount']}  تقييم )",
+                              "( $reviewsCount تقييم )", // Correctly display the review count
                               style: TextStyle(
                                 color: Color.fromARGB(255, 163, 163, 163),
                                 fontSize: 11,
@@ -377,6 +356,76 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
     );
   }
 
+  // load the category name based on the categoryId
+  Future<void> _loadCategoryName() async {
+    final categoryId = widget.documentSnapshot['categoryId'];
+    final name = await getCategoryNameById(categoryId);
+    setState(() {
+      categoryName = name;
+    });
+  }
+
+  // Fetch category name by categoryId from Firestore
+  Future<String> getCategoryNameById(String categoryId) async {
+    try {
+      final categoryDoc =
+          await _firestore.collection('Food-Category').doc(categoryId).get();
+
+      if (categoryDoc.exists) {
+        return categoryDoc['name'] ?? 'Unknown Category';
+      } else {
+        return 'Unknown Category';
+      }
+    } catch (e) {
+      print('Error fetching category name: $e');
+      return 'Error loading category';
+    }
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final favDoc = await _firestore
+          .collection('Favorite')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(widget.documentSnapshot.id)
+          .get();
+      setState(() {
+        isFavorite = favDoc.exists;
+      });
+    }
+  }
+
+  Future<void> _toggleFavorite() async {
+    final user = _auth.currentUser;
+    if (user != null) {
+      final favRef = _firestore
+          .collection('Favorite')
+          .doc(user.uid)
+          .collection('favorites')
+          .doc(widget.documentSnapshot.id);
+
+      if (isFavorite) {
+        // Remove from favorites
+        await favRef.delete();
+      } else {
+        // Add to favorites
+        await favRef.set({
+          'truckId': widget.documentSnapshot.id,
+          'truckName': widget.documentSnapshot['name'],
+          'truckImage': widget.documentSnapshot['truckImage'],
+          'businessLogo': widget.documentSnapshot['businessLogo'],
+          'category': categoryName,
+          'operatingHours': widget.documentSnapshot['operatingHours'],
+        });
+      }
+      setState(() {
+        isFavorite = !isFavorite;
+      });
+    }
+  }
+
   FloatingActionButton viewLocationAndAddToFavoriteButton() {
     return FloatingActionButton.extended(
       backgroundColor: Colors.transparent,
@@ -413,8 +462,11 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                      CustomerReviews(ownerID: widget.documentSnapshot.id),
+                  builder: (context) => //the passed parameter
+                      CustomerReviews(
+                    truckID: widget.documentSnapshot.id,
+                    customerID: widget.customerID,
+                  ),
                 ),
               );
             },

@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
 import 'dart:io';
+import 'package:file_picker/file_picker.dart';
 
 class CreateTruck1 extends StatefulWidget {
   final String ownerId;
@@ -28,12 +29,14 @@ class _CreateTruck1State extends State<CreateTruck1> {
   String? closingTime;
   File? businessLogo;
   File? truckImage;
+  File? licenseFile;
+  String? licenseFileUrl;
 
   List<Map<String, String>> categories = [];
   final List<String> timeList = [];
   bool isLogoMissing = false;
   bool isImageMissing = false;
-
+  bool isLicenseMissing = false;
   @override
   void initState() {
     super.initState();
@@ -98,6 +101,27 @@ class _CreateTruck1State extends State<CreateTruck1> {
       timeList.add(time);
     }
     return timeList;
+  }
+
+  Future<void> _pickAndUploadFile() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      File file = File(result.files.single.path!);
+      try {
+        final storageRef = FirebaseStorage.instance
+            .ref()
+            .child('licenses/${DateTime.now().millisecondsSinceEpoch}');
+        await storageRef.putFile(file);
+        final fileUrl = await storageRef.getDownloadURL();
+
+        setState(() {
+          licenseFile = file;
+          licenseFileUrl = fileUrl;
+        });
+      } catch (e) {
+        print('Error uploading file: $e');
+      }
+    }
   }
 
   @override
@@ -232,33 +256,26 @@ class _CreateTruck1State extends State<CreateTruck1> {
 
                       Directionality(
                         textDirection: TextDirection.rtl,
-                        child: TextFormField(
-                          decoration: InputDecoration(
-                            labelText: 'رقم الرخصة',
-                            border: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  const BorderSide(color: Colors.black12),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                        child: ElevatedButton.icon(
+                          onPressed: _pickAndUploadFile,
+                          icon: Icon(Icons.upload_file),
+                          label: Text(licenseFile == null
+                              ? 'تحميل ملف رخصة عربة متنقلة '
+                              : 'تم تحميل الملف'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.grey[200],
+                            foregroundColor: const Color.fromARGB(255, 0, 0, 0),
                           ),
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'الرجاء إدخال رقم الرخصة';
-                            }
-                            return null;
-                          },
-                          onChanged: (value) {
-                            setState(() {
-                              licenseNo = value;
-                            });
-                          },
                         ),
                       ),
+                      if (isLicenseMissing)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(
+                            'الرجاء تحميل ملف رقم الرخصة',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                        ),
 
                       const SizedBox(height: 25.0),
 //category
@@ -543,19 +560,19 @@ class _CreateTruck1State extends State<CreateTruck1> {
                               // Check if images are missing
                               isLogoMissing = businessLogo == null;
                               isImageMissing = truckImage == null;
-
                               if (!isLogoMissing &&
                                   !isImageMissing &&
+                                  !isLicenseMissing &&
                                   _formKey.currentState!.validate()) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) {
-                                      // Navigation logic here
                                       return CreateTruck2(
                                         ownerId: widget.ownerId,
                                         truckName: truckName,
-                                        licenseNo: licenseNo,
+                                        licenseNo: licenseFileUrl ??
+                                            '', // <- Now using uploaded file URL
                                         businessLogo: businessLogoUrl,
                                         truckImage: truckImageUrl,
                                         selectedCategory: selectedCategory!,
@@ -570,7 +587,7 @@ class _CreateTruck1State extends State<CreateTruck1> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                        'الرجاء التأكد من أن كل إدخال البيانات كاملة'),
+                                        'الرجاء التأكد من إدخال البيانات كاملة'),
                                   ),
                                 );
                               }

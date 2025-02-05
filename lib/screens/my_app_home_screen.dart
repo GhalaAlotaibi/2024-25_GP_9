@@ -7,19 +7,23 @@ import 'package:tracki/screens/view_all_items.dart';
 import 'package:tracki/widgets/banner.dart';
 import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-
 import '../user_auth/firebase_auth_services.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/gestures.dart';
 
 class MyAppHomeScreen extends StatefulWidget {
-  const MyAppHomeScreen({super.key});
+  final String customerID;
+  const MyAppHomeScreen({super.key, required this.customerID});
 
   @override
   State<MyAppHomeScreen> createState() => _MyAppHomeScreenState();
 }
 
+//setState
 class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
+  String selectedCategoryId = "";
+
+  late final String cID = widget.customerID;
   final FirebaseAuthService _authService = FirebaseAuthService();
 
   final CollectionReference categoriesItems =
@@ -27,74 +31,101 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
   Query get allItems => FirebaseFirestore.instance.collection("Food_Truck");
   Query get selectedTrucks => category == "الكل" ? allItems : filteredItems;
+
+  Query get filteredItems => FirebaseFirestore.instance
+      .collection("Food_Truck")
+      .where("categoryId", isEqualTo: selectedCategoryId);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: kbackgroundColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    headerParts(),
-                    mySearchBar(),
-                    const BannerToExplore(),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Text(
-                        "التصنيفات",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: selectedCategory(),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (_) => const ViewAllItems()));
-                          },
-                          child: const Text(
-                            "عرض الكل",
-                            style: TextStyle(
-                                color: kBannerColor,
-                                fontWeight: FontWeight.w600),
+    return WillPopScope(
+      onWillPop: () async {
+        // Prevent the swipe back gesture
+        return false; // Returning false disables back navigation
+      },
+      child: Scaffold(
+        backgroundColor: kbackgroundColor,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 15),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      headerParts(),
+                      mySearchBar(),
+                      const BannerToExplore(),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Text(
+                          "التصنيفات",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        const Text(
-                          "عربات الطعام",
-                          style: TextStyle(
+                      ),
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: selectedCategory(),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (_) =>
+                                        ViewAllItems(customerID: cID)),
+                              );
+                            },
+                            child: const Text(
+                              "عرض الكل",
+                              style: TextStyle(
+                                color: kBannerColor,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const Text(
+                            "عربات الطعام",
+                            style: TextStyle(
                               fontSize: 20,
-                              letterSpacing: 0.1,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ],
-                    ),
-                    StreamBuilder(
-                      stream: selectedTrucks.snapshots(),
-                      builder:
-                          (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                        if (snapshot.hasData) {
-                          final List<DocumentSnapshot> trucks =
-                              snapshot.data?.docs ?? [];
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                      StreamBuilder<QuerySnapshot>(
+                        stream: selectedTrucks
+                            .snapshots(), // This will update based on the selected category
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return const Center(
+                                child: CircularProgressIndicator());
+                          }
+
+                          if (snapshot.hasError) {
+                            return const Center(
+                                child: Text("Error loading data"));
+                          }
+
+                          if (!snapshot.hasData ||
+                              snapshot.data!.docs.isEmpty) {
+                            return const Center(
+                                child: Text("لا توجد عربات طعام."));
+                          }
+
+                          final trucks = snapshot.data!.docs;
+
                           return Column(
                             children: [
                               Padding(
@@ -105,8 +136,10 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: trucks
-                                          .map((e) =>
-                                              ItemsDisplay(documentSnapshot: e))
+                                          .map((e) => ItemsDisplay(
+                                                documentSnapshot: e,
+                                                customerID: widget.customerID,
+                                              ))
                                           .toList(),
                                     ),
                                   ),
@@ -131,28 +164,19 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                               ),
                             ],
                           );
-                        }
-                        return const Center(child: CircularProgressIndicator());
-                      },
-                    ),
-                    const SizedBox(
-                      height: 100,
-                    ),
-                  ],
+                        },
+                      ),
+                      const SizedBox(height: 100),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
-
-  Query get filteredItems => FirebaseFirestore.instance
-      .collection("Food_Truck")
-      .where("categoryId", isEqualTo: selectedCategoryId);
-
-  String selectedCategoryId = "";
 
   StreamBuilder<QuerySnapshot<Object?>> selectedCategory() {
     return StreamBuilder(
@@ -171,10 +195,12 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
                   return GestureDetector(
                     onTap: () {
-                      setState(() {
-                        selectedCategoryId = categoryId;
-                        category = categoryName;
-                      });
+                      if (mounted) {
+                        setState(() {
+                          selectedCategoryId = categoryId;
+                          category = categoryName;
+                        });
+                      }
                     },
                     child: Container(
                       decoration: BoxDecoration(

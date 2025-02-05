@@ -132,7 +132,7 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
           BottomNavigationBarItem(
               icon: Icon(
                   selectedIndex == 2 ? Iconsax.location5 : Iconsax.location),
-              label: 'تحديث الموقع'),
+              label: 'الموقع الحالي'),
           BottomNavigationBarItem(
               icon: Icon(
                   selectedIndex == 3 ? Iconsax.setting_21 : Iconsax.setting_2),

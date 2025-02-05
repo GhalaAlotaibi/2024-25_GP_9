@@ -265,7 +265,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             ),
             buildServiceCard(
               icon: Iconsax.location,
-              title: 'الموقع الحالي',
+              title: 'تحديث الموقع ',
               color: kBannerColor,
               onTap: () {},
             ),

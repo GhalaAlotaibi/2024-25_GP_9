@@ -6,7 +6,8 @@ import 'package:tracki/screens/food_truck_profile_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
 class ViewAllItems extends StatefulWidget {
-  const ViewAllItems({super.key});
+  final String customerID;
+  const ViewAllItems({super.key, required this.customerID});
 
   @override
   State<ViewAllItems> createState() => _ViewAllItemsState();
@@ -17,8 +18,12 @@ class _ViewAllItemsState extends State<ViewAllItems> {
       FirebaseFirestore.instance.collection("Food_Truck");
   final CollectionReference categoriesCollection =
       FirebaseFirestore.instance.collection("Food-Category");
-  final CollectionReference requestCollection = FirebaseFirestore.instance
-      .collection("Request"); 
+  final CollectionReference requestCollection =
+      FirebaseFirestore.instance.collection("Request");
+
+  final TextEditingController searchController = TextEditingController();
+  String searchQuery = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,13 +33,14 @@ class _ViewAllItemsState extends State<ViewAllItems> {
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
-          const SizedBox(width: 15),
+          const SizedBox(width: 20),
           const Spacer(),
           const Text(
             "العربات",
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
           ),
-          const Spacer(),
+          const SizedBox(width: 105),
+          // const Spacer(),
           MyIconButton(
               icon: Icons.arrow_forward_ios,
               pressed: () {
@@ -52,13 +58,18 @@ class _ViewAllItemsState extends State<ViewAllItems> {
               stream: completeListOfTrucks.snapshots(),
               builder: (context, AsyncSnapshot<QuerySnapshot> streamSnapshot) {
                 if (streamSnapshot.hasData) {
+                  final filteredDocs = streamSnapshot.data!.docs.where((doc) {
+                    final truckName = doc['name'].toString().toLowerCase();
+                    return truckName.contains(searchQuery.toLowerCase());
+                  }).toList();
+
                   return ListView.builder(
-                    itemCount: streamSnapshot.data!.docs.length,
+                    itemCount: filteredDocs.length,
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
                     itemBuilder: (context, index) {
                       final DocumentSnapshot documentSnapshot =
-                          streamSnapshot.data!.docs[index];
+                          filteredDocs[index];
 
                       String uniqueId =
                           '${documentSnapshot.id}_${documentSnapshot["name"]}';
@@ -108,9 +119,10 @@ class _ViewAllItemsState extends State<ViewAllItems> {
                                           MaterialPageRoute(
                                             builder: (context) =>
                                                 FoodTruckProfileDisplay(
-                                              documentSnapshot:
-                                                  documentSnapshot,
-                                            ),
+                                                    documentSnapshot:
+                                                        documentSnapshot,
+                                                    customerID:
+                                                        widget.customerID),
                                           ),
                                         );
                                       },
@@ -386,6 +398,12 @@ class _ViewAllItemsState extends State<ViewAllItems> {
       child: Directionality(
         textDirection: TextDirection.rtl,
         child: TextField(
+          controller: searchController,
+          onChanged: (value) {
+            setState(() {
+              searchQuery = value;
+            });
+          },
           textAlign: TextAlign.right,
           decoration: InputDecoration(
             filled: true,

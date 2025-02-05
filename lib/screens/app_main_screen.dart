@@ -5,7 +5,7 @@ import 'package:tracki/screens/customer_settings.dart';
 import 'package:tracki/screens/favourites_page.dart';
 import 'package:tracki/screens/my_app_home_screen.dart';
 import 'package:tracki/screens/Customer_map_screen.dart';
- 
+
 import '../Utils/constants.dart';
 
 class AppMainScreen extends StatefulWidget {
@@ -25,7 +25,7 @@ class _AppMainScreenState extends State<AppMainScreen> {
   @override
   void initState() {
     page = [
-      const MyAppHomeScreen(),
+      MyAppHomeScreen(customerID: widget.customerID),
       const FavoritesPage(),
       const CustomerMapScreen(),
       CustomerSettings(customerID: widget.customerID),
