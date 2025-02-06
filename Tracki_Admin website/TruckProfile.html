@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracki - Truck Profile</title>
+    <link rel="stylesheet" href="Styles/Style.css">
+    <link rel="stylesheet" href="Styles/AllTrucks.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="headerOfBar">
+                <img src="images/TrackiLogo.png" alt="Logo">
+                <h1>Tracki</h1>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 20px 0;">
+                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
+                <li><a href="AllTrucks.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-truck"></i> جميع العربات</a></li>
+                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
+                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
+                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+            </ul>
+        </div>  
+        
+        <section class="status-section">
+            <div class="left-actions">
+                <p id="status">مرحبًا!</p>
+            </div>
+            <div class="right-actions">
+                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h2>ملف العربة</h2>
+            <div id="truck-details">
+                <h3>تفاصيل العربة سيتم عرضها هنا</h3>
+                <p>معرف العربة: <span id="truck-id"></span></p>
+                <!-- Add more details as needed -->
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Check authentication status on page load
+        onAuthStateChanged(auth, (user) => {            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];
+                statusElement.innerText = `مرحبًا ${username} !`;
+                fetchTruckDetails(); // Call function to load the truck details
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "WelcomePage.html";
+            }
+        });
+
+        // Logout functionality
+        const logoutIcon = document.getElementById('logout-icon');
+        logoutIcon.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert("تم تسجيل الخروج بنجاح!");
+                window.location.href = "WelcomePage.html";
+            } catch (error) {
+                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+            }
+        });
+
+        // Function to fetch truck details using truckId from the URL
+        async function fetchTruckDetails() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const truckId = urlParams.get('truckId');
+
+            if (truckId) {
+                document.getElementById('truck-id').innerText = truckId; // Display the truck ID
+                
+                try {
+                    const truckDoc = await getDoc(doc(db, "Food_Truck", truckId));
+
+                    if (truckDoc.exists()) {
+                        const data = truckDoc.data();
+                        // You can populate more details about the truck here;
+                        document.getElementById('truck-details').innerHTML += `
+                            <p><strong>الاسم:</strong> ${data.name || "غير محدد"}</p>
+                            <p><strong>رقم الترخيص:</strong> ${data.licenseNo || "غير محدد"}</p>
+                            <p><strong>الفئة:</strong> ${data.categoryId || "غير محدد"}</p>
+                            <p><strong>الحالة:</strong> ${data.statusId || "غير محدد"}</p>
+                            <img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: auto;">
+                            <img src="${data.truckImage}" alt="Truck Image" style="width: 300px; height: auto;">
+                        `;
+                    } else {
+                        document.getElementById('truck-details').innerHTML = "لا توجد بيانات لهذه العربة.";
+                    }
+                } catch (error) {
+                    console.error("Error fetching truck details:", error);
+                    document.getElementById('truck-details').innerHTML = "حدث خطأ أثناء تحميل تفاصيل العربة.";
+                }
+            } else {
+                document.getElementById('truck-details').innerHTML = "معرف العربة غير موجود.";
+            }
+        }
+    </script>
+</body>
+</html>

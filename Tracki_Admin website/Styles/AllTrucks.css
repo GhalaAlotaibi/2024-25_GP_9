@@ -1,0 +1,182 @@
+/**********************************************(AllTrucks)*********************************************************/
+/* Style for table */
+table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* Row background color */
+tr:nth-child(odd),
+tr:nth-child(even) {
+    background-color: #faf1f4;
+    /* Slightly darker for even rows */
+}
+
+/* Other styles for table rows and cells */
+th,
+td {
+    padding: 10px;
+    text-align: right;
+    border-bottom: 1px solid #ddd;
+    word-wrap: break-word;
+    white-space: normal;
+}
+
+th {
+    background-color: #7A557A;
+    color: #faf3f0;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+td {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+
+tr:hover {
+    background-color: rgba(154, 119, 154, 0.1);
+    cursor: pointer;
+}
+
+.content {
+    overflow-x: auto;
+    padding: 25px;
+    background-color: #ffffff;
+    color: #5B3E5B;
+    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+}
+
+/* Table Buttons */
+
+button.accept-btn {
+    background: linear-gradient(to right, #4CAF50, #388E3C);
+    /* Green for accept button */
+}
+
+button.decline-btn {
+    background: linear-gradient(to right, #F44336, #D32F2F);
+    /* Red for decline button */
+}
+
+/**********---------- Style of Fetched Data ----------**********/
+/* Style for trucks */
+.active-row,
+.inactive-row {
+    background-color: #ffffff;
+    font-weight: bold;
+}
+
+/* Accept button styling */
+.accept-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.accept-btn:hover {
+    background-color: #45a049;
+}
+
+/* Decline button styling */
+.decline-btn {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.decline-btn:hover {
+    background-color: #e53935;
+}
+
+/* Hover effect for active and inactive rows */
+.active-row:hover {
+    background-color: #f3dada;
+    /* Lighter green when hovered */
+}
+
+.inactive-row:hover {
+    background-color: #f3dada;
+    /* Lighter red when hovered */
+}
+
+/**********---------- Style of Pagination ----------**********/
+/* Pagination Container */
+#pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-top: 20px;
+    font-family: 'Zain', sans-serif;
+}
+
+/* Pagination Links */
+#pagination-controls .pagination-link {
+    color: #ac8eac;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Hover Effect */
+#pagination-controls .pagination-link:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+/* Active Page Styling */
+#pagination-controls .active-page {
+    color: #5B3E5B;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* Disabled State */
+#pagination-controls .disabled {
+    color: #ac8eac;
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+/********************---Search and Filering---********************/
+.filter-section {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-start;
+    /* Align items to the left */
+    align-items: center;
+    gap: 10px;
+    /* Adds space between the search bar and the filter dropdown */
+    width: 100%;
+    /* Ensure it takes up the full width of the container */
+}
+
+#search-bar {
+    padding: 5px;
+    font-size: 16px;
+    width: 250px;
+    border-radius: 10px;
+    /* Rounded edges for the search bar */
+}
+
+#category-filter {
+    border-radius: 10px;
+    /* Rounded edges for the filter dropdown */
+    padding: 5px;
+    font-size: 16px;
+}

@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracki - Main Page</title>
+    <link rel="stylesheet" href="Styles/Style.css">
+    <link rel="stylesheet" href="Styles/MainPage.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <!-- Header -->
+
+    <div class="main-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="headerOfBar">
+                <img src="images/TrackiLogo.png" alt="Logo">
+                <h1>Tracki</h1>
+            </div>
+            <ul style="list-style: none; padding: 0; margin: 20px 0;">
+                <li><a href="MainPage.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
+                <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
+                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
+                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
+                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+            </ul>
+        </div>  
+        
+        <section class="status-section">
+            <div class="left-actions">
+                <p id="status">مرحبًا!</p>
+            </div>
+            <div class="right-actions">
+                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h1>مرحبًا بكم في الموقع</h1>
+            <p>يمكنك إضافة المزيد من المحتوى هنا.</p>
+            
+            <!-- Chart Canvas -->
+            <canvas id="foodTruckChart" width="400" height="200"></canvas>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    </div>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Real-Time User Authentication
+        onAuthStateChanged(auth, (user) => {
+            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];         
+                statusElement.innerText = `مرحبًا ${username} !`;
+                // Fetch data and create the chart
+                fetchFoodTruckData();
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "WelcomePage.html";
+            }
+        });
+
+        // Logout functionality
+        const logoutIcon = document.getElementById('logout-icon');
+        logoutIcon.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert("تم تسجيل الخروج بنجاح!");
+                window.location.href = "WelcomePage.html";
+            } catch (error) {
+                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+            }
+        });
+
+        async function fetchFoodTruckData() {
+    try {
+        console.log("Fetching food trucks...");
+        const foodTruckRef = collection(db, "Food_Truck");
+        const categoryRef = collection(db, "Food-Category");
+
+        const foodTruckSnapshot = await getDocs(foodTruckRef);
+        console.log("Food trucks fetched:", foodTruckSnapshot.docs.length);
+        
+        const categorySnapshot = await getDocs(categoryRef);
+        console.log("Categories fetched:", categorySnapshot.docs.length);
+        
+        const categoryCount = {};
+        let totalTrucks = 0;
+
+        // Count the number of food trucks in each category
+        foodTruckSnapshot.forEach((doc) => {
+            const categoryId = doc.data().categoryId; 
+            categoryCount[categoryId] = (categoryCount[categoryId] || 0) + 1; 
+            totalTrucks++; 
+        });
+
+        const categoryNames = {};
+        categorySnapshot.forEach((doc) => {
+            const data = doc.data();
+            categoryNames[doc.id] = data.name;
+        });
+
+        const labels = [];
+        const dataValues = [];
+        
+        for (const [id, count] of Object.entries(categoryCount)) {
+            if (categoryNames[id]) {
+                labels.push(categoryNames[id]);
+                const percentage = ((count / totalTrucks) * 100).toFixed(2);
+                dataValues.push(percentage);
+            }
+        }
+
+        console.log("Total trucks:", totalTrucks);
+        console.log("Category counts:", categoryCount);
+        console.log("Category names:", categoryNames);
+
+        if (labels.length > 0 && dataValues.length > 0) {
+            createPieChart(labels, dataValues);
+        } else {
+            console.warn("No data available for chart.");
+        }
+    } catch (error) {
+        console.error("Error fetching food truck data: ", error);
+    }
+}
+
+        // Function to create a pie chart using Chart.js
+        function createPieChart(labels, dataValues) {
+            const ctx = document.getElementById('foodTruckChart').getContext('2d');
+            const foodTruckChart = new Chart(ctx, {
+                type: 'pie', // Set to 'pie' for a pie chart
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'نسبة العربات حسب الفئة',
+                        data: dataValues,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.6)',
+                            'rgba(54, 162, 235, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(153, 102, 255, 0.6)',
+                            'rgba(255, 159, 64, 0.6)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                }
+            });
+        }
+    </script>
+</body>
+</html>
