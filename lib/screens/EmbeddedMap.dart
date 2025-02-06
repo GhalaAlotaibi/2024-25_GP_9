@@ -1,34 +1,74 @@
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-class EmbeddedMap extends StatelessWidget {
-  final String location; // Location as "latitude,longitude"
+class EmbeddedMap extends StatefulWidget {
+  final String location; // Location in "latitude,longitude" format
 
   const EmbeddedMap({Key? key, required this.location}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    // Construct Google Maps URL
-    String mapsUrl =
-        "https://www.google.com/maps/search/?api=1&query=${Uri.encodeFull(location)}";
+  _EmbeddedMapState createState() => _EmbeddedMapState();
+}
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Google Maps'),
-      ),
-      body: WebView(
-        initialUrl: mapsUrl,
-        javascriptMode: JavascriptMode.unrestricted, // Enable JavaScript
-        onPageStarted: (url) {
-          debugPrint("Loading: $url");
-        },
-        onPageFinished: (url) {
-          debugPrint("Finished loading: $url");
-        },
-        onWebResourceError: (error) {
-          debugPrint("Error loading page: ${error.description}");
-        },
-      ),
-    );
+class _EmbeddedMapState extends State<EmbeddedMap> {
+  late InAppWebViewController _webViewController;
+  bool _isValid = false;
+  String? _errorMessage;
+
+  @override
+  void initState() {
+    super.initState();
+    String location = widget.location.trim();
+
+    if (location.isEmpty) {
+      _errorMessage = 'No location data available';
+      return;
+    }
+
+    List<String> locationParts = location.split(',');
+    if (locationParts.length != 2) {
+      _errorMessage = 'Invalid location format';
+      return;
+    }
+
+    String latitude = locationParts[0].trim();
+    String longitude = locationParts[1].trim();
+    String mapsUrl = "https://www.google.com/maps?q=$latitude,$longitude";
+
+    // Load the URL with the location
+    _isValid = true;
+
+    // Call setState to refresh the widget and show the map
+    setState(() {
+      _errorMessage = null; // Reset error message when valid location is ready
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isValid) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Food Truck Location')),
+        body: InAppWebView(
+          initialUrlRequest: URLRequest(
+            url: WebUri(
+                "https://www.google.com/maps?q=${widget.location}"), // Pass the location URL here
+          ),
+          onWebViewCreated: (InAppWebViewController controller) {
+            _webViewController = controller;
+          },
+          onReceivedError: (controller, request, error) {
+            setState(() {
+              _errorMessage = 'Error loading map: ${error.description}';
+            });
+          },
+        ),
+      );
+    } else {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Error')),
+        body: Center(child: Text(_errorMessage ?? 'Unknown error')),
+      );
+    }
   }
 }

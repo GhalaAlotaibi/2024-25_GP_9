@@ -7,6 +7,7 @@ import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/screens/profile_map.dart';
+import 'package:tracki/screens/EmbeddedMap.dart';
 
 // Customers' side
 class FoodTruckProfileDisplay extends StatefulWidget {
@@ -439,7 +440,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ProfileMap(location: location),
+                  builder: (context) => EmbeddedMap(location: location),
                 ),
               );
             },
