@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/app_main_screen.dart';
@@ -11,14 +12,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracki/screens/statusPending.dart';
 import 'package:tracki/screens/statusRejected.dart';
 import 'package:tracki/screens/forget_password_screen.dart';
-
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
-
   @override
   State<LogInScreen> createState() => _LogInScreenState();
 }
-
 class _LogInScreenState extends State<LogInScreen> {
   final _formLogInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
@@ -26,39 +24,32 @@ class _LogInScreenState extends State<LogInScreen> {
   final TextEditingController passwordController = TextEditingController();
   final FirebaseAuthService _authService = FirebaseAuthService();
   bool isLoading = false;
-
   @override
   void dispose() {
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
-
   Future<void> signIn() async {
     if (_formLogInKey.currentState!.validate() && !isLoading) {
       setState(() {
         isLoading = true;
       });
-
       String userID = "";
       String? result = await _authService.signInWithEmailAndPassword(
         emailController.text.trim(),
         passwordController.text.trim(),
       );
-
       setState(() {
         isLoading = false;
       });
-
       if (result != null && result.isNotEmpty && !isErrorMessage(result)) {
         userID = result;
         print('User ID: $userID');
-
         DocumentSnapshot ownerDoc = await FirebaseFirestore.instance
             .collection('Truck_Owner')
             .doc(userID)
             .get();
-
         if (ownerDoc.exists) {
           // Owner *****************************************
 FirebaseFirestore.instance
@@ -69,7 +60,6 @@ FirebaseFirestore.instance
   if (querySnapshot.docs.isNotEmpty) {
     var foodTruckDoc = querySnapshot.docs.first;
     String statusId = foodTruckDoc['statusId'];
-
     if (statusId != null && statusId.isNotEmpty) {
       FirebaseFirestore.instance
           .collection('Request')
@@ -78,15 +68,17 @@ FirebaseFirestore.instance
           .then((requestDoc) {
         if (requestDoc.exists) {
           String status = requestDoc['status'];
-
-          if (status == 'accepted') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OwnerMainScreen(ownerID: userID),
-              ),
-            );
-          } else if (status == 'pending') {
+       if (status == 'accepted' || status == 'suspended') {
+  Navigator.pushReplacement(
+    context,
+    MaterialPageRoute(
+      builder: (context) => OwnerMainScreen(
+        ownerID: userID,
+        isSuspended: status == 'suspended', // Pass the suspension flag
+      ),
+    ),
+  );
+} else if (status == 'pending') {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
@@ -116,14 +108,12 @@ FirebaseFirestore.instance
 }).catchError((error) {
   print('Error querying Food_Truck collection: $error');
 });
-
         } else {
           // Customer ***************************************************
           DocumentSnapshot customerDoc = await FirebaseFirestore.instance
               .collection('Customer')
               .doc(userID)
               .get();
-
           if (customerDoc.exists) {
             Navigator.pushReplacement(
               context,
@@ -142,7 +132,6 @@ FirebaseFirestore.instance
       }
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -358,7 +347,6 @@ FirebaseFirestore.instance
       ),
     );
   }
-
   bool isErrorMessage(String message) {
     const List<String> errorMessages = [
       'يرجى إدخال بريد إلكتروني صالح',
@@ -373,7 +361,6 @@ FirebaseFirestore.instance
       'المستخدم غير موجود',
       'كلمة المرور خاطئة',
     ];
-
     return errorMessages.contains(message);
   }
 }

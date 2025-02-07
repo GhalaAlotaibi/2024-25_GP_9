@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
@@ -9,35 +10,79 @@ import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/widgets/banner2.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/login_screen.dart';
-
 import '../user_auth/firebase_auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 class OwnerHomeScreen extends StatefulWidget {
   final String ownerID; //the doc id not the ownerID !!
-
   const OwnerHomeScreen({Key? key, required this.ownerID}) : super(key: key);
-
   @override
   _OwnerHomeScreenState createState() => _OwnerHomeScreenState();
 }
-
 class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
   final FirebaseAuthService _authService = FirebaseAuthService();
+  String? suspensionMessage; // Store the suspension message
+  @override
+  @override
+void initState() {
+  super.initState();
+  // Listen to changes in the Food_Truck collection
+  getFoodTruckStream().listen((foodTruckSnapshot) {
+    if (foodTruckSnapshot.exists) {
+      print("Food Truck Data Updated: ${foodTruckSnapshot.data()}");
+    }
+  });
+  // Listen to changes in the Request collection
+  getRequestStream().listen((requestSnapshot) {
+    if (requestSnapshot.docs.isNotEmpty) {
+      Map<String, dynamic> requestData =
+          requestSnapshot.docs.first.data() as Map<String, dynamic>;
+      print("Request Data Updated: $requestData");
+      // Check the suspension status
+      if (requestData['status'] == 'suspended') {
+        setState(() {
+          suspensionMessage =
+              'تم تعليق حسابك. لمزيد من المعلومات، يرجى التواصل مع المسؤول عبر البريد الإلكتروني tracki1ad@gmail.com.';
+        });
+      } else {
+        setState(() {
+          suspensionMessage = null; // Clear the message if not suspended
+        });
+      }
+    }
+  });
+}
+
+
+
+
+
+
+
+  
 
   Future<Map<String, dynamic>> fetchOwnerData(String ownerID) async {
     DocumentSnapshot snapshot = await FirebaseFirestore.instance
         .collection('Food_Truck')
         .doc(ownerID)
         .get();
-
     if (snapshot.exists) {
       return snapshot.data() as Map<String, dynamic>;
     } else {
       throw Exception('Truck not found');
     }
   }
-
+Stream<DocumentSnapshot> getFoodTruckStream() {
+  return FirebaseFirestore.instance
+      .collection('Food_Truck')
+      .doc(widget.ownerID)
+      .snapshots();
+}
+Stream<QuerySnapshot> getRequestStream() {
+  return FirebaseFirestore.instance
+      .collection('Request')
+      .where('foodTruckId', isEqualTo: widget.ownerID)
+      .snapshots();
+}
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,7 +96,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
           if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           }
-
           var ownerData = snapshot.data!;
           String truckImageUrl = ownerData['truckImage'] ?? '';
           String businessLogo = ownerData['businessLogo'] ?? '';
@@ -60,7 +104,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
           String rating = ownerData['rating']?.toString() ?? 'N/A';
           int ratingCount = ownerData['ratingsCount'] ?? 0;
           String ownerID = ownerData['ownerID'] ?? 'Unknown';
-
           return SingleChildScrollView(
             padding: const EdgeInsets.all(0),
             child: Column(
@@ -80,7 +123,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       ),
     );
   }
-
   Widget buildWelcomeMessage(String logoUrl, String ownerID) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 0, 19, 0),
@@ -120,7 +162,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                                 child: const Text('إلغاء'),
                               ),
                             ),
-
                             // Confirm Logout Button with banner color
                             TextButton(
                               onPressed: () {
@@ -141,7 +182,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                       },
                     ) ??
                     false; // Default to false if dialog is closed without a response
-
                 // Proceed with sign-out if the user confirmed the logout
                 if (shouldLogOut) {
                   try {
@@ -157,7 +197,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
                     );
                   }
                 }
-
                 // If confirmed, proceed with sign-out
                 if (shouldLogOut == true) {
                   try {
@@ -198,7 +237,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       ),
     );
   }
-
   Widget buildBusinessLogo(String logoUrl) {
     return Container(
       width: 55,
@@ -212,7 +250,27 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       ),
     );
   }
-
+    Widget buildSuspensionMessage(String message) {
+  return Container(
+    width: double.infinity,
+    margin: const EdgeInsets.symmetric(horizontal: 20),
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+      color: Colors.red.withOpacity(0.1),
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.red),
+    ),
+    child: Text(
+      message,
+      style: const TextStyle(
+        color: Colors.red,
+        fontWeight: FontWeight.bold,
+        fontSize: 16,
+      ),
+      textAlign: TextAlign.center,
+    ),
+  );
+}
   Widget buildServiceSection(BuildContext context, int ratingCount) {
     return Column(
       children: [
@@ -271,9 +329,19 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
             ),
           ],
         ),
+      const SizedBox(height: 20),
+      // Add the suspension message below the squares
+      if (suspensionMessage != null)
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20), // Adjust spacing
+          child: buildSuspensionMessage(suspensionMessage!),
+        ),
+      const SizedBox(height: 10),
       ],
     );
   }
+
+
 
   Widget buildServiceCard({
     required IconData icon,
@@ -333,7 +401,6 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
       ),
     );
   }
-
   Widget buildServiceCardWithAnimation({
     required String title,
     required Color color,
