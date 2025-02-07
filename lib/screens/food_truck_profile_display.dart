@@ -440,7 +440,12 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => EmbeddedMap(location: location),
+                  builder: (context) => EmbeddedMap(
+                    destination: location, // Pass the location string
+                    customerID: widget.customerID, // Pass the customer ID
+                    documentID: widget
+                        .documentSnapshot.id, // Pass the food truck document ID
+                  ),
                 ),
               );
             },
