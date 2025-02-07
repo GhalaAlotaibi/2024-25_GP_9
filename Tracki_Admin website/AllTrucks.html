@@ -42,11 +42,58 @@
 
         <div class="content">
             <h2> جميع العربات </h2>
+
             <!-- Search and Filter Section -->
-            <div class="filter-section">
-                <input type="text" id="search-bar" placeholder="ابحث عن عربة...">
-                <select id="category-filter" onchange="">
-                </select>
+            <div class="Searchandfilter">
+                 <!-- Filter -->
+                 <div class="filter-container">
+                    <button class="filter-icon" onclick="toggleDropdown()">
+                        <img src="images/FilterIcon2.png"> 
+                    </button>
+                    <div id="category-dropdown" class="dropdown-content" style="display: none;">
+                        <div class="dropdown-header">تصنيف حسب</div>
+                        <a href="#Status" onclick="toggleStatusList()">الحالة</a>
+                        <a href="#Category" onclick="toggleCategoryList()">الفـئة</a>
+                        <a href="#Ratings" onclick="toggleRatingList()">التقييم</a>
+                        <a href="#Complaints" onclick="toggleComplaintsList()">الشكاوي</a>
+                    </div>
+                    
+                    <!-- Secondary List for Status -->
+                    <div id="status-list" class="dropdown-content" style="display: none;">
+                        <a href="#" onclick="selectStatus('مقبولة')">مقبولة</a>
+                        <a href="#" onclick="selectStatus('مرفوضة')">مرفوضة</a>
+                        <a href="#" onclick="selectStatus('قيد الإنتظار')">قيد الإنتظار</a>
+                    </div>
+                    
+                    <!-- Secondary List for Category -->
+                    <div id="category-list" class="dropdown-content" style="display: none;">
+                        <a href="#" onclick="selectCategory('Food')">طعام</a>
+                        <a href="#" onclick="selectCategory('Beverages')">مشروبات</a>
+                        <a href="#" onclick="selectCategory('Desserts')">حلويات</a>
+                        <!-- Add more categories as needed -->
+                    </div>
+                    
+                    <!-- Secondary List for Ratings -->
+                    <div id="ratings-list" class="dropdown-content" style="display: none;">
+                        <a href="#" onclick="selectRating(5)">5 نجوم</a>
+                        <a href="#" onclick="selectRating(4)">4 نجوم</a>
+                        <a href="#" onclick="selectRating(3)">3 نجوم</a>
+                        <a href="#" onclick="selectRating(2)">2 نجوم</a>
+                        <a href="#" onclick="selectRating(1)">نجمة واحدة</a>
+                        <a href="#" onclick="selectRating(1)">0 نجمة</a>
+                    </div>
+                    
+                    <!-- Secondary List for Complaints -->
+                    <div id="complaints-list" class="dropdown-content" style="display: none;">
+                        <a href="#" onclick="selectComplaints(0)">بدون شكوى</a>
+                        <a href="#" onclick="selectComplaints(1)">شكوى واحدة</a>
+                        <a href="#" onclick="selectComplaints(2)">2 شكوى</a>
+                        <a href="#" onclick="selectComplaints(3)">أكثر من 2</a>
+                    </div>
+                </div>
+
+                <!-- Search -->
+                <input type="text" id="search-bar" placeholder="ابحث عن عربة..."> 
             </div>
 
             <div class="table-container">
@@ -58,7 +105,9 @@
                             <th>صورة العربة</th>
                             <th>رقم الترخيص</th>
                             <th>المالك</th>
+                            <th>التقييم</th>
                             <th>الفئة</th>
+                            <th>عدد الشكاوي</th>
                             <th>الحالة</th>
                         </tr>
                     </thead>
@@ -72,7 +121,7 @@
             <div class="loading" id="loading-message">
                 <img src="images/WaitingTruck2.png" alt="Loading Food Truck">
                 <p> الرجاء الإنتظار...</p>
-            </div> 
+            </div>
         </div>
     </div>
 
@@ -121,6 +170,7 @@ logoutIcon.addEventListener('click', async () => {
     }
 });
 
+//START of SEARCH AND FILTERING
 //*****************************-- Search Function
 let originalRows = [];
 
@@ -142,6 +192,133 @@ function searchTrucks() {
 }
 document.getElementById('search-bar').addEventListener('keyup', searchTrucks);
 
+//*****************************-- Filter Function
+function toggleDropdown() {
+        const dropdown = document.getElementById("category-dropdown");
+        dropdown.style.display = dropdown.style.display === "none" || dropdown.style.display === "" ? "block" : "none";
+    }
+
+    window.onclick = function(event) {
+        const dropdown = document.getElementById("category-dropdown");
+        if (!event.target.closest('.filter-container')) {
+            if (dropdown.style.display === "block") {
+                dropdown.style.display = "none";
+            }
+        }
+    };
+    function toggleStatusList() {
+    toggleList('status-list');
+}
+
+function toggleCategoryList() {
+    toggleList('category-list');
+}
+
+function toggleRatingList() {
+    toggleList('ratings-list');
+}
+
+function toggleComplaintsList() {
+    toggleList('complaints-list');
+}
+
+function toggleList(listId) {
+    const lists = ['status-list', 'category-list', 'ratings-list', 'complaints-list'];
+    lists.forEach(id => {
+        const list = document.getElementById(id);
+        list.style.display = (id === listId && list.style.display !== 'block') ? 'block' : 'none';
+    });
+}
+
+//*****************************-- Filter By Status
+function selectStatus(selectedStatus) {
+    allRows = [];
+
+    originalRows.forEach(row => {
+        const statusCell = row.querySelector('td:nth-child(9)');
+        const truckStatus = statusCell.textContent.trim(); 
+
+        // Check if the selectedStatus matches the truckStatus
+        if (truckStatus === selectedStatus) {
+            allRows.push(row);
+        }
+    });
+
+    const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
+    foodTrucksTableBody.innerHTML = '';
+
+    if (allRows.length === 0) {
+        const noDataRow = document.createElement('tr');
+        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+        foodTrucksTableBody.appendChild(noDataRow);
+    } else {
+        allRows.forEach(row => foodTrucksTableBody.appendChild(row));
+    }
+
+    displayPage(1);
+    document.getElementById('status-list').style.display = 'none'; 
+}
+
+//*****************************-- Filter By Category
+function selectCategory(category) {
+    console.log("Selected category: " + category);
+    document.getElementById('category-list').style.display = 'none'; 
+}
+
+//*****************************-- Filter By Ratings
+async function selectRating(selectedRating) {   
+    allRows = [];
+
+    originalRows.forEach(row => {
+        const ratingCell = row.querySelector('td:nth-child(6)'); 
+        const truckRating = parseFloat(ratingCell.textContent);
+
+        if (truckRating >= selectedRating && truckRating < (selectedRating + 1)) {
+            allRows.push(row);
+        }
+    });
+
+    if (allRows.length === 0) {
+        const noDataRow = document.createElement('tr');
+        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+        foodTrucksTableBody.appendChild(noDataRow);
+    }
+
+    displayPage(1); 
+    document.getElementById('ratings-list').style.display = 'none';
+}
+
+//*****************************-- Filter By Complaints
+function selectComplaints(selectedComplaints) {
+    allRows = [];
+
+    originalRows.forEach(row => {
+        const ComplaintsCell = row.querySelector('td:nth-child(8)'); 
+        const TruckComplaints = parseFloat(ComplaintsCell.textContent);
+
+        if (selectedComplaints === 0 && TruckComplaints === 0) {
+            allRows.push(row); // Only show rows with 0 complaints
+        } else if (selectedComplaints === 1 && TruckComplaints === 1) {
+            allRows.push(row); // Only show rows with exactly 1 complaint
+        } else if (selectedComplaints == 2 && TruckComplaints == 2) {
+            allRows.push(row); // Only show rows with exactly 2 complaints
+        }
+        else if (selectedComplaints >= 3 && TruckComplaints >= 3) {
+            allRows.push(row); // Show rows with 3 or more complaints
+        }
+    });
+
+    if (allRows.length === 0) {
+        const noDataRow = document.createElement('tr');
+        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+        foodTrucksTableBody.appendChild(noDataRow);
+    }
+
+    displayPage(1); 
+    document.getElementById('complaints-list').style.display = 'none';
+}
+
+//END of SEARCH AND FILTERING
 let currentPage = 1;
 const rowsPerPage = 6;
 let allRows = [];
@@ -160,6 +337,7 @@ async function fetchFoodTrucks() {
             return;
         }
 
+        originalRows = [];
         allRows = [];
         for (const docSnapshot of querySnapshot.docs) {
             const data = docSnapshot.data();
@@ -174,6 +352,7 @@ async function fetchFoodTrucks() {
             const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
 
             const statusId = data.statusId;
+            const rating = data.rating;
             let statusText = 'غير محددة';
 
             if (statusId) {
@@ -228,7 +407,9 @@ async function fetchFoodTrucks() {
                                 <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
                             </div>
                         </td>
+                        <td>${data.rating}/5</td>
                         <td>${categoryText}</td>
+                        <td>${data.complaintsCount}</td>
                         <td>${statusText}</td>
                     `;
 
@@ -237,13 +418,13 @@ async function fetchFoodTrucks() {
                 }
 
                 // After successful fetching, hide loading message and show content
-                document.getElementById('loading-message').style.display = 'none'; // Hide loading message
-                document.querySelector('.content').style.display = 'block'; // Show content
+                document.getElementById('loading-message').style.display = 'none'; 
+                document.querySelector('.content').style.display = 'block'; 
 
                 displayPage(currentPage);
             } catch (error) {
                 console.error("Error fetching food trucks:", error);
-                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات."; // Error message
+                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات."; 
             }
         }
 
@@ -306,6 +487,21 @@ async function fetchFoodTrucks() {
             }
             paginationContainer.appendChild(nextLink);
         }
+
+    // Attach function to the global scope
+    window.toggleDropdown = toggleDropdown;
+
+    window.toggleStatusList=  toggleStatusList;
+    window.selectStatus= selectStatus;
+
+    window.toggleCategoryList = toggleCategoryList;
+    window.selectCategory= selectCategory;
+
+    window.toggleRatingList= toggleRatingList;
+    window.selectRating= selectRating;
+
+    window.toggleComplaintsList=  toggleComplaintsList;
+    window.selectComplaints= selectComplaints;
     </script>
 </body>
 </html>

@@ -53,18 +53,6 @@ tr:hover {
     border-radius: 12px;
 }
 
-/* Table Buttons */
-
-button.accept-btn {
-    background: linear-gradient(to right, #4CAF50, #388E3C);
-    /* Green for accept button */
-}
-
-button.decline-btn {
-    background: linear-gradient(to right, #F44336, #D32F2F);
-    /* Red for decline button */
-}
-
 /**********---------- Style of Fetched Data ----------**********/
 /* Style for trucks */
 .active-row,
@@ -154,29 +142,94 @@ button.decline-btn {
 }
 
 /********************---Search and Filering---********************/
-.filter-section {
+.Searchandfilter {
     margin-bottom: 15px;
     display: flex;
     justify-content: flex-start;
-    /* Align items to the left */
     align-items: center;
     gap: 10px;
-    /* Adds space between the search bar and the filter dropdown */
     width: 100%;
-    /* Ensure it takes up the full width of the container */
 }
 
+/********************---Search---********************/
 #search-bar {
     padding: 5px;
     font-size: 16px;
     width: 250px;
     border-radius: 10px;
-    /* Rounded edges for the search bar */
+    border: 2px solid #5B3E5B; /* Change #yourColor to your desired border color */
 }
 
-#category-filter {
-    border-radius: 10px;
-    /* Rounded edges for the filter dropdown */
-    padding: 5px;
-    font-size: 16px;
+/********************---Filtering---********************/
+.filter-container {
+    position: relative;
+    display: inline-block;
+}
+
+.filter-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px; /* Adjust icon size */
+}
+
+.dropdown-content {
+    display: none; /* Initially hidden */
+    position: absolute; /* Position relative to parent */
+    background-color: #f9f9f9;
+    width: 150px; /* Set desired width */
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 2; /* Ensure primary dropdown has a lower z-index */
+    border-radius: 8px; /* Rounded corners */
+    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
+}
+
+.dropdown-content a {
+    color: #5B3E5B; /* Color of links */
+    padding: 8px 12px; /* Reduced padding for compactness */
+    text-decoration: none;
+    display: block;
+    border-bottom: 1px solid #ddd; /* Separation between options */
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none; /* Remove border from last item */
+}
+
+.dropdown-content a:hover {
+    background-color: #bbb; /* Hover background color */
+}
+
+.filter-icon img {
+    width: 30px; 
+    height: 30px; 
+}
+
+.dropdown-header {
+    font-weight: bold;
+    padding: 8px 12px; /* Reduced padding */
+    background-color: #f0f0f0; /* Example background */
+    text-align: center; /* Center the text */
+    font-size: 14px; /* Adjust font size */
+}
+
+/* Positioning for secondary lists to appear on the left */
+#status-list {
+    left: -160px; /* Adjust accordingly to position to the left of the parent */
+    top: 0; /* Align to the top of the parent */
+}
+
+#category-list {
+    left: -160px; /* Adjust accordingly */
+    top: 0; /* Align to the top */
+}
+
+#ratings-list {
+    left: -160px; /* Adjust accordingly */
+    top: 0; /* Align to the top */
+}
+
+#complaints-list {
+    left: -160px; /* Adjust accordingly */
+    top: 0; /* Align to the top */
 }
