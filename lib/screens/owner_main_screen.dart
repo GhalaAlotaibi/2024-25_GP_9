@@ -8,9 +8,9 @@ import 'package:tracki/screens/owner_settings.dart';
 import '../Utils/constants.dart';
 
 class OwnerMainScreen extends StatefulWidget {
-  final String ownerID;
-
-  const OwnerMainScreen({super.key, required this.ownerID});
+ final String ownerID;
+  final bool isSuspended; // New parameter for the suspension flag
+ const OwnerMainScreen({super.key, required this.ownerID, this.isSuspended = false});
 
   @override
   State<OwnerMainScreen> createState() => _OwnerMainScreenState();
