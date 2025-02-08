@@ -45,34 +45,30 @@
 
             <!-- Search and Filter Section -->
             <div class="Searchandfilter">
-                 <!-- Filter -->
-                 <div class="filter-container">
+                <!-- Filter -->
+                <div class="filter-container">
                     <button class="filter-icon" onclick="toggleDropdown()">
-                        <img src="images/FilterIcon2.png"> 
+                        <img src="images/FilterIcon2.png">
                     </button>
                     <div id="category-dropdown" class="dropdown-content" style="display: none;">
                         <div class="dropdown-header">تصنيف حسب</div>
                         <a href="#Status" onclick="toggleStatusList()">الحالة</a>
-                        <a href="#Category" onclick="toggleCategoryList()">الفـئة</a>
+                        <a href="#" id="category-toggle" onclick="toggleCategoryList()">التصنيف</a>
                         <a href="#Ratings" onclick="toggleRatingList()">التقييم</a>
                         <a href="#Complaints" onclick="toggleComplaintsList()">الشكاوي</a>
                     </div>
-                    
+
                     <!-- Secondary List for Status -->
                     <div id="status-list" class="dropdown-content" style="display: none;">
                         <a href="#" onclick="selectStatus('مقبولة')">مقبولة</a>
                         <a href="#" onclick="selectStatus('مرفوضة')">مرفوضة</a>
-                        <a href="#" onclick="selectStatus('قيد الإنتظار')">قيد الإنتظار</a>
                     </div>
-                    
+
                     <!-- Secondary List for Category -->
                     <div id="category-list" class="dropdown-content" style="display: none;">
-                        <a href="#" onclick="selectCategory('Food')">طعام</a>
-                        <a href="#" onclick="selectCategory('Beverages')">مشروبات</a>
-                        <a href="#" onclick="selectCategory('Desserts')">حلويات</a>
-                        <!-- Add more categories as needed -->
+                        <!-- Categories will be populated here dynamically -->
                     </div>
-                    
+
                     <!-- Secondary List for Ratings -->
                     <div id="ratings-list" class="dropdown-content" style="display: none;">
                         <a href="#" onclick="selectRating(5)">5 نجوم</a>
@@ -82,18 +78,18 @@
                         <a href="#" onclick="selectRating(1)">نجمة واحدة</a>
                         <a href="#" onclick="selectRating(1)">0 نجمة</a>
                     </div>
-                    
+
                     <!-- Secondary List for Complaints -->
                     <div id="complaints-list" class="dropdown-content" style="display: none;">
                         <a href="#" onclick="selectComplaints(0)">بدون شكوى</a>
                         <a href="#" onclick="selectComplaints(1)">شكوى واحدة</a>
-                        <a href="#" onclick="selectComplaints(2)">2 شكوى</a>
+                        <a href="#" onclick="selectComplaints(2)">شكوتان</a>
                         <a href="#" onclick="selectComplaints(3)">أكثر من 2</a>
                     </div>
                 </div>
 
                 <!-- Search -->
-                <input type="text" id="search-bar" placeholder="ابحث عن عربة..."> 
+                <input type="text" id="search-bar" placeholder="ابحث عن عربة...">
             </div>
 
             <div class="table-container">
@@ -103,10 +99,10 @@
                             <th>الاسم</th>
                             <th>الشعار</th>
                             <th>صورة العربة</th>
-                            <th>رقم الترخيص</th>
+                            <th>رقم الرخصة</th>
                             <th>المالك</th>
                             <th>التقييم</th>
-                            <th>الفئة</th>
+                            <th>التصنيف</th>
                             <th>عدد الشكاوي</th>
                             <th>الحالة</th>
                         </tr>
@@ -115,7 +111,7 @@
                         <!-- Food truck rows will be added here dynamically -->
                     </tbody>
                 </table>
-
+                <p id="no-matches-message">لاتوجد عربات مطابقة.</p>
                 <div id="pagination-controls" style="text-align: center; margin-top: 20px;"></div>
             </div>
             <div class="loading" id="loading-message">
@@ -132,262 +128,307 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc,  getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-    authDomain: "trucki-database.firebaseapp.com",
-    projectId: "trucki-database",
-    storageBucket: "trucki-database.appspot.com",
-    messagingSenderId: "283818817351",
-    appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
 
-onAuthStateChanged(auth, (user) => {
-    const statusElement = document.getElementById('status');
-    if (user) {
-        const username = user.email.split('@')[0];
-        statusElement.innerText = `مرحبًا ${username} !`;
-        fetchFoodTrucks(); // Fetch the trucks
-    } else {
-        statusElement.innerText = "لم يتم تسجيل الدخول";
-        window.location.href = "WelcomePage.html";
-    }
-});
-
-const logoutIcon = document.getElementById('logout-icon');
-logoutIcon.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        alert("تم تسجيل الخروج بنجاح!");
-        window.location.href = "WelcomePage.html";
-    } catch (error) {
-        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-    }
-});
-
-//START of SEARCH AND FILTERING
-//*****************************-- Search Function
-let originalRows = [];
-
-function searchTrucks() {
-    const searchTerm = document.getElementById('search-bar').value.toLowerCase(); 
-
-    if (searchTerm !== "") {
-        const filteredRows = originalRows.filter(row => {
-            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            return name.includes(searchTerm);
+        onAuthStateChanged(auth, (user) => {
+            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];
+                statusElement.innerText = `مرحبًا ${username} !`;
+                fetchFoodTrucks(); // Fetch the trucks
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "WelcomePage.html";
+            }
         });
 
-        allRows = filteredRows;
-        displayPage(1);
-    } else {
-        allRows = [...originalRows];
-        displayPage(1);
-    }
-}
-document.getElementById('search-bar').addEventListener('keyup', searchTrucks);
+        const logoutIcon = document.getElementById('logout-icon');
+        logoutIcon.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                alert("تم تسجيل الخروج بنجاح!");
+                window.location.href = "WelcomePage.html";
+            } catch (error) {
+                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+            }
+        });
 
-//*****************************-- Filter Function
-function toggleDropdown() {
-        const dropdown = document.getElementById("category-dropdown");
-        dropdown.style.display = dropdown.style.display === "none" || dropdown.style.display === "" ? "block" : "none";
-    }
+        //START of SEARCH AND FILTERING
+        //*****************************-- Search Function
+        let originalRows = [];
 
-    window.onclick = function(event) {
-        const dropdown = document.getElementById("category-dropdown");
-        if (!event.target.closest('.filter-container')) {
-            if (dropdown.style.display === "block") {
-                dropdown.style.display = "none";
+        function searchTrucks() {
+            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+
+            if (searchTerm !== "") {
+                const filteredRows = originalRows.filter(row => {
+                    const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                    return name.includes(searchTerm);
+                });
+
+                allRows = filteredRows;
+                displayPage(1);
+            } else {
+                allRows = [...originalRows];
+                displayPage(1);
             }
         }
-    };
-    function toggleStatusList() {
-    toggleList('status-list');
-}
+        document.getElementById('search-bar').addEventListener('keyup', searchTrucks);
 
-function toggleCategoryList() {
-    toggleList('category-list');
-}
-
-function toggleRatingList() {
-    toggleList('ratings-list');
-}
-
-function toggleComplaintsList() {
-    toggleList('complaints-list');
-}
-
-function toggleList(listId) {
-    const lists = ['status-list', 'category-list', 'ratings-list', 'complaints-list'];
-    lists.forEach(id => {
-        const list = document.getElementById(id);
-        list.style.display = (id === listId && list.style.display !== 'block') ? 'block' : 'none';
-    });
-}
-
-//*****************************-- Filter By Status
-function selectStatus(selectedStatus) {
-    allRows = [];
-
-    originalRows.forEach(row => {
-        const statusCell = row.querySelector('td:nth-child(9)');
-        const truckStatus = statusCell.textContent.trim(); 
-
-        // Check if the selectedStatus matches the truckStatus
-        if (truckStatus === selectedStatus) {
-            allRows.push(row);
+        //*****************************-- Filter Function
+        function toggleDropdown() {
+            const dropdown = document.getElementById("category-dropdown");
+            dropdown.style.display = dropdown.style.display === "none" || dropdown.style.display === "" ? "block" : "none";
         }
-    });
 
-    const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-    foodTrucksTableBody.innerHTML = '';
-
-    if (allRows.length === 0) {
-        const noDataRow = document.createElement('tr');
-        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
-        foodTrucksTableBody.appendChild(noDataRow);
-    } else {
-        allRows.forEach(row => foodTrucksTableBody.appendChild(row));
-    }
-
-    displayPage(1);
-    document.getElementById('status-list').style.display = 'none'; 
-}
-
-//*****************************-- Filter By Category
-function selectCategory(category) {
-    console.log("Selected category: " + category);
-    document.getElementById('category-list').style.display = 'none'; 
-}
-
-//*****************************-- Filter By Ratings
-async function selectRating(selectedRating) {   
-    allRows = [];
-
-    originalRows.forEach(row => {
-        const ratingCell = row.querySelector('td:nth-child(6)'); 
-        const truckRating = parseFloat(ratingCell.textContent);
-
-        if (truckRating >= selectedRating && truckRating < (selectedRating + 1)) {
-            allRows.push(row);
+        window.onclick = function (event) {
+            const dropdown = document.getElementById("category-dropdown");
+            if (!event.target.closest('.filter-container')) {
+                if (dropdown.style.display === "block") {
+                    dropdown.style.display = "none";
+                }
+            }
+        };
+        function toggleStatusList() {
+            toggleList('status-list');
         }
-    });
 
-    if (allRows.length === 0) {
-        const noDataRow = document.createElement('tr');
-        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
-        foodTrucksTableBody.appendChild(noDataRow);
-    }
+        function toggleCategoryList() {
+            const categoryList = document.getElementById("category-list");
 
-    displayPage(1); 
-    document.getElementById('ratings-list').style.display = 'none';
-}
-
-//*****************************-- Filter By Complaints
-function selectComplaints(selectedComplaints) {
-    allRows = [];
-
-    originalRows.forEach(row => {
-        const ComplaintsCell = row.querySelector('td:nth-child(8)'); 
-        const TruckComplaints = parseFloat(ComplaintsCell.textContent);
-
-        if (selectedComplaints === 0 && TruckComplaints === 0) {
-            allRows.push(row); // Only show rows with 0 complaints
-        } else if (selectedComplaints === 1 && TruckComplaints === 1) {
-            allRows.push(row); // Only show rows with exactly 1 complaint
-        } else if (selectedComplaints == 2 && TruckComplaints == 2) {
-            allRows.push(row); // Only show rows with exactly 2 complaints
+            if (categoryList.style.display === 'none' || categoryList.style.display === '') {
+                fetchCategories();
+                categoryList.style.display = 'block';
+            } else {
+                categoryList.style.display = 'none';
+            }
         }
-        else if (selectedComplaints >= 3 && TruckComplaints >= 3) {
-            allRows.push(row); // Show rows with 3 or more complaints
+
+        function toggleRatingList() {
+            toggleList('ratings-list');
         }
-    });
 
-    if (allRows.length === 0) {
-        const noDataRow = document.createElement('tr');
-        noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
-        foodTrucksTableBody.appendChild(noDataRow);
-    }
+        function toggleComplaintsList() {
+            toggleList('complaints-list');
+        }
 
-    displayPage(1); 
-    document.getElementById('complaints-list').style.display = 'none';
-}
+        function toggleList(listId) {
+            const lists = ['status-list', 'category-list', 'ratings-list', 'complaints-list'];
+            lists.forEach(id => {
+                const list = document.getElementById(id);
+                list.style.display = (id === listId && list.style.display !== 'block') ? 'block' : 'none';
+            });
+        }
 
-//END of SEARCH AND FILTERING
-let currentPage = 1;
-const rowsPerPage = 6;
-let allRows = [];
-originalRows = [];
+        //*****************************-- Filter By Status
+        function selectStatus(selectedStatus) {
+            allRows = [];
 
-async function fetchFoodTrucks() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+            originalRows.forEach(row => {
+                const statusCell = row.querySelector('td:nth-child(9)');
+                const truckStatus = statusCell.textContent.trim();
 
-        if (querySnapshot.empty) {
+                // Check if the selectedStatus matches the truckStatus
+                if (truckStatus === selectedStatus) {
+                    allRows.push(row);
+                }
+            });
+
             const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-            foodTrucksTableBody.innerHTML = ''; 
-            const noDataRow = document.createElement('tr');
-            noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
-            foodTrucksTableBody.appendChild(noDataRow);
-            return;
+            foodTrucksTableBody.innerHTML = '';
+
+            const noMatchesMessage = document.getElementById('no-matches-message');
+            if (allRows.length === 0) {
+                noMatchesMessage.style.display = 'block'; // Show the new no matches message
+            } else {
+                allRows.forEach(row => foodTrucksTableBody.appendChild(row));
+            }
+
+            displayPage(1);
+            document.getElementById('status-list').style.display = 'none';
         }
 
+        //*****************************-- Filter By Category
+        // Fetch categories from Firestore
+        async function fetchCategories() {
+            const snapshot = await getDocs(collection(db, "Food-Category"));
+            const categoryList = document.getElementById("category-list");
+            categoryList.innerHTML = '';
+
+            snapshot.forEach(doc => {
+                const data = doc.data();
+                const categoryName = data.name;
+
+                const categoryItem = document.createElement('a');
+                categoryItem.href = "#";
+                categoryItem.textContent = categoryName;
+                categoryItem.onclick = () => selectCategory(categoryName); // Call selectCategory function
+
+                categoryList.appendChild(categoryItem);
+            });
+        }
+
+        function selectCategory(selectedCategory) {
+            let hasMatch = false;
+
+            allRows.forEach(row => {
+                const categoryCell = row.querySelector('td:nth-child(7)');
+                const truckCategory = categoryCell.textContent.trim();
+
+                if (truckCategory === selectedCategory) {
+                    row.style.display = '';
+                    hasMatch = true;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Display the message if no matches found
+            const noMatchesMessage = document.getElementById('no-matches-message');
+            if (!hasMatch) {
+                noMatchesMessage.style.display = 'block';
+            } else {
+                noMatchesMessage.style.display = 'none';
+            }
+        }
+
+        //*****************************-- Filter By Ratings
+        async function selectRating(selectedRating) {
+            allRows = [];
+
+            originalRows.forEach(row => {
+                const ratingCell = row.querySelector('td:nth-child(6)');
+                const truckRating = parseFloat(ratingCell.textContent);
+
+                if (truckRating >= selectedRating && truckRating < (selectedRating + 1)) {
+                    allRows.push(row);
+                }
+            });
+
+            const noMatchesMessage = document.getElementById('no-matches-message');
+            if (allRows.length === 0) {
+                noMatchesMessage.style.display = 'block'; // Show the new no matches message
+            }
+
+            displayPage(1);
+            document.getElementById('ratings-list').style.display = 'none';
+        }
+
+        //*****************************-- Filter By Complaints
+        function selectComplaints(selectedComplaints) {
+            allRows = [];
+
+            originalRows.forEach(row => {
+                const ComplaintsCell = row.querySelector('td:nth-child(8)');
+                const TruckComplaints = parseFloat(ComplaintsCell.textContent);
+
+                if (selectedComplaints === 0 && TruckComplaints === 0) {
+                    allRows.push(row); // Only show rows with 0 complaints
+                } else if (selectedComplaints === 1 && TruckComplaints === 1) {
+                    allRows.push(row); // Only show rows with exactly 1 complaint
+                } else if (selectedComplaints == 2 && TruckComplaints == 2) {
+                    allRows.push(row); // Only show rows with exactly 2 complaints
+                }
+                else if (selectedComplaints >= 3 && TruckComplaints >= 3) {
+                    allRows.push(row); // Show rows with 3 or more complaints
+                }
+            });
+
+            const noMatchesMessage = document.getElementById('no-matches-message');
+            if (allRows.length === 0) {
+                noMatchesMessage.style.display = 'block'; // Show the new no matches message
+            }
+
+            displayPage(1);
+            document.getElementById('complaints-list').style.display = 'none';
+        }
+
+        //END of SEARCH AND FILTERING
+        let currentPage = 1;
+        const rowsPerPage = 6;
+        let allRows = [];
         originalRows = [];
-        allRows = [];
-        for (const docSnapshot of querySnapshot.docs) {
-            const data = docSnapshot.data();
-            const truckId = docSnapshot.id; //****************NEW FOR FOOD TRUCK PROFILE
 
-            const ownerID = data.ownerID;
-            const ownerDocRef = doc(db, "Truck_Owner", ownerID);
-            const ownerDoc = await getDoc(ownerDocRef);
+        async function fetchFoodTrucks() {
+            try {
+                const querySnapshot = await getDocs(collection(db, "Food_Truck"));
 
-            const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
-            const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
-            const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+                if (querySnapshot.empty) {
+                    const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
+                    foodTrucksTableBody.innerHTML = '';
+                    const noDataRow = document.createElement('tr');
+                    noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+                    foodTrucksTableBody.appendChild(noDataRow);
+                    return;
+                }
 
-            const statusId = data.statusId;
-            const rating = data.rating;
-            let statusText = 'غير محددة';
+                originalRows = [];
+                allRows = [];
+                for (const docSnapshot of querySnapshot.docs) {
+                    const data = docSnapshot.data();
+                    const truckId = docSnapshot.id;
 
-            if (statusId) {
-                const requestDocRef = doc(db, "Request", statusId);
-                const requestDoc = await getDoc(requestDocRef);
+                    const ownerID = data.ownerID;
+                    const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+                    const ownerDoc = await getDoc(ownerDocRef);
 
-                if (requestDoc.exists()) {
-                    const requestData = requestDoc.data();
-                    if (requestData.status === 'pending') {
-                        statusText = 'قيد الإنتظار';
-                    } else if (requestData.status === 'accepted') {
-                        statusText = 'مقبولة';
-                    } else if (requestData.status === 'rejected') {
-                        statusText = 'مرفوضة';
+                    const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
+                    const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
+                    const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+
+                    const statusId = data.statusId;
+                    const rating = data.rating;
+                    let statusText = 'غير محددة';
+
+                    if (statusId) {
+                        const requestDocRef = doc(db, "Request", statusId);
+                        const requestDoc = await getDoc(requestDocRef);
+
+                        if (requestDoc.exists()) {
+                            const requestData = requestDoc.data();
+                            if (requestData.status === 'pending') {
+                                continue;
+                            } else if (requestData.status === 'accepted') {
+                                statusText = 'مقبولة';
+                            } else if (requestData.status === 'rejected') {
+                                statusText = 'مرفوضة';
+                            }
+                        }
                     }
-                }
-            }
 
-            const categoryId = data.categoryId;
-            let categoryText = 'غير محددة';
+                    const categoryId = data.categoryId;
+                    let categoryText = 'غير محددة';
 
-            if (categoryId) {
-                const categoryDocRef = doc(db, "Food-Category", categoryId);
-                const categoryDoc = await getDoc(categoryDocRef);
+                    if (categoryId) {
+                        const categoryDocRef = doc(db, "Food-Category", categoryId);
+                        const categoryDoc = await getDoc(categoryDocRef);
 
-                if (categoryDoc.exists()) {
-                    const categoryData = categoryDoc.data();
-                    categoryText = categoryData.name;
-                }
-            }
+                        if (categoryDoc.exists()) {
+                            const categoryData = categoryDoc.data();
+                            categoryText = categoryData.name;
+                        }
+                    }
 
-            const row = document.createElement('tr');
-            row.addEventListener('click', () => { //****************NEW FOR FOOD TRUCK PROFILE
-            window.location.href = `TruckProfile.html?truckId=${truckId}`;
-        });
+                    const complaintsSnapshot = await getDocs(query(collection(db, "Complaint"), where("foodTruckId", "==", truckId)));
+                    const complaintsCount = complaintsSnapshot.size; // Get the number of complaints for this truck
+
+                    const row = document.createElement('tr');
+                    row.addEventListener('click', () => {
+                        window.location.href = `TruckProfile.html?truckId=${truckId}`;
+                    });
 
                     if (statusText === 'مقبولة') {
                         row.classList.add('active-row');
@@ -396,35 +437,34 @@ async function fetchFoodTrucks() {
                     }
 
                     row.innerHTML = `
-                        <td>${data.name}</td>
-                        <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
-                        <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
-                        <td>${data.licenseNo}</td>
-                        <td>
-                            <div class="owner-details">
-                                <p><strong>الاسم:</strong> ${ownerName}</p>
-                                <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
-                                <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
-                            </div>
-                        </td>
-                        <td>${data.rating}/5</td>
-                        <td>${categoryText}</td>
-                        <td>${data.complaintsCount}</td>
-                        <td>${statusText}</td>
-                    `;
+                    <td>${data.name}</td>
+        <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
+        <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
+        <td>${data.licenseNo}</td>
+        <td>
+            <div class="owner-details">
+                <p><strong>الاسم:</strong> ${ownerName}</p>
+                <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
+                <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
+            </div>
+        </td>
+        <td>${data.rating}/5</td>
+        <td>${categoryText}</td>
+        <td>${complaintsCount}</td>
+        <td>${statusText}</td>
+    `;
 
                     allRows.push(row);
                     originalRows.push(row);
                 }
-
                 // After successful fetching, hide loading message and show content
-                document.getElementById('loading-message').style.display = 'none'; 
-                document.querySelector('.content').style.display = 'block'; 
+                document.getElementById('loading-message').style.display = 'none';
+                document.querySelector('.content').style.display = 'block';
 
                 displayPage(currentPage);
             } catch (error) {
                 console.error("Error fetching food trucks:", error);
-                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات."; 
+                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات.";
             }
         }
 
@@ -488,20 +528,20 @@ async function fetchFoodTrucks() {
             paginationContainer.appendChild(nextLink);
         }
 
-    // Attach function to the global scope
-    window.toggleDropdown = toggleDropdown;
+        // Attach function to the global scope
+        window.toggleDropdown = toggleDropdown;
 
-    window.toggleStatusList=  toggleStatusList;
-    window.selectStatus= selectStatus;
+        window.toggleStatusList = toggleStatusList;
+        window.selectStatus = selectStatus;
 
-    window.toggleCategoryList = toggleCategoryList;
-    window.selectCategory= selectCategory;
+        window.toggleCategoryList = toggleCategoryList;
 
-    window.toggleRatingList= toggleRatingList;
-    window.selectRating= selectRating;
+        window.toggleRatingList = toggleRatingList;
+        window.selectRating = selectRating;
 
-    window.toggleComplaintsList=  toggleComplaintsList;
-    window.selectComplaints= selectComplaints;
+        window.toggleComplaintsList = toggleComplaintsList;
+        window.selectComplaints = selectComplaints;
     </script>
 </body>
+
 </html>

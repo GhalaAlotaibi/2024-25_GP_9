@@ -1,219 +1,197 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracki - Reviews</title>
-    <link rel="stylesheet" href="Styles/Style.css" />
-    <link rel="stylesheet" href="Styles/AllTrucks.css" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <div class="main-container">
-      <div class="sidebar">
-        <div class="headerOfBar">
-          <img src="images/TrackiLogo.png" alt="Logo" />
-          <h1>Tracki</h1>
-        </div>
-        <ul style="list-style: none; padding: 0; margin: 20px 0">
-          <li>
-            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
-          </li>
-          <li>
-            <a href="PendingTrucks.html"
-              ><i class="fas fa-truck-loading"></i> العربات المعلقة</a
-            >
-          </li>
-          <li>
-            <a href="AllTrucks.html"
-              ><i class="fas fa-truck"></i> جميع العربات</a
-            >
-          </li>
-          <li>
-            <a href="History.html"><i class="fas fa-history"></i> التاريخ</a>
-          </li>
-          <li>
-            <a
-              href="Reviews.html"
-              style="
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracki - Reviews</title>
+  <link rel="stylesheet" href="Styles/Style.css" />
+  <link rel="stylesheet" href="Styles/AllTrucks.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet"> 
+</head>
+
+<body>
+  <div class="main-container">
+    <div class="sidebar">
+      <div class="headerOfBar">
+        <img src="images/TrackiLogo.png" alt="Logo" />
+        <h1>Tracki</h1>
+      </div>
+      <ul style="list-style: none; padding: 0; margin: 20px 0">
+        <li>
+          <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+        </li>
+        <li>
+          <a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a>
+        </li>
+        <li>
+          <a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a>
+        </li>
+        <li>
+          <a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a>
+        </li>
+        <li>
+          <a href="Reviews.html" style="
                 background-color: #7a557a;
                 color: #faf3f0;
                 font-weight: bold;
                 border-radius: 8px;
-              "
-              ><i class="fas fa-star"></i> التقييمات</a
-            >
-          </li>
-          <li>
-            <a href="Complaints.html"
-              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
-            >
-          </li>
-        </ul>
-      </div>
-
-      <section class="status-section">
-        <div class="left-actions">
-          <p id="status">مرحبًا!</p>
-        </div>
-        <div class="right-actions">
-          <i
-            id="notification-icon"
-            class="fas fa-bell notification-icon"
-            title="الإشعارات"
-          ></i>
-          <i
-            id="logout-icon"
-            class="fas fa-sign-out-alt logout-icon"
-            title="تسجيل الخروج"
-          ></i>
-        </div>
-      </section>
-
-      <div class="content">
-        <h2>التقييمات</h2>
-        <div class="filter-section">
-          <input
-            type="text"
-            id="search-bar"
-            placeholder="ابحث عن عربة..."
-            onkeyup="searchReviews()"
-          />
-        </div>
-        <div class="table-container">
-          <table id="reviews-table">
-            <thead>
-              <tr>
-                <th>اسم العميل</th>
-                <th>البريد الإلكتروني</th>
-                <th>اسم العربة</th>
-                <th>التقييم</th>
-                <th>التعليق</th>
-                <th>الوقت</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Reviews will be added dynamically here -->
-            </tbody>
-          </table>
-        </div>
-      </div>
+              "><i class="fas fa-star"></i> التقييمات</a>
+        </li>
+        <li>
+          <a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a>
+        </li>
+      </ul>
     </div>
 
-    <div class="footer">
-      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    <section class="status-section">
+      <div class="left-actions">
+        <p id="status">مرحبًا!</p>
+      </div>
+      <div class="right-actions">
+        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+      </div>
+    </section>
+
+    <div class="content">
+      <h2>التقييمات</h2>
+      <div class="filter-section">
+        <input type="text" id="search-bar" placeholder="ابحث عن عربة..." onkeyup="searchReviews()" />
+      </div>
+      <br>
+      <div class="table-container">
+        <table id="reviews-table">
+          <thead>
+            <tr>
+              <th>اسم العميل</th>
+              <th>البريد الإلكتروني</th>
+              <th>اسم العربة</th>
+              <th>التقييم</th>
+              <th>التعليق</th>
+              <th>الوقت</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Reviews will be added dynamically here -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="loading" id="loading-message">
+        <img src="images/WaitingTruck2.png" alt="Loading Food Truck">
+        <p> الرجاء الإنتظار...</p>
+      </div>
+
     </div>
+  </div>
 
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import {
-        getAuth,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import {
-        getFirestore,
-        collection,
-        getDocs,
-        doc,
-        getDoc,
-        query,
-        orderBy,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <div class="footer">
+    <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+  </div>
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-        authDomain: "trucki-database.firebaseapp.com",
-        projectId: "trucki-database",
-        storageBucket: "trucki-database.appspot.com",
-        messagingSenderId: "283818817351",
-        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
-      };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import {
+      getFirestore,
+      collection,
+      getDocs,
+      doc,
+      getDoc,
+      query,
+      orderBy,
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
+    const firebaseConfig = {
+      apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+      authDomain: "trucki-database.firebaseapp.com",
+      projectId: "trucki-database",
+      storageBucket: "trucki-database.appspot.com",
+      messagingSenderId: "283818817351",
+      appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+    };
 
-      onAuthStateChanged(auth, (user) => {
-        const statusElement = document.getElementById("status");
-        if (user) {
-          statusElement.innerText = `مرحبًا ${user.email.split("@")[0]} !`; // Use backticks for interpolation
-          fetchReviews();
-        } else {
-          statusElement.innerText = "لم يتم تسجيل الدخول";
-          window.location.href = "WelcomePage.html";
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, (user) => {
+      const statusElement = document.getElementById("status");
+      if (user) {
+        statusElement.innerText = `مرحبًا ${user.email.split("@")[0]} !`; // Use backticks for interpolation
+        fetchReviews();
+      } else {
+        statusElement.innerText = "لم يتم تسجيل الدخول";
+        window.location.href = "WelcomePage.html";
+      }
+    });
+
+    async function fetchReviews() {
+      document.getElementById('loading-message').style.display = 'flex'; // Show loading message
+      try {
+        const reviewsQuery = query(
+          collection(db, "Review"),
+          orderBy("timestamp", "desc")
+        );
+        const querySnapshot = await getDocs(reviewsQuery);
+        const reviewsTableBody = document.querySelector("#reviews-table tbody");
+        reviewsTableBody.innerHTML = "";
+
+        for (const docSnapshot of querySnapshot.docs) {
+          const data = docSnapshot.data();
+          const customerDoc = await getDoc(doc(db, "Customer", data.customerId));
+          const truckDoc = await getDoc(doc(db, "Food_Truck", data.foodTruckId));
+          const customerName = customerDoc.exists() ? customerDoc.data().Name : "غير محدد";
+          const customerEmail = customerDoc.exists() ? customerDoc.data().email : "غير محدد";
+          const foodTruckName = truckDoc.exists() ? truckDoc.data().name : "غير محدد";
+          const timestamp = new Date(data.timestamp);
+          const formattedTimestamp = timestamp.toLocaleString();
+
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                <td>${customerName}</td>
+                <td>${customerEmail}</td>
+                <td>${foodTruckName}</td>
+                <td>${convertRatingToStars(data.rating)}</td>
+                <td>${data.comment}</td>
+                <td>${formattedTimestamp}</td>
+            `;
+          reviewsTableBody.appendChild(row);
         }
+
+        document.getElementById('loading-message').style.display = 'none'; // Hide loading message
+        document.querySelector('.content').style.display = 'block'; // Show content after loading
+      } catch (error) {
+        console.error("Error fetching reviews:", error);
+        document.getElementById('loading-message').style.display = 'none'; // Hide loading message on error
+      }
+    }
+
+    function searchReviews() {
+      const searchTerm = document
+        .getElementById("search-bar")
+        .value.toLowerCase();
+      const rows = document.querySelectorAll("#reviews-table tbody tr");
+      rows.forEach((row) => {
+        const foodTruckName = row
+          .querySelector("td:nth-child(3)")
+          .textContent.toLowerCase();
+        row.style.display = foodTruckName.includes(searchTerm) ? "" : "none";
       });
+    }
 
-      async function fetchReviews() {
-        try {
-          const reviewsQuery = query(
-            collection(db, "Review"),
-            orderBy("timestamp", "desc")
-          );
-          const querySnapshot = await getDocs(reviewsQuery);
-          const reviewsTableBody = document.querySelector(
-            "#reviews-table tbody"
-          );
-          reviewsTableBody.innerHTML = "";
-          for (const docSnapshot of querySnapshot.docs) {
-            const data = docSnapshot.data();
-            const customerDoc = await getDoc(
-              doc(db, "Customer", data.customerId)
-            );
-            const truckDoc = await getDoc(
-              doc(db, "Food_Truck", data.foodTruckId)
-            );
-            const customerName = customerDoc.exists()
-              ? customerDoc.data().Name
-              : "غير محدد";
-            const customerEmail = customerDoc.exists()
-              ? customerDoc.data().email
-              : "غير محدد";
-            const foodTruckName = truckDoc.exists()
-              ? truckDoc.data().name
-              : "غير محدد";
-            const timestamp = new Date(data.timestamp);
-            const formattedTimestamp = timestamp.toLocaleString();
-            console.log("Formatted Local Timestamp:", formattedTimestamp);
+    function convertRatingToStars(rating) {
+      const fullStar = '<span style="color: #FFD700;">★</span>';
+      const emptyStar = "<span>☆</span>";
+      return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
+    }
+  </script>
+</body>
 
-            const row = document.createElement("tr");
-            row.innerHTML = `
-        <td>${customerName}</td>
-        <td>${customerEmail}</td>
-        <td>${foodTruckName}</td>
-        <td>${convertRatingToStars(data.rating)}</td>
-        <td>${data.comment}</td>
-        <td>${formattedTimestamp}</td>
-      `;
-            reviewsTableBody.appendChild(row);
-          }
-        } catch (error) {
-          console.error("Error fetching reviews:", error);
-        }
-      }
-      function searchReviews() {
-        const searchTerm = document
-          .getElementById("search-bar")
-          .value.toLowerCase();
-        const rows = document.querySelectorAll("#reviews-table tbody tr");
-        rows.forEach((row) => {
-          const foodTruckName = row
-            .querySelector("td:nth-child(3)")
-            .textContent.toLowerCase();
-          row.style.display = foodTruckName.includes(searchTerm) ? "" : "none";
-        });
-      }
-
-      function convertRatingToStars(rating) {
-        const fullStar = '<span style="color: #FFD700;">★</span>';
-        const emptyStar = "<span>☆</span>";
-        return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
-      }
-    </script>
-     
-  </body>
 </html>

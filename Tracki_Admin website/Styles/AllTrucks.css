@@ -233,3 +233,11 @@ tr:hover {
     left: -160px; /* Adjust accordingly */
     top: 0; /* Align to the top */
 }
+
+#no-matches-message {
+    display: none; /* Initially hidden */
+    color: #7A557A; /* Text color */
+    text-align: center; /* Centered text */
+    font-size: 20px; /* Adjust font size to your preference */
+    margin: 10px 0; /* Space above and below the message */
+}

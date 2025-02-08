@@ -10,8 +10,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
 </head>
 <body>
-    <!-- Header -->
-
     <div class="main-container">
         <!-- Sidebar -->
         <div class="sidebar">
@@ -53,10 +51,10 @@
                             <th>الاسم</th>
                             <th>الشعار</th>
                             <th>صورة العربة</th>
-                            <th>رقم الترخيص</th>
-                            <th>ملف الترخيص</th>
+                            <th>رقم الرخصة</th>
+                            <th>ملف الرخصة</th>
                             <th>المالك</th>
-                            <th>الفئة</th>
+                            <th>التصنيف</th>
                             <th>الموقع</th>
                             <th>الحالة</th>
                             <th>قبول/رفض</th>
@@ -191,6 +189,7 @@ async function fetchFoodTrucks() {
             const acceptIcon = `<i class="fas fa-check-circle" style="color: green; cursor: pointer;" onclick="acceptFoodTruck('${docSnapshot.id}')"></i>`;
             const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="DeclineFoodTruck('${docSnapshot.id}')"></i>`;
 
+            const licensePDFUrl = data.licensePDF; // Get the license PDF URL
             const row = document.createElement('tr');
 
 
@@ -200,8 +199,9 @@ async function fetchFoodTrucks() {
                 <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
                 <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
                 <td>${data.licenseNo}</td>
-                <td>${data.licenseNo}</td>
                 <td>
+                    ${licensePDFUrl ? `<a href="${licensePDFUrl}" target="_blank">عرض الرخصة</a>` : "لا يوجد ملف"}
+                </td>
                     <div class="owner-details">
                         <p><strong>الاسم:</strong> ${ownerName}</p>
                         <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>

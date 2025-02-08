@@ -1,5 +1,103 @@
-#foodTruckChart {
-    width: 100%; /* Makes the chart responsive to the width of its container */
-    max-width: 800px; /* Sets a maximum width */
-    height: 400px; /* Fixed height */
+
+/* Analytics Blocks */
+.analytics-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px;
 }
+
+.analytics-section-group1_pt2 {
+    display: flex; 
+    gap: 20px; /* Add space between sections */
+    margin-bottom: 20px; 
+}
+
+.analytics-section1 {
+    flex: 1; /* Allow each section to grow equally */
+    padding: 10px 20px;
+    background-color: #fffafa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 60px;
+}
+
+#totalTrucksCount {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #7e617e;
+    margin: 10px 0;
+}
+
+#totalCustomersCount {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #7e617e;
+    margin: 10px 0;
+}
+
+.analytics-section-group,
+.analytics-section-group2 {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+}
+
+.analytics-section2,
+.analytics-section3,
+.analytics-section4,
+.analytics-section5 {
+    overflow: hidden;
+    flex: 1;
+    margin: 5px;
+    padding: 20px;
+    background-color: #fffafa;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    height: 400px;
+}
+
+
+/* Analytics Charts */
+/*analytics-section2*/
+.analytics-section2 {
+    flex: 3;
+}
+
+/*analytics-section3*/
+.analytics-section3 {
+    flex: 2;
+}
+
+#registeredCategoriesChart {
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;
+}
+
+/*analytics-section4*/
+.analytics-section4 {
+    flex: 2;
+}
+
+#s4{
+    height: auto;
+    max-width: 90%;
+    max-height: 90%;  
+}
+
+/*analytics-section5*/
+.analytics-section5 {
+    flex: 3;
+}
+
+#s5 {
+    width: 90%; 
+    height: auto; 
+    max-height: 95%; 
+}
+

@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="Styles/Style.css">
     <link rel="stylesheet" href="Styles/AllTrucks.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
     <style>
         /* Style for the 'حل' button */
         .resolve-btn {
@@ -181,9 +182,9 @@ td button {
             <!-- Navigation Links -->
             <ul style="list-style: none; padding: 0; margin: 20px 0;">
                 <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="PendingTrucks.html"><i class="fas fa-truck-loading"></i> العربات المعلقة</a></li>
+                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
                 <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="History.html"><i class="fas fa-history"></i> التاريخ</a></li>
+                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
                 <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
                 <li><a href="Complaints.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
             </ul>
@@ -200,6 +201,7 @@ td button {
         </section>
         <!-- Main Content -->
         <div class="content">
+            <h2>الشكاوى</h2>
             <div class="filter-container">
                 <label for="status-filter">تصفية حسب الحالة:</label>
                 <select id="status-filter" onchange="filterComplaints()">
@@ -209,7 +211,7 @@ td button {
                 </select>
             </div>
    
-            </div>
+    
             
             <div class="table-container">
                 <table id="complaints-table">
