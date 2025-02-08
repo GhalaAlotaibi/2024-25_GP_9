@@ -419,12 +419,12 @@
             }
 
             // Extract complaint data
-            const timestamp = data.timestamp.slice(0, 10);
+            //const timestamp = data.timestamp;
             const isResolved = data.status === "resolved";
             const statusColor = isResolved ? "green-bar" : "red-bar";
             const statusText = isResolved ? "تم الحل" : "قيد الانتظار";
 
-            // Complaint HTML structure
+            // Complaint HTML structure  <!-- <small id="time">${timestamp}</small> -->
             const complaintHTML = `
         <div class="complaint ${complaintCount >= 1 ? "hidden" : ""}">
           <div class="complaint-status ${statusColor}">
@@ -435,7 +435,7 @@
               <img src="/assets/images/user.jpg" alt="User Avatar" class="avatar">
               <div class="cHeader">
                 <h4>${customerName}</h4>
-                <small id="time">${timestamp}</small>
+            
               </div>
             </div>
             <p class="complaint-description">${data.description}</p>
