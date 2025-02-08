@@ -1,138 +1,536 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tracki - Truck Profile</title>
-    <link rel="stylesheet" href="Styles/Style.css">
-    <link rel="stylesheet" href="Styles/AllTrucks.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
-</head>
-<body>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link rel="stylesheet" href="Styles/style2.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <!-- Header -->
     <div class="main-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="headerOfBar">
-                <img src="images/TrackiLogo.png" alt="Logo">
-                <h1>Tracki</h1>
-            </div>
-            <ul style="list-style: none; padding: 0; margin: 20px 0;">
-                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
-                <li><a href="AllTrucks.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
-                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-            </ul>
-        </div>  
-        
-        <section class="status-section">
-            <div class="left-actions">
-                <p id="status">مرحبًا!</p>
-            </div>
-            <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
-                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <div class="content">
-            <h2>ملف العربة</h2>
-            <div id="truck-details">
-                <h3>تفاصيل العربة سيتم عرضها هنا</h3>
-                <p>معرف العربة: <span id="truck-id"></span></p>
-                <!-- Add more details as needed -->
-            </div>
-
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="headerOfBar">
+          <img src="images/TrackiLogo.png" alt="Logo" />
+          <h1>Tracki</h1>
         </div>
+        <ul style="list-style: none; padding: 0; margin: 20px 0">
+          <li>
+            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+          </li>
+          <li>
+            <a href="WaitingTrucks.html"
+              ><i class="fas fa-truck-loading"></i> قيد الإنتظار
+            </a>
+          </li>
+          <li>
+            <a
+              href="AllTrucks.html"
+              style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "
+              ><i class="fas fa-truck"></i> جميع العربات</a
+            >
+          </li>
+          <li>
+            <a href="History.html"
+              ><i class="fas fa-history"></i> سجل العمليات
+            </a>
+          </li>
+          <li>
+            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+          </li>
+          <li>
+            <a href="Complaints.html"
+              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <section class="status-section">
+        <div class="left-actions">
+          <p id="status">مرحبًا!</p>
+        </div>
+        <div class="right-actions">
+          <i
+            id="notification-icon"
+            class="fas fa-bell notification-icon"
+            title="الإشعارات"
+          ></i>
+          <i
+            id="logout-icon"
+            class="fas fa-sign-out-alt logout-icon"
+            title="تسجيل الخروج"
+          ></i>
+        </div>
+      </section>
+
+      <!-- Main Content -->
+      <div class="profile">
+        <div class="container">
+          <div class="truck-image-container">
+            <img id="truckImage" class="truck-image" src="" alt="صورة العربة" />
+            <img
+              id="businessLogo"
+              class="business-logo"
+              src=""
+              alt="شعار العربة"
+            />
+          </div>
+          <div class="truck-info">
+            <div id="truckName" class="truck-name"></div>
+
+            <div id="truckCategory" class="truck-category">قهوه</div>
+            <div id="starRating" class="stars"></div>
+          </div>
+        </div>
+        <div class="rowOfCards">
+          <div class="colOfCards">
+            <div id="ownerInfoCard" class="card">
+              <h3 class="cardTitle">عن المالك</h3>
+            </div>
+            <div class="card license">
+              <h3 class="cardTitle">استمارة البيع</h3>
+              <div class="licenseContainer">
+                <!-- License PDF will be embedded here -->
+              </div>
+            </div>
+          </div>
+
+          <div id="complaintsContainer" class="card complaints">
+            <h3 class="cardTitle">الشكاوي</h3>
+            <div id="complaintsCard"></div>
+          </div>
+
+          <div class="card reviews">
+            <h3 class="cardTitle">التقييمات</h3>
+            <div id="reviewsCard"></div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
 
     <!-- Firebase Script -->
+
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import {
+        getFirestore,
+        query,
+        where,
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-            authDomain: "trucki-database.firebaseapp.com",
-            projectId: "trucki-database",
-            storageBucket: "trucki-database.appspot.com",
-            messagingSenderId: "283818817351",
-            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
-        };
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+      // Initialize Firebase
+      const urlParams = new URLSearchParams(window.location.search);
+      const truckID = urlParams.get("truckId");
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-        // Check authentication status on page load
-        onAuthStateChanged(auth, (user) => {            const statusElement = document.getElementById('status');
-            if (user) {
-                const username = user.email.split('@')[0];
-                statusElement.innerText = `مرحبًا ${username} !`;
-                fetchTruckDetails(); // Call function to load the truck details
-            } else {
-                statusElement.innerText = "لم يتم تسجيل الدخول";
-                window.location.href = "WelcomePage.html";
-            }
-        });
-
-        // Logout functionality
-        const logoutIcon = document.getElementById('logout-icon');
-        logoutIcon.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                alert("تم تسجيل الخروج بنجاح!");
-                window.location.href = "WelcomePage.html";
-            } catch (error) {
-                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-            }
-        });
-
-        // Function to fetch truck details using truckId from the URL
-        async function fetchTruckDetails() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const truckId = urlParams.get('truckId');
-
-            if (truckId) {
-                document.getElementById('truck-id').innerText = truckId; // Display the truck ID
-                
-                try {
-                    const truckDoc = await getDoc(doc(db, "Food_Truck", truckId));
-
-                    if (truckDoc.exists()) {
-                        const data = truckDoc.data();
-                        // You can populate more details about the truck here;
-                        document.getElementById('truck-details').innerHTML += `
-                            <p><strong>الاسم:</strong> ${data.name || "غير محدد"}</p>
-                            <p><strong>رقم الترخيص:</strong> ${data.licenseNo || "غير محدد"}</p>
-                            <p><strong>الفئة:</strong> ${data.categoryId || "غير محدد"}</p>
-                            <p><strong>الحالة:</strong> ${data.statusId || "غير محدد"}</p>
-                            <img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: auto;">
-                            <img src="${data.truckImage}" alt="Truck Image" style="width: 300px; height: auto;">
-                        `;
-                    } else {
-                        document.getElementById('truck-details').innerHTML = "لا توجد بيانات لهذه العربة.";
-                    }
-                } catch (error) {
-                    console.error("Error fetching truck details:", error);
-                    document.getElementById('truck-details').innerHTML = "حدث خطأ أثناء تحميل تفاصيل العربة.";
-                }
-            } else {
-                document.getElementById('truck-details').innerHTML = "معرف العربة غير موجود.";
-            }
+      // Check authentication status on page load
+      onAuthStateChanged(auth, (user) => {
+        const statusElement = document.getElementById("status");
+        if (user) {
+          const username = user.email.split("@")[0];
+          statusElement.innerText = `مرحبًا ${username} !`;
+        } else {
+          statusElement.innerText = "لم يتم تسجيل الدخول";
+          window.location.href = "WelcomePage.html";
         }
+      });
+
+      // Logout functionality
+      const logoutIcon = document.getElementById("logout-icon");
+      logoutIcon.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          alert("تم تسجيل الخروج بنجاح!");
+          window.location.href = "WelcomePage.html";
+        } catch (error) {
+          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+        }
+      });
+      //profile content
+
+      async function displayTruck(truckID) {
+        const truckRef = doc(db, "Food_Truck", truckID);
+        const truckSnap = await getDoc(truckRef);
+
+        if (truckSnap.exists()) {
+          const truckData = truckSnap.data();
+
+          document.getElementById("truckImage").src = truckData.truckImage;
+          document.getElementById("businessLogo").src = truckData.businessLogo;
+          document.getElementById("truckName").textContent = truckData.name;
+          displayStars(parseFloat(truckData.rating.trim()));
+
+          // Display license PDF
+          const licensePDFUrl = truckData.licensePDF;
+          const licenseContainer = document.querySelector(".licenseContainer");
+
+          // Check if the licensePDFUrl is a non-empty string
+          if (licensePDFUrl && licensePDFUrl.trim() !== "") {
+            licenseContainer.innerHTML = `
+      <embed src="${licensePDFUrl}" type="application/pdf" width="100%" height="100%">
+    `;
+          } else {
+            licenseContainer.innerHTML = "<p>لا توجد استمارة للبيع.</p>";
+          }
+
+          if (truckData.ownerID) {
+            displayOwner(truckData.ownerID);
+          }
+        } else {
+          console.log("No such truck!");
+        }
+      }
+
+      function displayStars(rating) {
+        const starsContainer = document.getElementById("starRating");
+        starsContainer.innerHTML = "";
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        for (let i = 0; i < fullStars; i++) {
+          starsContainer.innerHTML += "<i class='fas fa-star'></i>";
+        }
+        if (halfStar) {
+          starsContainer.innerHTML += "<i class='fas fa-star-half-alt'></i>";
+        }
+        for (let i = 0; i < emptyStars; i++) {
+          starsContainer.innerHTML += "<i class='far fa-star'></i>";
+        }
+      }
+
+      async function displayOwner(ownerID) {
+        const ownerRef = doc(db, "Truck_Owner", ownerID);
+        const ownerSnap = await getDoc(ownerRef);
+
+        if (ownerSnap.exists()) {
+          const ownerData = ownerSnap.data();
+          const ownerEmail = ownerData.Email;
+          const ownerPhone = ownerData.PhoneNum;
+
+          const ownerInfoCard = document.getElementById("ownerInfoCard");
+          ownerInfoCard.innerHTML += `
+            <div class="owner-info">
+                <div class="info-item">
+                    <i class="fas fa-user"></i>
+                    <span>${ownerData.Name}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <span>${ownerEmail}</span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <span>${ownerPhone}</span>
+                </div>
+                <div class="action-buttons">
+                    <button class="btn email-btn">تواصل عبر البريد الالكتروني</button>
+                    <button class="btn btn-danger sms-btn">أرسل رسالة SMS</button>
+                </div>
+            </div>
+        `;
+
+          // Add event listeners for email and SMS buttons
+          document
+            .querySelector(".email-btn")
+            .addEventListener("click", function () {
+              window.location.href = `mailto:${ownerEmail}?subject=استفسار عن عربة الطعام&body=مرحبًا، أود الاستفسار عن عربتك.`;
+            });
+
+          document
+            .querySelector(".sms-btn")
+            .addEventListener("click", function () {
+              window.location.href = `sms:${ownerPhone}?body=مرحبًا، أود الاستفسار عن عربتك.`;
+            });
+        } else {
+          console.log("No such owner!");
+        }
+      }
+      displayTruck(truckID);
+      async function displayReviews(truckID) {
+        const reviewsContainer = document.getElementById("reviewsCard");
+
+        try {
+          // Query the Review collection
+          const q = query(
+            collection(db, "Review"),
+            where("foodTruckId", "==", truckID)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          // Check if reviews exist
+          if (querySnapshot.empty) {
+            reviewsContainer.innerHTML +=
+              "<p class='emptyMessage'>لا توجد تقييمات حاليا.</p>";
+            return;
+          }
+
+          // Display reviews
+          let reviewsHTML = "";
+          let reviewCount = 0;
+          for (const docSnap of querySnapshot.docs) {
+            const data = docSnap.data();
+            let customerName = "مستخدم مجهول";
+            let timestamp1 = data.timestamp;
+            let timestamp = timestamp1.slice(0, 10);
+
+            // Fetch customer name if available
+            if (data.customerId) {
+              const customerRef = doc(db, "Customer", data.customerId);
+              const customerSnap = await getDoc(customerRef);
+              if (customerSnap.exists()) {
+                customerName = customerSnap.data().Name || "مستخدم مجهول";
+              }
+            }
+
+            // Generate dynamic star ratings
+            const rating = parseFloat(data.rating || "0");
+            const fullStars = Math.floor(rating);
+            const hasHalfStar = rating % 1 !== 0;
+            const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+            const stars = `${'<i class="fas fa-star star"></i>'.repeat(
+              fullStars
+            )}
+   ${hasHalfStar ? '<i class="fas fa-star-half-alt star"></i>' : ""}
+   ${'<i class="far fa-star star"></i>'.repeat(emptyStars)}`;
+
+            const reviewHTML = `
+        <div class="review ${reviewCount >= 2 ? "hidden" : ""}">
+          <div class="review-header">
+            <img src="/assets/images/user.jpg" alt="User Avatar" class="avatar">
+            <div class="nameAndTime">
+              <h4>${customerName}</h4>
+              <small>${timestamp}</small>
+            </div>
+          </div class="comment">
+          <p>${data.comment || "لا يوجد تعليق"}</p>
+          <div class="rating">${stars}</div>
+          <hr>
+        </div>
+      `;
+
+            reviewsHTML += reviewHTML;
+            reviewCount++;
+          }
+
+          if (reviewCount > 2) {
+            reviewsHTML += `<button id="showMoreBtn" class="btn">رؤية المزيد</button>`;
+          }
+
+          reviewsContainer.innerHTML = reviewsHTML;
+
+          // Add functionality for "Show More" button
+          const showMoreBtn = document.getElementById("showMoreBtn");
+          if (showMoreBtn) {
+            showMoreBtn.addEventListener("click", () => {
+              document.querySelectorAll(".review.hidden").forEach((review) => {
+                review.classList.remove("hidden");
+              });
+              showMoreBtn.style.display = "none";
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching reviews:", error);
+          reviewsContainer.innerHTML = "<p>حدث خطأ أثناء تحميل التقييمات.</p>";
+        }
+      }
+      displayReviews(truckID);
+
+      async function displayComplaints(truckID) {
+        const complaintsContainer = document.getElementById("complaintsCard");
+
+        try {
+          // Query the Complaints collection
+          const q = query(
+            collection(db, "Complaint"),
+            where("foodTruckId", "==", truckID)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          // Check if complaints exist
+          if (querySnapshot.empty) {
+            complaintsContainer.innerHTML += complaintsContainer.innerHTML += `
+  <p class='emptyMessage'>
+    لا توجد شكاوي على هذه العربة.  
+  </p>`;
+            return;
+          }
+
+          let complaintsHTML = "";
+          let complaintCount = 0;
+
+          for (const docSnap of querySnapshot.docs) {
+            const data = docSnap.data();
+            let customerName = "مستخدم مجهول";
+
+            // Fetch customer name
+            if (data.customerId) {
+              const customerRef = doc(db, "Customer", data.customerId);
+              const customerSnap = await getDoc(customerRef);
+              if (customerSnap.exists()) {
+                customerName = customerSnap.data().Name || "مستخدم مجهول";
+              }
+            }
+
+            // Extract complaint data
+            const timestamp = data.timestamp.slice(0, 10);
+            const isResolved = data.status === "resolved";
+            const statusColor = isResolved ? "green-bar" : "red-bar";
+            const statusText = isResolved ? "تم الحل" : "قيد الانتظار";
+
+            // Complaint HTML structure
+            const complaintHTML = `
+        <div class="complaint ${complaintCount >= 1 ? "hidden" : ""}">
+          <div class="complaint-status ${statusColor}">
+            <span>${statusText}</span>
+          </div>
+          <div class="complaint-content">
+            <div class="complaint-header">
+              <img src="/assets/images/user.jpg" alt="User Avatar" class="avatar">
+              <div class="cHeader">
+                <h4>${customerName}</h4>
+                <small id="time">${timestamp}</small>
+              </div>
+            </div>
+            <p class="complaint-description">${data.description}</p>
+            ${
+              isResolved
+                ? `<div class="admin-comment"><strong>تعليق المدير:</strong> ${
+                    data.adminComment || "لا يوجد تعليق"
+                  }</div>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+
+            complaintsHTML += complaintHTML;
+            complaintCount++;
+          }
+
+          if (complaintCount > 1) {
+            complaintsHTML += `<button id="showMoreComplaintsBtn" class="btn complaintsBtn">رؤية المزيد</button>`;
+          }
+
+          complaintsContainer.innerHTML = complaintsHTML;
+
+          // Add functionality for "Show More" button
+          const showMoreComplaintsBtn = document.getElementById(
+            "showMoreComplaintsBtn"
+          );
+          if (showMoreComplaintsBtn) {
+            showMoreComplaintsBtn.addEventListener("click", () => {
+              document
+                .querySelectorAll(".complaint.hidden")
+                .forEach((complaint) => {
+                  complaint.classList.remove("hidden");
+                });
+              showMoreComplaintsBtn.style.display = "none";
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching complaints:", error);
+          complaintsContainer.innerHTML = "<p>حدث خطأ أثناء تحميل الشكاوي.</p>";
+        }
+      }
+
+      displayComplaints(truckID);
+
+      // Function to fetch truck details using truckId from the URL
+      //   async function fetchTruckDetails() {
+      //     const urlParams = new URLSearchParams(window.location.search);
+      //     const truckId = urlParams.get("truckId");
+      //     const truckID = truckId;
+      //     if (truckId) {
+      //       document.getElementById("truck-id").innerText = truckId; // Display the truck ID
+
+      //       try {
+      //         const truckDoc = await getDoc(doc(db, "Food_Truck", truckId));
+
+      //         if (truckDoc.exists()) {
+      //           const data = truckDoc.data();
+      //           // You can populate more details about the truck here;
+      //           document.getElementById("truck-details").innerHTML += `
+      //                         <p><strong>الاسم:</strong> ${
+      //                           data.name || "غير محدد"
+      //                         }</p>
+      //                         <p><strong>رقم الترخيص:</strong> ${
+      //                           data.licensePDF || "غير محدد"
+      //                         }</p>
+      //                         <p><strong>الفئة:</strong> ${
+      //                           data.categoryId || "غير محدد"
+      //                         }</p>
+      //                         <p><strong>الحالة:</strong> ${
+      //                           data.statusId || "غير محدد"
+      //                         }</p>
+      //                         <img src="${
+      //                           data.businessLogo
+      //                         }" alt="Logo" style="width: 100px; height: auto;">
+      //                         <img src="${
+      //                           data.truckImage
+      //                         }" alt="Truck Image" style="width: 300px; height: auto;">
+      //                     `;
+      //         } else {
+      //           document.getElementById("truck-details").innerHTML =
+      //             "لا توجد بيانات لهذه العربة.";
+      //         }
+      //       } catch (error) {
+      //         console.error("Error fetching truck details:", error);
+      //         document.getElementById("truck-details").innerHTML =
+      //           "حدث خطأ أثناء تحميل تفاصيل العربة.";
+      //       }
+      //     } else {
+      //       document.getElementById("truck-details").innerHTML =
+      //         "معرف العربة غير موجود.";
+      //     }
+      //   }
+      //
     </script>
-</body>
+  </body>
 </html>

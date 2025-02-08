@@ -16,6 +16,7 @@ class CreateTruck2 extends StatefulWidget {
   final String description;
   final String operatingHours;
   final String licenseNo;
+  final String licensePDF;
 
   CreateTruck2({
     Key? key,
@@ -27,6 +28,7 @@ class CreateTruck2 extends StatefulWidget {
     required this.description,
     required this.operatingHours,
     required this.licenseNo,
+    required this.licensePDF,
   }) : super(key: key);
 
   @override
@@ -58,13 +60,14 @@ class _CreateTruck2State extends State<CreateTruck2> {
           'name': widget.truckName,
           'businessLogo': widget.businessLogo,
           'truckImage': widget.truckImage,
-          'categoryId': widget.selectedCategory, // Store category ID
+          'categoryId': widget.selectedCategory,
           'description': widget.description,
           'operatingHours': widget.operatingHours,
           'ownerID': widget.ownerId,
           'location':
               '${_selectedLocation.latitude},${_selectedLocation.longitude}',
-          'licenseNo': widget.licenseNo,
+          'licenseNo': widget.licenseNo, // 🔍 This should be a number
+          'licensePDF': widget.licensePDF, // 🔍 This should be a URL
           'rating': '0',
           'ratingsCount': 0,
           'item_names_list': [],
@@ -72,6 +75,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
           'item_images_list': [],
           'statusId': requestId, // Link to the Request document
         });
+
         String truckId = truckRef.id;
 
         //Update the Request document with the foodTruckId
@@ -103,7 +107,8 @@ class _CreateTruck2State extends State<CreateTruck2> {
     final encodedQuery = Uri.encodeQueryComponent(query);
 
     //THIS KEY SHOULD BE REMOVED BEFORE UPLOADING TO GITHUB
-    final url = 'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedQuery&key=AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Replace with Ghala's API key later
+    final url =
+        'https://maps.googleapis.com/maps/api/geocode/json?address=$encodedQuery&key=AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Replace with Ghala's API key later
     final response = await http.get(Uri.parse(url));
 
     if (response.statusCode == 200) {
@@ -262,7 +267,6 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           markers: {
                             Marker(
                               markerId: MarkerId('selected_location'),
-                              position: _selectedLocation,
                             ),
                           },
                         ),

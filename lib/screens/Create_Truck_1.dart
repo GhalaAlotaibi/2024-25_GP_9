@@ -7,6 +7,7 @@ import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
+ 
 
 class CreateTruck1 extends StatefulWidget {
   final String ownerId;
@@ -21,7 +22,11 @@ class _CreateTruck1State extends State<CreateTruck1> {
   final _formKey = GlobalKey<FormState>();
   String? selectedCategory;
   String truckName = '';
+  TextEditingController _licenseNoController = TextEditingController();
+
   String licenseNo = '';
+  String licensePDF = ' ';
+
   String description = '';
   String businessLogoUrl = '';
   String truckImageUrl = '';
@@ -254,6 +259,39 @@ class _CreateTruck1State extends State<CreateTruck1> {
 
                       const SizedBox(height: 25.0),
 
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          controller:
+                              _licenseNoController, // 🔥 Assign controller
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الرجاء إدخال رقم الرخصة';
+                            }
+                            return null;
+                          },
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            label: const Text('رقم الرخصة',
+                                textAlign: TextAlign.center),
+                            hintText: 'ادخل رقم الرخصة',
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignLabelWithHint: true,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 20.0),
                       Directionality(
                         textDirection: TextDirection.rtl,
                         child: ElevatedButton.icon(
@@ -556,8 +594,9 @@ class _CreateTruck1State extends State<CreateTruck1> {
 // ElevatedButton with Validation ==> DONE AND CHECKED
                             ElevatedButton(
                           onPressed: () {
+                            String licensePDF = licenseFileUrl ?? " ";
+
                             setState(() {
-                              // Check if images are missing
                               isLogoMissing = businessLogo == null;
                               isImageMissing = truckImage == null;
                               if (!isLogoMissing &&
@@ -571,14 +610,17 @@ class _CreateTruck1State extends State<CreateTruck1> {
                                       return CreateTruck2(
                                         ownerId: widget.ownerId,
                                         truckName: truckName,
-                                        licenseNo: licenseFileUrl ??
-                                            '', // <- Now using uploaded file URL
                                         businessLogo: businessLogoUrl,
                                         truckImage: truckImageUrl,
                                         selectedCategory: selectedCategory!,
                                         description: description,
                                         operatingHours:
                                             '$openingTime-$closingTime',
+                                        licenseNo:
+                                            _licenseNoController.text.isNotEmpty
+                                                ? _licenseNoController.text
+                                                : "",
+                                        licensePDF: licenseFileUrl ?? '',
                                       );
                                     },
                                   ),
@@ -598,7 +640,8 @@ class _CreateTruck1State extends State<CreateTruck1> {
                           ),
                           child: const Text(
                             'التالي',
-                            style: TextStyle(color: Colors.white),
+                            style: TextStyle(
+                                color: Color.fromARGB(255, 255, 255, 255)),
                           ),
                         ),
                       ),

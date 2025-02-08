@@ -40,8 +40,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        // Prevent the swipe back gesture
-        return false; // Returning false disables back navigation
+        return false;
       },
       child: Scaffold(
         backgroundColor: kbackgroundColor,
@@ -57,7 +56,8 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       headerParts(),
-                      mySearchBar(),
+                      const SizedBox(height: 20),
+                      //  mySearchBar(),
                       const BannerToExplore(),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 20),
@@ -158,6 +158,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                   ),
                                 ),
                               ),
+                              const SizedBox(height: 20),
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
                                 child: suggestedTrucksRow(trucks),
@@ -282,27 +283,21 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                           textDirection: TextDirection.rtl,
                         ),
                         actions: <Widget>[
-                          // Cancel Button
                           TextButton(
                             onPressed: () {
-                              Navigator.of(dialogContext)
-                                  .pop(false); // Cancel action
+                              Navigator.of(dialogContext).pop(false);
                             },
                             child: Directionality(
                               textDirection: TextDirection.rtl,
                               child: const Text('إلغاء'),
                             ),
                           ),
-
-                          // Confirm Logout Button with banner color
                           TextButton(
                             onPressed: () {
-                              Navigator.of(dialogContext)
-                                  .pop(true); // Confirm Logout action
+                              Navigator.of(dialogContext).pop(true);
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  kBannerColor, // Set button color to banner color
+                              backgroundColor: kBannerColor,
                             ),
                             child: const Text(
                               'تسجيل الخروج',
@@ -313,9 +308,8 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                       );
                     },
                   ) ??
-                  false; // Default to false if dialog is closed without a response
+                  false;
 
-              // Proceed with sign-out if the user confirmed the logout
               if (shouldLogOut) {
                 try {
                   await _authService.signOut();
@@ -341,35 +335,142 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
       ],
     );
   }
+}
 
-  Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-      child: Row(
-        children: trucks.map((e) {
-          final imageUrl = e['truckImage'];
-          final truckName = e['name'];
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12.0),
-            child: Column(
-              children: [
-                CircleAvatar(
-                  radius: 25,
-                  backgroundImage: NetworkImage(imageUrl),
-                  backgroundColor: Colors.grey[200],
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  truckName,
-                  style: const TextStyle(fontSize: 12),
-                  textAlign: TextAlign.center,
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ],
-            ),
-          );
-        }).toList(),
-      ),
-    );
+Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
+  return FutureBuilder<List<DocumentSnapshot>>(
+    future: _getAcceptedTrucks(trucks),
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Center(child: CircularProgressIndicator());
+      }
+
+      if (snapshot.hasError) {
+        return const Center(child: Text("Error loading data"));
+      }
+
+      final acceptedTrucks = snapshot.data ?? [];
+
+      if (acceptedTrucks.isEmpty) {
+        return const Center(child: Text("لا توجد عربات مقترحة متاحة."));
+      }
+
+      return SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: acceptedTrucks.reversed.map((truck) {
+            // Reverse list manually
+            final imageUrl = truck['truckImage'] ?? ''; // Avoid null errors
+            final truckName = truck['name'] ?? 'غير معروف'; // Default name
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Stack(
+                children: [
+                  // Truck Image Card
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(15),
+                    child: Container(
+                      width: 140,
+                      height: 180,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300], // Placeholder background
+                        borderRadius: BorderRadius.circular(15),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 8,
+                            spreadRadius: 2,
+                            offset: const Offset(2, 4),
+                          )
+                        ],
+                      ),
+                      child: imageUrl.isNotEmpty
+                          ? Image.network(
+                              imageUrl,
+                              fit: BoxFit.cover,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              },
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const Icon(Icons.image_not_supported,
+                                      size: 60),
+                            )
+                          : const Icon(Icons.image_not_supported, size: 60),
+                    ),
+                  ),
+
+                  // Gradient Overlay
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Container(
+                      height: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
+                          bottomLeft: Radius.circular(15),
+                          bottomRight: Radius.circular(15),
+                        ),
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [
+                            Colors.black.withOpacity(0.6),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  // Truck Name Overlay
+                  Positioned(
+                    bottom: 10,
+                    left: 10,
+                    right: 10,
+                    child: Text(
+                      truckName,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }).toList(),
+        ),
+      );
+    },
+  );
+}
+
+Future<List<DocumentSnapshot>> _getAcceptedTrucks(
+    List<DocumentSnapshot> trucks) async {
+  final CollectionReference requestCollection =
+      FirebaseFirestore.instance.collection("Request");
+
+  List<DocumentSnapshot> acceptedTrucks = [];
+
+  for (var truck in trucks) {
+    final String statusId = truck['statusId'];
+    try {
+      final requestDoc = await requestCollection.doc(statusId).get();
+      if (requestDoc.exists && requestDoc['status'] == 'accepted') {
+        acceptedTrucks.add(truck);
+      }
+    } catch (e) {
+      print('Error checking truck status for $statusId: $e');
+    }
   }
+  return acceptedTrucks;
 }
