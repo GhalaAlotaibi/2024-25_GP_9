@@ -18,6 +18,7 @@ class MyAppHomeScreen extends StatefulWidget {
   State<MyAppHomeScreen> createState() => _MyAppHomeScreenState();
 }
 
+
 //setState
 class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
