@@ -9,6 +9,8 @@ import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:flutter/gestures.dart';
+import 'dart:convert'; // For JSON decoding
+import 'package:http/http.dart' as http;
 
 class MyAppHomeScreen extends StatefulWidget {
   final String customerID;
@@ -18,14 +20,51 @@ class MyAppHomeScreen extends StatefulWidget {
   State<MyAppHomeScreen> createState() => _MyAppHomeScreenState();
 }
 
-
 //setState
 class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
   String selectedCategoryId = "";
-
   late final String cID = widget.customerID;
   final FirebaseAuthService _authService = FirebaseAuthService();
+  void initState() {
+    super.initState();
+    // Call getRecommendations when the page is loaded
+    getRecommendations();
+  }
+
+  List<DocumentSnapshot> recommendedTrucks = [];
+
+  void getRecommendations() async {
+    String userId = widget.customerID; // Use the logged-in user ID
+    double lat = 24.70952885058521;
+    double lon = 46.770585;
+
+    List<String> recommendedTruckIDs =
+        await fetchRecommendedFoodTrucks(userId, lat, lon);
+
+    if (recommendedTruckIDs.isNotEmpty) {
+      List<DocumentSnapshot> fetchedTrucks =
+          await fetchTruckDetails(recommendedTruckIDs);
+      setState(() {
+        recommendedTrucks = fetchedTrucks;
+      });
+    }
+  }
+
+  Future<List<DocumentSnapshot>> fetchTruckDetails(
+      List<String> truckIDs) async {
+    List<DocumentSnapshot> truckList = [];
+    for (String id in truckIDs) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection("Food_Truck")
+          .doc(id)
+          .get();
+      if (doc.exists) {
+        truckList.add(doc);
+      }
+    }
+    return truckList;
+  }
 
   final CollectionReference categoriesItems =
       FirebaseFirestore.instance.collection("Food-Category");
@@ -162,7 +201,11 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                               const SizedBox(height: 20),
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                child: suggestedTrucksRow(trucks),
+                                child: recommendedTrucks.isNotEmpty
+                                    ? suggestedTrucksRow(recommendedTrucks)
+                                    : const Center(
+                                        child: Text(
+                                            "لا توجد عربات مقترحة متاحة.")),
                               ),
                             ],
                           );
@@ -475,3 +518,33 @@ Future<List<DocumentSnapshot>> _getAcceptedTrucks(
   }
   return acceptedTrucks;
 }
+
+Future<List<String>> fetchRecommendedFoodTrucks(
+    String userId, double lat, double lon) async {
+  final Uri url = Uri.parse(
+      'http://10.0.2.2:5000/recommend?user_id=$userId&lat=$lat&lon=$lon');
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return List<String>.from(data["recommended_food_trucks"]);
+    } else {
+      throw Exception("Failed to load recommendations");
+    }
+  } catch (e) {
+    print("Error fetching recommendations: $e");
+    return [];
+  }
+}
+
+// void getRecommendations() async {
+//   String userId = "4QIh8jSpdwdH82nmQRd8WOMKFOj2";
+//   double lat = 24.70952885058521;
+//   double lon = 46.770585;
+
+//   List<String> recommendedTrucks =
+//       await fetchRecommendedFoodTrucks(userId, lat, lon);
+//   print("Recommended Food Trucks: $recommendedTrucks");
+// }
