@@ -9,8 +9,10 @@ import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:flutter/gestures.dart';
-import 'dart:convert'; // For JSON decoding
+import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MyAppHomeScreen extends StatefulWidget {
   final String customerID;
@@ -36,8 +38,16 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
 
   void getRecommendations() async {
     String userId = widget.customerID; // Use the logged-in user ID
-    double lat = 24.70952885058521;
-    double lon = 46.770585;
+
+    // Fetch the user's current location
+    Position? currentPosition = await _getCurrentLocation();
+    if (currentPosition == null) {
+      print("Failed to fetch current location.");
+      return;
+    }
+
+    double lat = currentPosition.latitude;
+    double lon = currentPosition.longitude;
 
     List<String> recommendedTruckIDs =
         await fetchRecommendedFoodTrucks(userId, lat, lon);
@@ -48,6 +58,40 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
       setState(() {
         recommendedTrucks = fetchedTrucks;
       });
+    }
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print("Location services are disabled.");
+        return null;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print("Location permissions are denied.");
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print("Location permissions are permanently denied.");
+        return null;
+      }
+
+      // Fetch the current position
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+    } catch (e) {
+      print("Error fetching location: $e");
+      return null;
     }
   }
 
@@ -538,13 +582,4 @@ Future<List<String>> fetchRecommendedFoodTrucks(
     return [];
   }
 }
-
-// void getRecommendations() async {
-//   String userId = "4QIh8jSpdwdH82nmQRd8WOMKFOj2";
-//   double lat = 24.70952885058521;
-//   double lon = 46.770585;
-
-//   List<String> recommendedTrucks =
-//       await fetchRecommendedFoodTrucks(userId, lat, lon);
-//   print("Recommended Food Trucks: $recommendedTrucks");
-// }
+//24.7082, 46.5989
