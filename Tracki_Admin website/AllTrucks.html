@@ -1,442 +1,558 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracki - All Trucks</title>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Tracki - All Trucks </title>
-    <link rel="stylesheet" href="Styles/Style.css">
-    <link rel="stylesheet" href="Styles/AllTrucks.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
-</head>
-
-<body>
+  <body>
     <div class="main-container">
-        <div class="sidebar">
-            <div class="headerOfBar">
-                <img src="images/TrackiLogo.png" alt="Logo">
-                <h1>Tracki</h1>
+      <div class="sidebar">
+        <div class="headerOfBar">
+          <img src="images/TrackiLogo.png" alt="Logo" />
+          <h1>Tracki</h1>
+        </div>
+        <ul style="list-style: none; padding: 0; margin: 20px 0">
+          <li>
+            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+          </li>
+          <li>
+            <a href="WaitingTrucks.html"
+              ><i class="fas fa-truck-loading"></i> قيد الإنتظار
+            </a>
+          </li>
+          <li>
+            <a
+              href="AllTrucks.html"
+              style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "
+              ><i class="fas fa-truck"></i> جميع العربات</a
+            >
+          </li>
+          <li>
+            <a href="LocationUpdateRequests.html"
+              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
+            >
+          </li>
+          <li>
+            <a href="History.html"
+              ><i class="fas fa-history"></i> سجل العمليات
+            </a>
+          </li>
+          <li>
+            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+          </li>
+          <li>
+            <a href="Complaints.html"
+              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <section class="status-section">
+        <div class="left-actions">
+          <p id="status">مرحبًا!</p>
+        </div>
+        <div class="right-actions">
+          <i
+            id="notification-icon"
+            class="fas fa-bell notification-icon"
+            title="الإشعارات"
+          ></i>
+          <i
+            id="logout-icon"
+            class="fas fa-sign-out-alt logout-icon"
+            title="تسجيل الخروج"
+          ></i>
+        </div>
+      </section>
+
+      <div class="content">
+        <h2>جميع العربات</h2>
+
+        <!-- Search and Filter Section -->
+        <div class="Searchandfilter">
+          <!-- Filter -->
+          <div class="filter-container">
+            <button class="filter-icon" onclick="toggleDropdown()">
+              <img src="images/FilterIcon2.png" />
+            </button>
+            <div
+              id="category-dropdown"
+              class="dropdown-content"
+              style="display: none"
+            >
+              <div class="dropdown-header">تصنيف حسب</div>
+              <a href="#Status" onclick="toggleStatusList()">الحالة</a>
+              <a href="#" id="category-toggle" onclick="toggleCategoryList()"
+                >التصنيف</a
+              >
+              <a href="#Ratings" onclick="toggleRatingList()">التقييم</a>
+              <a href="#Complaints" onclick="toggleComplaintsList()">الشكاوي</a>
             </div>
-            <ul style="list-style: none; padding: 0; margin: 20px 0;">
-                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
-                <li><a href="AllTrucks.html"
-                        style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
-                            class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
-                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-            </ul>
+
+            <!-- Secondary List for Status -->
+            <div
+              id="status-list"
+              class="dropdown-content"
+              style="display: none"
+            >
+              <a href="#" onclick="selectStatus('مقبولة')">مقبولة</a>
+              <a href="#" onclick="selectStatus('مرفوضة')">مرفوضة</a>
+            </div>
+
+            <!-- Secondary List for Category -->
+            <div
+              id="category-list"
+              class="dropdown-content"
+              style="display: none"
+            >
+              <!-- Categories will be populated here dynamically -->
+            </div>
+
+            <!-- Secondary List for Ratings -->
+            <div
+              id="ratings-list"
+              class="dropdown-content"
+              style="display: none"
+            >
+              <a href="#" onclick="selectRating(5)">5 نجوم</a>
+              <a href="#" onclick="selectRating(4)">4 نجوم</a>
+              <a href="#" onclick="selectRating(3)">3 نجوم</a>
+              <a href="#" onclick="selectRating(2)">2 نجوم</a>
+              <a href="#" onclick="selectRating(1)">نجمة واحدة</a>
+              <a href="#" onclick="selectRating(1)">0 نجمة</a>
+            </div>
+
+            <!-- Secondary List for Complaints -->
+            <div
+              id="complaints-list"
+              class="dropdown-content"
+              style="display: none"
+            >
+              <a href="#" onclick="selectComplaints(0)">بدون شكوى</a>
+              <a href="#" onclick="selectComplaints(1)">شكوى واحدة</a>
+              <a href="#" onclick="selectComplaints(2)">شكوتان</a>
+              <a href="#" onclick="selectComplaints(3)">أكثر من 2</a>
+            </div>
+          </div>
+
+          <!-- Search -->
+          <input type="text" id="search-bar" placeholder="ابحث عن عربة..." />
         </div>
 
-        <section class="status-section">
-            <div class="left-actions">
-                <p id="status">مرحبًا!</p>
-            </div>
-            <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
-                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
-            </div>
-        </section>
-
-        <div class="content">
-            <h2> جميع العربات </h2>
-
-            <!-- Search and Filter Section -->
-            <div class="Searchandfilter">
-                <!-- Filter -->
-                <div class="filter-container">
-                    <button class="filter-icon" onclick="toggleDropdown()">
-                        <img src="images/FilterIcon2.png">
-                    </button>
-                    <div id="category-dropdown" class="dropdown-content" style="display: none;">
-                        <div class="dropdown-header">تصنيف حسب</div>
-                        <a href="#Status" onclick="toggleStatusList()">الحالة</a>
-                        <a href="#" id="category-toggle" onclick="toggleCategoryList()">التصنيف</a>
-                        <a href="#Ratings" onclick="toggleRatingList()">التقييم</a>
-                        <a href="#Complaints" onclick="toggleComplaintsList()">الشكاوي</a>
-                    </div>
-
-                    <!-- Secondary List for Status -->
-                    <div id="status-list" class="dropdown-content" style="display: none;">
-                        <a href="#" onclick="selectStatus('مقبولة')">مقبولة</a>
-                        <a href="#" onclick="selectStatus('مرفوضة')">مرفوضة</a>
-                    </div>
-
-                    <!-- Secondary List for Category -->
-                    <div id="category-list" class="dropdown-content" style="display: none;">
-                        <!-- Categories will be populated here dynamically -->
-                    </div>
-
-                    <!-- Secondary List for Ratings -->
-                    <div id="ratings-list" class="dropdown-content" style="display: none;">
-                        <a href="#" onclick="selectRating(5)">5 نجوم</a>
-                        <a href="#" onclick="selectRating(4)">4 نجوم</a>
-                        <a href="#" onclick="selectRating(3)">3 نجوم</a>
-                        <a href="#" onclick="selectRating(2)">2 نجوم</a>
-                        <a href="#" onclick="selectRating(1)">نجمة واحدة</a>
-                        <a href="#" onclick="selectRating(1)">0 نجمة</a>
-                    </div>
-
-                    <!-- Secondary List for Complaints -->
-                    <div id="complaints-list" class="dropdown-content" style="display: none;">
-                        <a href="#" onclick="selectComplaints(0)">بدون شكوى</a>
-                        <a href="#" onclick="selectComplaints(1)">شكوى واحدة</a>
-                        <a href="#" onclick="selectComplaints(2)">شكوتان</a>
-                        <a href="#" onclick="selectComplaints(3)">أكثر من 2</a>
-                    </div>
-                </div>
-
-                <!-- Search -->
-                <input type="text" id="search-bar" placeholder="ابحث عن عربة...">
-            </div>
-
-            <div class="table-container">
-                <table id="food-trucks-table">
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>الشعار</th>
-                            <th>صورة العربة</th>
-                            <th>رقم الرخصة</th>
-                            <th>المالك</th>
-                            <th>التقييم</th>
-                            <th>التصنيف</th>
-                            <th>عدد الشكاوي</th>
-                            <th>الحالة</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Food truck rows will be added here dynamically -->
-                    </tbody>
-                </table>
-                <p id="no-matches-message">لاتوجد عربات مطابقة.</p>
-                <div id="pagination-controls" style="text-align: center; margin-top: 20px;"></div>
-            </div>
-            <div class="loading" id="loading-message">
-                <img src="images/WaitingTruck2.png" alt="Loading Food Truck">
-                <p> الرجاء الإنتظار...</p>
-            </div>
+        <div class="table-container">
+          <table id="food-trucks-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الشعار</th>
+                <th>صورة العربة</th>
+                <th>رقم الرخصة</th>
+                <th>المالك</th>
+                <th>التقييم</th>
+                <th>التصنيف</th>
+                <th>عدد الشكاوي</th>
+                <th>الحالة</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Food truck rows will be added here dynamically -->
+            </tbody>
+          </table>
+          <p id="no-matches-message">لاتوجد عربات مطابقة.</p>
+          <div
+            id="pagination-controls"
+            style="text-align: center; margin-top: 20px"
+          ></div>
         </div>
+        <div class="loading" id="loading-message">
+          <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
+          <p>الرجاء الإنتظار...</p>
+        </div>
+      </div>
     </div>
 
     <div class="footer">
-        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, query, where } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+        updateDoc,
+        query,
+        where,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-            authDomain: "trucki-database.firebaseapp.com",
-            projectId: "trucki-database",
-            storageBucket: "trucki-database.appspot.com",
-            messagingSenderId: "283818817351",
-            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
-        };
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-        onAuthStateChanged(auth, (user) => {
-            const statusElement = document.getElementById('status');
-            if (user) {
-                const username = user.email.split('@')[0];
-                statusElement.innerText = `مرحبًا ${username} !`;
-                fetchFoodTrucks(); // Fetch the trucks
-            } else {
-                statusElement.innerText = "لم يتم تسجيل الدخول";
-                window.location.href = "WelcomePage.html";
-            }
+      onAuthStateChanged(auth, (user) => {
+        const statusElement = document.getElementById("status");
+        if (user) {
+          const username = user.email.split("@")[0];
+          statusElement.innerText = `مرحبًا ${username} !`;
+          fetchFoodTrucks(); // Fetch the trucks
+        } else {
+          statusElement.innerText = "لم يتم تسجيل الدخول";
+          window.location.href = "WelcomePage.html";
+        }
+      });
+
+      const logoutIcon = document.getElementById("logout-icon");
+      logoutIcon.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          alert("تم تسجيل الخروج بنجاح!");
+          window.location.href = "WelcomePage.html";
+        } catch (error) {
+          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+        }
+      });
+
+      //START of SEARCH AND FILTERING
+      //*****************************-- Search Function
+      let originalRows = [];
+
+      function searchTrucks() {
+        const searchTerm = document
+          .getElementById("search-bar")
+          .value.toLowerCase();
+
+        if (searchTerm !== "") {
+          const filteredRows = originalRows.filter((row) => {
+            const name = row
+              .querySelector("td:nth-child(1)")
+              .textContent.toLowerCase();
+            return name.includes(searchTerm);
+          });
+
+          allRows = filteredRows;
+          displayPage(1);
+        } else {
+          allRows = [...originalRows];
+          displayPage(1);
+        }
+      }
+      document
+        .getElementById("search-bar")
+        .addEventListener("keyup", searchTrucks);
+
+      //*****************************-- Filter Function
+      function toggleDropdown() {
+        const dropdown = document.getElementById("category-dropdown");
+        dropdown.style.display =
+          dropdown.style.display === "none" || dropdown.style.display === ""
+            ? "block"
+            : "none";
+      }
+
+      window.onclick = function (event) {
+        const dropdown = document.getElementById("category-dropdown");
+        if (!event.target.closest(".filter-container")) {
+          if (dropdown.style.display === "block") {
+            dropdown.style.display = "none";
+          }
+        }
+      };
+      function toggleStatusList() {
+        toggleList("status-list");
+      }
+
+      function toggleCategoryList() {
+        const categoryList = document.getElementById("category-list");
+
+        if (
+          categoryList.style.display === "none" ||
+          categoryList.style.display === ""
+        ) {
+          fetchCategories();
+          categoryList.style.display = "block";
+        } else {
+          categoryList.style.display = "none";
+        }
+      }
+
+      function toggleRatingList() {
+        toggleList("ratings-list");
+      }
+
+      function toggleComplaintsList() {
+        toggleList("complaints-list");
+      }
+
+      function toggleList(listId) {
+        const lists = [
+          "status-list",
+          "category-list",
+          "ratings-list",
+          "complaints-list",
+        ];
+        lists.forEach((id) => {
+          const list = document.getElementById(id);
+          list.style.display =
+            id === listId && list.style.display !== "block" ? "block" : "none";
+        });
+      }
+
+      //*****************************-- Filter By Status
+      function selectStatus(selectedStatus) {
+        allRows = [];
+
+        originalRows.forEach((row) => {
+          const statusCell = row.querySelector("td:nth-child(9)");
+          const truckStatus = statusCell.textContent.trim();
+
+          // Check if the selectedStatus matches the truckStatus
+          if (truckStatus === selectedStatus) {
+            allRows.push(row);
+          }
         });
 
-        const logoutIcon = document.getElementById('logout-icon');
-        logoutIcon.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                alert("تم تسجيل الخروج بنجاح!");
-                window.location.href = "WelcomePage.html";
-            } catch (error) {
-                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-            }
+        const foodTrucksTableBody = document.querySelector(
+          "#food-trucks-table tbody"
+        );
+        foodTrucksTableBody.innerHTML = "";
+
+        const noMatchesMessage = document.getElementById("no-matches-message");
+        if (allRows.length === 0) {
+          noMatchesMessage.style.display = "block"; // Show the new no matches message
+        } else {
+          allRows.forEach((row) => foodTrucksTableBody.appendChild(row));
+        }
+
+        displayPage(1);
+        document.getElementById("status-list").style.display = "none";
+      }
+
+      //*****************************-- Filter By Category
+      // Fetch categories from Firestore
+      async function fetchCategories() {
+        const snapshot = await getDocs(collection(db, "Food-Category"));
+        const categoryList = document.getElementById("category-list");
+        categoryList.innerHTML = "";
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const categoryName = data.name;
+
+          const categoryItem = document.createElement("a");
+          categoryItem.href = "#";
+          categoryItem.textContent = categoryName;
+          categoryItem.onclick = () => selectCategory(categoryName); // Call selectCategory function
+
+          categoryList.appendChild(categoryItem);
+        });
+      }
+
+      function selectCategory(selectedCategory) {
+        let hasMatch = false;
+
+        allRows.forEach((row) => {
+          const categoryCell = row.querySelector("td:nth-child(7)");
+          const truckCategory = categoryCell.textContent.trim();
+
+          if (truckCategory === selectedCategory) {
+            row.style.display = "";
+            hasMatch = true;
+          } else {
+            row.style.display = "none";
+          }
         });
 
-        //START of SEARCH AND FILTERING
-        //*****************************-- Search Function
-        let originalRows = [];
+        // Display the message if no matches found
+        const noMatchesMessage = document.getElementById("no-matches-message");
+        if (!hasMatch) {
+          noMatchesMessage.style.display = "block";
+        } else {
+          noMatchesMessage.style.display = "none";
+        }
+      }
 
-        function searchTrucks() {
-            const searchTerm = document.getElementById('search-bar').value.toLowerCase();
+      //*****************************-- Filter By Ratings
+      async function selectRating(selectedRating) {
+        allRows = [];
 
-            if (searchTerm !== "") {
-                const filteredRows = originalRows.filter(row => {
-                    const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-                    return name.includes(searchTerm);
-                });
+        originalRows.forEach((row) => {
+          const ratingCell = row.querySelector("td:nth-child(6)");
+          const truckRating = parseFloat(ratingCell.textContent);
 
-                allRows = filteredRows;
-                displayPage(1);
+          if (
+            truckRating >= selectedRating &&
+            truckRating < selectedRating + 1
+          ) {
+            allRows.push(row);
+          }
+        });
+
+        const noMatchesMessage = document.getElementById("no-matches-message");
+        if (allRows.length === 0) {
+          noMatchesMessage.style.display = "block"; // Show the new no matches message
+        }
+
+        displayPage(1);
+        document.getElementById("ratings-list").style.display = "none";
+      }
+
+      //*****************************-- Filter By Complaints
+      function selectComplaints(selectedComplaints) {
+        allRows = [];
+
+        originalRows.forEach((row) => {
+          const ComplaintsCell = row.querySelector("td:nth-child(8)");
+          const TruckComplaints = parseFloat(ComplaintsCell.textContent);
+
+          if (selectedComplaints === 0 && TruckComplaints === 0) {
+            allRows.push(row); // Only show rows with 0 complaints
+          } else if (selectedComplaints === 1 && TruckComplaints === 1) {
+            allRows.push(row); // Only show rows with exactly 1 complaint
+          } else if (selectedComplaints == 2 && TruckComplaints == 2) {
+            allRows.push(row); // Only show rows with exactly 2 complaints
+          } else if (selectedComplaints >= 3 && TruckComplaints >= 3) {
+            allRows.push(row); // Show rows with 3 or more complaints
+          }
+        });
+
+        const noMatchesMessage = document.getElementById("no-matches-message");
+        if (allRows.length === 0) {
+          noMatchesMessage.style.display = "block"; // Show the new no matches message
+        }
+
+        displayPage(1);
+        document.getElementById("complaints-list").style.display = "none";
+      }
+
+      //END of SEARCH AND FILTERING
+      let currentPage = 1;
+      const rowsPerPage = 6;
+      let allRows = [];
+      originalRows = [];
+
+      async function fetchFoodTrucks() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+
+          if (querySnapshot.empty) {
+            const foodTrucksTableBody = document.querySelector(
+              "#food-trucks-table tbody"
+            );
+            foodTrucksTableBody.innerHTML = "";
+            const noDataRow = document.createElement("tr");
+            noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
+            foodTrucksTableBody.appendChild(noDataRow);
+            return;
+          }
+
+          originalRows = [];
+          allRows = [];
+          for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            const truckId = docSnapshot.id;
+
+            const ownerID = data.ownerID;
+            const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+            const ownerDoc = await getDoc(ownerDocRef);
+
+            const ownerName = ownerDoc.exists()
+              ? ownerDoc.data().Name
+              : "غير محدد";
+            const ownerEmail = ownerDoc.exists()
+              ? ownerDoc.data().Email
+              : "غير محدد";
+            const ownerPhone = ownerDoc.exists()
+              ? ownerDoc.data().PhoneNum
+              : "غير محدد";
+
+            const statusId = data.statusId;
+            const rating = data.rating;
+            let statusText = "غير محددة";
+
+            if (statusId) {
+              const requestDocRef = doc(db, "Request", statusId);
+              const requestDoc = await getDoc(requestDocRef);
+
+              if (requestDoc.exists()) {
+                const requestData = requestDoc.data();
+                if (requestData.status === "pending") {
+                  continue;
+                } else if (requestData.status === "accepted") {
+                  statusText = "مقبولة";
+                } else if (requestData.status === "rejected") {
+                  statusText = "مرفوضة";
+                }
+              }
+            }
+
+            const categoryId = data.categoryId;
+            let categoryText = "غير محددة";
+
+            if (categoryId) {
+              const categoryDocRef = doc(db, "Food-Category", categoryId);
+              const categoryDoc = await getDoc(categoryDocRef);
+
+              if (categoryDoc.exists()) {
+                const categoryData = categoryDoc.data();
+                categoryText = categoryData.name;
+              }
+            }
+
+            const complaintsSnapshot = await getDocs(
+              query(
+                collection(db, "Complaint"),
+                where("foodTruckId", "==", truckId)
+              )
+            );
+            const complaintsCount = complaintsSnapshot.size; // Get the number of complaints for this truck
+
+            const row = document.createElement("tr");
+            row.addEventListener("click", () => {
+              window.location.href = `TruckProfile.html?truckId=${truckId}`;
+            });
+
+            if (statusText === "مقبولة") {
+              row.classList.add("active-row");
             } else {
-                allRows = [...originalRows];
-                displayPage(1);
-            }
-        }
-        document.getElementById('search-bar').addEventListener('keyup', searchTrucks);
-
-        //*****************************-- Filter Function
-        function toggleDropdown() {
-            const dropdown = document.getElementById("category-dropdown");
-            dropdown.style.display = dropdown.style.display === "none" || dropdown.style.display === "" ? "block" : "none";
-        }
-
-        window.onclick = function (event) {
-            const dropdown = document.getElementById("category-dropdown");
-            if (!event.target.closest('.filter-container')) {
-                if (dropdown.style.display === "block") {
-                    dropdown.style.display = "none";
-                }
-            }
-        };
-        function toggleStatusList() {
-            toggleList('status-list');
-        }
-
-        function toggleCategoryList() {
-            const categoryList = document.getElementById("category-list");
-
-            if (categoryList.style.display === 'none' || categoryList.style.display === '') {
-                fetchCategories();
-                categoryList.style.display = 'block';
-            } else {
-                categoryList.style.display = 'none';
-            }
-        }
-
-        function toggleRatingList() {
-            toggleList('ratings-list');
-        }
-
-        function toggleComplaintsList() {
-            toggleList('complaints-list');
-        }
-
-        function toggleList(listId) {
-            const lists = ['status-list', 'category-list', 'ratings-list', 'complaints-list'];
-            lists.forEach(id => {
-                const list = document.getElementById(id);
-                list.style.display = (id === listId && list.style.display !== 'block') ? 'block' : 'none';
-            });
-        }
-
-        //*****************************-- Filter By Status
-        function selectStatus(selectedStatus) {
-            allRows = [];
-
-            originalRows.forEach(row => {
-                const statusCell = row.querySelector('td:nth-child(9)');
-                const truckStatus = statusCell.textContent.trim();
-
-                // Check if the selectedStatus matches the truckStatus
-                if (truckStatus === selectedStatus) {
-                    allRows.push(row);
-                }
-            });
-
-            const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-            foodTrucksTableBody.innerHTML = '';
-
-            const noMatchesMessage = document.getElementById('no-matches-message');
-            if (allRows.length === 0) {
-                noMatchesMessage.style.display = 'block'; // Show the new no matches message
-            } else {
-                allRows.forEach(row => foodTrucksTableBody.appendChild(row));
+              row.classList.add("inactive-row");
             }
 
-            displayPage(1);
-            document.getElementById('status-list').style.display = 'none';
-        }
-
-        //*****************************-- Filter By Category
-        // Fetch categories from Firestore
-        async function fetchCategories() {
-            const snapshot = await getDocs(collection(db, "Food-Category"));
-            const categoryList = document.getElementById("category-list");
-            categoryList.innerHTML = '';
-
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const categoryName = data.name;
-
-                const categoryItem = document.createElement('a');
-                categoryItem.href = "#";
-                categoryItem.textContent = categoryName;
-                categoryItem.onclick = () => selectCategory(categoryName); // Call selectCategory function
-
-                categoryList.appendChild(categoryItem);
-            });
-        }
-
-        function selectCategory(selectedCategory) {
-            let hasMatch = false;
-
-            allRows.forEach(row => {
-                const categoryCell = row.querySelector('td:nth-child(7)');
-                const truckCategory = categoryCell.textContent.trim();
-
-                if (truckCategory === selectedCategory) {
-                    row.style.display = '';
-                    hasMatch = true;
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-
-            // Display the message if no matches found
-            const noMatchesMessage = document.getElementById('no-matches-message');
-            if (!hasMatch) {
-                noMatchesMessage.style.display = 'block';
-            } else {
-                noMatchesMessage.style.display = 'none';
-            }
-        }
-
-        //*****************************-- Filter By Ratings
-        async function selectRating(selectedRating) {
-            allRows = [];
-
-            originalRows.forEach(row => {
-                const ratingCell = row.querySelector('td:nth-child(6)');
-                const truckRating = parseFloat(ratingCell.textContent);
-
-                if (truckRating >= selectedRating && truckRating < (selectedRating + 1)) {
-                    allRows.push(row);
-                }
-            });
-
-            const noMatchesMessage = document.getElementById('no-matches-message');
-            if (allRows.length === 0) {
-                noMatchesMessage.style.display = 'block'; // Show the new no matches message
-            }
-
-            displayPage(1);
-            document.getElementById('ratings-list').style.display = 'none';
-        }
-
-        //*****************************-- Filter By Complaints
-        function selectComplaints(selectedComplaints) {
-            allRows = [];
-
-            originalRows.forEach(row => {
-                const ComplaintsCell = row.querySelector('td:nth-child(8)');
-                const TruckComplaints = parseFloat(ComplaintsCell.textContent);
-
-                if (selectedComplaints === 0 && TruckComplaints === 0) {
-                    allRows.push(row); // Only show rows with 0 complaints
-                } else if (selectedComplaints === 1 && TruckComplaints === 1) {
-                    allRows.push(row); // Only show rows with exactly 1 complaint
-                } else if (selectedComplaints == 2 && TruckComplaints == 2) {
-                    allRows.push(row); // Only show rows with exactly 2 complaints
-                }
-                else if (selectedComplaints >= 3 && TruckComplaints >= 3) {
-                    allRows.push(row); // Show rows with 3 or more complaints
-                }
-            });
-
-            const noMatchesMessage = document.getElementById('no-matches-message');
-            if (allRows.length === 0) {
-                noMatchesMessage.style.display = 'block'; // Show the new no matches message
-            }
-
-            displayPage(1);
-            document.getElementById('complaints-list').style.display = 'none';
-        }
-
-        //END of SEARCH AND FILTERING
-        let currentPage = 1;
-        const rowsPerPage = 6;
-        let allRows = [];
-        originalRows = [];
-
-        async function fetchFoodTrucks() {
-            try {
-                const querySnapshot = await getDocs(collection(db, "Food_Truck"));
-
-                if (querySnapshot.empty) {
-                    const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-                    foodTrucksTableBody.innerHTML = '';
-                    const noDataRow = document.createElement('tr');
-                    noDataRow.innerHTML = `<td colspan="7" style="text-align: center;">لا توجد بيانات</td>`;
-                    foodTrucksTableBody.appendChild(noDataRow);
-                    return;
-                }
-
-                originalRows = [];
-                allRows = [];
-                for (const docSnapshot of querySnapshot.docs) {
-                    const data = docSnapshot.data();
-                    const truckId = docSnapshot.id;
-
-                    const ownerID = data.ownerID;
-                    const ownerDocRef = doc(db, "Truck_Owner", ownerID);
-                    const ownerDoc = await getDoc(ownerDocRef);
-
-                    const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
-                    const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
-                    const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
-
-                    const statusId = data.statusId;
-                    const rating = data.rating;
-                    let statusText = 'غير محددة';
-
-                    if (statusId) {
-                        const requestDocRef = doc(db, "Request", statusId);
-                        const requestDoc = await getDoc(requestDocRef);
-
-                        if (requestDoc.exists()) {
-                            const requestData = requestDoc.data();
-                            if (requestData.status === 'pending') {
-                                continue;
-                            } else if (requestData.status === 'accepted') {
-                                statusText = 'مقبولة';
-                            } else if (requestData.status === 'rejected') {
-                                statusText = 'مرفوضة';
-                            }
-                        }
-                    }
-
-                    const categoryId = data.categoryId;
-                    let categoryText = 'غير محددة';
-
-                    if (categoryId) {
-                        const categoryDocRef = doc(db, "Food-Category", categoryId);
-                        const categoryDoc = await getDoc(categoryDocRef);
-
-                        if (categoryDoc.exists()) {
-                            const categoryData = categoryDoc.data();
-                            categoryText = categoryData.name;
-                        }
-                    }
-
-                    const complaintsSnapshot = await getDocs(query(collection(db, "Complaint"), where("foodTruckId", "==", truckId)));
-                    const complaintsCount = complaintsSnapshot.size; // Get the number of complaints for this truck
-
-                    const row = document.createElement('tr');
-                    row.addEventListener('click', () => {
-                        window.location.href = `TruckProfile.html?truckId=${truckId}`;
-                    });
-
-                    if (statusText === 'مقبولة') {
-                        row.classList.add('active-row');
-                    } else {
-                        row.classList.add('inactive-row');
-                    }
-
-                    row.innerHTML = `
+            row.innerHTML = `
                     <td>${data.name}</td>
         <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
         <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
@@ -454,94 +570,98 @@
         <td>${statusText}</td>
     `;
 
-                    allRows.push(row);
-                    originalRows.push(row);
-                }
-                // After successful fetching, hide loading message and show content
-                document.getElementById('loading-message').style.display = 'none';
-                document.querySelector('.content').style.display = 'block';
+            allRows.push(row);
+            originalRows.push(row);
+          }
+          // After successful fetching, hide loading message and show content
+          document.getElementById("loading-message").style.display = "none";
+          document.querySelector(".content").style.display = "block";
 
-                displayPage(currentPage);
-            } catch (error) {
-                console.error("Error fetching food trucks:", error);
-                document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات.";
-            }
+          displayPage(currentPage);
+        } catch (error) {
+          console.error("Error fetching food trucks:", error);
+          document.getElementById("loading-message").innerText =
+            "حدث خطأ أثناء تحميل البيانات.";
+        }
+      }
+
+      function displayPage(page) {
+        const foodTrucksTableBody = document.querySelector(
+          "#food-trucks-table tbody"
+        );
+        foodTrucksTableBody.innerHTML = "";
+
+        const start = (page - 1) * rowsPerPage;
+        const end = start + rowsPerPage;
+        const rowsToDisplay = allRows.slice(start, end);
+
+        rowsToDisplay.forEach((row) => foodTrucksTableBody.appendChild(row));
+
+        updatePaginationControls();
+      }
+
+      function updatePaginationControls() {
+        const paginationContainer = document.getElementById(
+          "pagination-controls"
+        );
+        paginationContainer.innerHTML = "";
+
+        const totalPages = Math.ceil(allRows.length / rowsPerPage);
+
+        const prevLink = document.createElement("span");
+        prevLink.textContent = "<";
+        prevLink.classList.add("pagination-link");
+        if (currentPage === 1) {
+          prevLink.classList.add("disabled");
+        } else {
+          prevLink.addEventListener("click", () => {
+            currentPage--;
+            displayPage(currentPage);
+          });
+        }
+        paginationContainer.appendChild(prevLink);
+
+        for (let i = 1; i <= totalPages; i++) {
+          const pageLink = document.createElement("span");
+          pageLink.textContent = i;
+          pageLink.classList.add("pagination-link");
+          if (i === currentPage) {
+            pageLink.classList.add("active-page");
+          }
+          pageLink.addEventListener("click", () => {
+            currentPage = i;
+            displayPage(currentPage);
+          });
+          paginationContainer.appendChild(pageLink);
         }
 
-        function displayPage(page) {
-            const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-            foodTrucksTableBody.innerHTML = '';
-
-            const start = (page - 1) * rowsPerPage;
-            const end = start + rowsPerPage;
-            const rowsToDisplay = allRows.slice(start, end);
-
-            rowsToDisplay.forEach((row) => foodTrucksTableBody.appendChild(row));
-
-            updatePaginationControls();
+        const nextLink = document.createElement("span");
+        nextLink.textContent = ">";
+        nextLink.classList.add("pagination-link");
+        if (currentPage === totalPages) {
+          nextLink.classList.add("disabled");
+        } else {
+          nextLink.addEventListener("click", () => {
+            currentPage++;
+            displayPage(currentPage);
+          });
         }
+        paginationContainer.appendChild(nextLink);
+      }
 
-        function updatePaginationControls() {
-            const paginationContainer = document.getElementById('pagination-controls');
-            paginationContainer.innerHTML = '';
+      // Attach function to the global scope
+      window.toggleDropdown = toggleDropdown;
 
-            const totalPages = Math.ceil(allRows.length / rowsPerPage);
+      window.toggleStatusList = toggleStatusList;
+      window.selectStatus = selectStatus;
 
-            const prevLink = document.createElement('span');
-            prevLink.textContent = '<';
-            prevLink.classList.add('pagination-link');
-            if (currentPage === 1) {
-                prevLink.classList.add('disabled');
-            } else {
-                prevLink.addEventListener('click', () => {
-                    currentPage--;
-                    displayPage(currentPage);
-                });
-            }
-            paginationContainer.appendChild(prevLink);
+      window.toggleCategoryList = toggleCategoryList;
 
-            for (let i = 1; i <= totalPages; i++) {
-                const pageLink = document.createElement('span');
-                pageLink.textContent = i;
-                pageLink.classList.add('pagination-link');
-                if (i === currentPage) {
-                    pageLink.classList.add('active-page');
-                }
-                pageLink.addEventListener('click', () => {
-                    currentPage = i;
-                    displayPage(currentPage);
-                });
-                paginationContainer.appendChild(pageLink);
-            }
+      window.toggleRatingList = toggleRatingList;
+      window.selectRating = selectRating;
 
-            const nextLink = document.createElement('span');
-            nextLink.textContent = '>';
-            nextLink.classList.add('pagination-link');
-            if (currentPage === totalPages) {
-                nextLink.classList.add('disabled');
-            } else {
-                nextLink.addEventListener('click', () => {
-                    currentPage++;
-                    displayPage(currentPage);
-                });
-            }
-            paginationContainer.appendChild(nextLink);
-        }
-
-        // Attach function to the global scope
-        window.toggleDropdown = toggleDropdown;
-
-        window.toggleStatusList = toggleStatusList;
-        window.selectStatus = selectStatus;
-
-        window.toggleCategoryList = toggleCategoryList;
-
-        window.toggleRatingList = toggleRatingList;
-        window.selectRating = selectRating;
-
-        window.toggleComplaintsList = toggleComplaintsList;
-        window.selectComplaints = selectComplaints;
+      window.toggleComplaintsList = toggleComplaintsList;
+      window.selectComplaints = selectComplaints;
     </script>
-</body>
-
+  </body>
 </html>

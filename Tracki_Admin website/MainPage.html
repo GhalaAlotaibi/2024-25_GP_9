@@ -1,551 +1,646 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Tracki - Main Page</title>
-    <link rel="stylesheet" href="Styles/Style.css">
-    <link rel="stylesheet" href="Styles/MainPage.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/MainPage.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+  </head>
 
-</head>
-
-<body>
+  <body>
     <!-- Header -->
 
     <div class="main-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <div class="headerOfBar">
-                <img src="images/TrackiLogo.png" alt="Logo">
-                <h1>Tracki</h1>
-            </div>
-            <ul style="list-style: none; padding: 0; margin: 20px 0;">
-                <li><a href="MainPage.html"
-                        style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
-                            class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
-                <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
-                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-            </ul>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <div class="headerOfBar">
+          <img src="images/TrackiLogo.png" alt="Logo" />
+          <h1>Tracki</h1>
+        </div>
+        <ul style="list-style: none; padding: 0; margin: 20px 0">
+          <li>
+            <a
+              href="MainPage.html"
+              style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "
+              ><i class="fas fa-home"></i> الرئيسية</a
+            >
+          </li>
+          <li>
+            <a href="WaitingTrucks.html"
+              ><i class="fas fa-truck-loading"></i> قيد الإنتظار
+            </a>
+          </li>
+          <li>
+            <a href="AllTrucks.html"
+              ><i class="fas fa-truck"></i> جميع العربات</a
+            >
+          </li>
+          <li>
+            <a href="LocationUpdateRequests.html"
+              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
+            >
+          </li>
+          <li>
+            <a href="History.html"
+              ><i class="fas fa-history"></i> سجل العمليات
+            </a>
+          </li>
+          <li>
+            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+          </li>
+          <li>
+            <a href="Complaints.html"
+              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <section class="status-section">
+        <div class="left-actions">
+          <p id="status">مرحبًا!</p>
+        </div>
+        <div class="right-actions">
+          <i
+            id="notification-icon"
+            class="fas fa-bell notification-icon"
+            title="الإشعارات"
+          ></i>
+          <i
+            id="logout-icon"
+            class="fas fa-sign-out-alt logout-icon"
+            title="تسجيل الخروج"
+          ></i>
+        </div>
+      </section>
+
+      <!-- Main Content -->
+      <div class="content">
+        <h1>مرحبًا بك في Tracki !</h1>
+
+        <!-- Analytics Sections -->
+        <div class="analytics-section-group1_pt2">
+          <div class="analytics-section1">
+            <h3>إجمالي عدد العربات</h3>
+            &nbsp;&nbsp;&nbsp;
+            <span id="totalTrucksCount"> </span>
+            <!-- Placeholder for the count -->
+          </div>
+
+          <div class="analytics-section1">
+            <h3>إجمالي عدد الزبائن</h3>
+            &nbsp;&nbsp;&nbsp;
+            <span id="totalCustomersCount"> </span>
+            <!-- Placeholder for the count -->
+          </div>
         </div>
 
-        <section class="status-section">
-            <div class="left-actions">
-                <p id="status">مرحبًا!</p>
-            </div>
-            <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
-                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
-            </div>
-        </section>
+        <div class="analytics-section-group">
+          <div class="analytics-section2">
+            <h3>العربات المسجلة شهريًا</h3>
+            <canvas id="registeredTrucksChart"></canvas>
+          </div>
 
-        <!-- Main Content -->
-        <div class="content">
-            <h1>مرحبًا بك في Tracki !</h1>
-
-            <!-- Analytics Sections -->
-            <div class="analytics-section-group1_pt2">
-                <div class="analytics-section1">
-                    <h3>إجمالي عدد العربات</h3>
-                    &nbsp;&nbsp;&nbsp;
-                    <span id="totalTrucksCount"> </span> <!-- Placeholder for the count -->
-                </div>
-
-                <div class="analytics-section1">
-                    <h3>إجمالي عدد الزبائن</h3>
-                    &nbsp;&nbsp;&nbsp;
-                    <span id="totalCustomersCount"> </span> <!-- Placeholder for the count -->
-                </div>
-            </div>
-
-            <div class="analytics-section-group">
-                <div class="analytics-section2">
-                    <h3>العربات المسجلة شهريًا</h3>
-                    <canvas id="registeredTrucksChart"></canvas>
-                </div>
-
-                <div class="analytics-section3">
-                    <h3>إجمالي تصنيف العربات</h3>
-                    <canvas id="registeredCategoriesChart"></canvas>
-                </div>
-            </div>
-
-            <div class="analytics-section-group2">
-                <div class="analytics-section4">
-                    <h3>إجمالي حالة العربات</h3>
-                    <canvas id="s4"></canvas>
-                </div>
-
-                <div class="analytics-section5">
-                    <h3>متوسط التقييمات المسجلة شهريًا</h3>
-                    <canvas id="s5"></canvas>
-                </div>
-            </div>
-
+          <div class="analytics-section3">
+            <h3>إجمالي تصنيف العربات</h3>
+            <canvas id="registeredCategoriesChart"></canvas>
+          </div>
         </div>
 
+        <div class="analytics-section-group2">
+          <div class="analytics-section4">
+            <h3>إجمالي حالة العربات</h3>
+            <canvas id="s4"></canvas>
+          </div>
 
+          <div class="analytics-section5">
+            <h3>متوسط التقييمات المسجلة شهريًا</h3>
+            <canvas id="s5"></canvas>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
 
     <!-- Firebase Script -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-            authDomain: "trucki-database.firebaseapp.com",
-            projectId: "trucki-database",
-            storageBucket: "trucki-database.appspot.com",
-            messagingSenderId: "283818817351",
-            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
+
+      // Real-Time User Authentication
+      onAuthStateChanged(auth, (user) => {
+        const statusElement = document.getElementById("status");
+        if (user) {
+          const username = user.email.split("@")[0];
+          statusElement.innerText = `مرحبًا ${username} !`;
+          // Fetch data and create the chart
+          fetchFoodTruckData();
+        } else {
+          statusElement.innerText = "لم يتم تسجيل الدخول";
+          window.location.href = "WelcomePage.html";
+        }
+      });
+
+      // Logout functionality
+      const logoutIcon = document.getElementById("logout-icon");
+      logoutIcon.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          alert("تم تسجيل الخروج بنجاح!");
+          window.location.href = "WelcomePage.html";
+        } catch (error) {
+          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+        }
+      });
+
+      //Analytics Section ***********************************
+      //analytics-section1
+      // Function to fetch the total number of food trucks
+      async function fetchFoodTruckData() {
+        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+        const totalTrucksCount = querySnapshot.size;
+        document.getElementById("totalTrucksCount").innerText =
+          totalTrucksCount; // Update the UI
+      }
+
+      // Function to fetch the total number of customers
+      async function fetchCustomersData() {
+        const querySnapshot = await getDocs(collection(db, "Customer"));
+        const totalCustomersCount = querySnapshot.size;
+        document.getElementById("totalCustomersCount").innerText =
+          totalCustomersCount; // Update the UI
+      }
+
+      // Call the functions to fetch data
+      fetchFoodTruckData();
+      fetchCustomersData();
+
+      //analytics-section2
+      async function fetchRegisteredTrucksData() {
+        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+        const dates = [];
+
+        querySnapshot.forEach((doc) => {
+          const date = doc.data().DateofReg.toDate();
+          dates.push(date);
+        });
+
+        createRegisteredTrucksChart(dates);
+      }
+
+      function createRegisteredTrucksChart(dates) {
+        const ctx = document
+          .getElementById("registeredTrucksChart")
+          .getContext("2d");
+        const monthlyCounts = {};
+        const arabicMonths = [
+          "يناير",
+          "فبراير",
+          "مارس",
+          "أبريل",
+          "مايو",
+          "يونيو",
+          "يوليو",
+          "أغسطس",
+          "سبتمبر",
+          "أكتوبر",
+          "نوفمبر",
+          "ديسمبر",
+        ];
+
+        dates.forEach((date) => {
+          const monthIndex = date.getMonth();
+          const year = date.getFullYear();
+          const monthYear = `${arabicMonths[monthIndex]} ${year}`;
+          monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
+        });
+
+        const sortedChartLabels = Object.keys(monthlyCounts).sort(
+          (a, b) =>
+            new Date(a.split(" ")[1], arabicMonths.indexOf(a.split(" ")[0])) -
+            new Date(b.split(" ")[1], arabicMonths.indexOf(b.split(" ")[0]))
+        );
+        const sortedChartData = sortedChartLabels.map(
+          (label) => monthlyCounts[label]
+        );
+
+        new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: sortedChartLabels,
+            datasets: [
+              {
+                label: "عدد العربات",
+                data: sortedChartData,
+                backgroundColor: "#D1A7C8",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: " العربات ",
+                  font: {
+                    family: "Zain",
+                    size: 14,
+                    weight: "bold",
+                    color: "#7A557A",
+                  },
+                },
+                ticks: {
+                  color: "#7A557A",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "الأشهر",
+                  font: {
+                    family: "Zain",
+                    size: 14,
+                    weight: "bold",
+                    color: "#7A557A",
+                  },
+                },
+                ticks: {
+                  color: "#7A557A",
+                },
+              },
+            },
+            responsive: true,
+            plugins: {
+              legend: {
+                display: true,
+                labels: {
+                  font: {
+                    family: "Zain",
+                    size: 14,
+                    color: "#7A557A",
+                  },
+                },
+              },
+              title: {
+                display: true,
+                font: {
+                  family: "Zain",
+                  size: 16,
+                  weight: "bold",
+                  color: "#7A557A",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Call the function
+      fetchRegisteredTrucksData();
+
+      //analytics-section3
+      async function fetchCategoryTruckCount() {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const categoriesSnapshot = await getDocs(
+          collection(db, "Food-Category")
+        );
+
+        const categoryMap = {};
+        categoriesSnapshot.forEach((doc) => {
+          categoryMap[doc.id] = doc.data().name;
+        });
+
+        const truckCountMap = {};
+        trucksSnapshot.forEach((doc) => {
+          const categoryId = doc.data().categoryId;
+          if (categoryId) {
+            if (truckCountMap[categoryId]) {
+              truckCountMap[categoryId] += 1;
+            } else {
+              truckCountMap[categoryId] = 1;
+            }
+          }
+        });
+
+        const labels = Object.keys(truckCountMap).map(
+          (id) => categoryMap[id] || id
+        );
+        const counts = Object.values(truckCountMap);
+
+        // Create the Pie Chart in the registeredCategoriesChart
+        const ctx = document
+          .getElementById("registeredCategoriesChart")
+          .getContext("2d");
+        const registeredCategoriesChart = new Chart(ctx, {
+          type: "pie",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "عدد العربات حسب الفئة",
+                data: counts,
+                backgroundColor: [
+                  "#f2e5ea", // Color 1
+                  "#D1A7C8", // Mauve
+                  "#FFABAB", // Light Pink
+                  "#e7f2e5", // Color 2
+                  "#a2a9a0", // Color 3
+                  "#f2eae5", // Color 4
+                  "#F7EFE5", // Light Beige
+                  "#FFABAB", // Light Pink
+                  "#C8A1E0", // Lavender
+                  "#674188", // Dark Purple
+                  "#F1C6B0", // Soft Peach
+                  "#D1A7C8", // Mauve
+                  "#4B2E6D", // Deep Purple
+                  "#a9a4a0", // Color 5
+                  "#A87BCE", // Medium Lavender
+                ],
+                hoverOffset: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              datalabels: {
+                color: "#7A557A",
+                font: {
+                  family: "Zain",
+                  size: 14,
+                  weight: "bold",
+                },
+                formatter: function (value, context) {
+                  const total = context.chart.data.datasets[0].data.reduce(
+                    (acc, val) => acc + val,
+                    0
+                  );
+                  const percentage = Math.round((value / total) * 100);
+                  const label = context.chart.data.labels[context.dataIndex];
+                  return `${label}: ${percentage}%`;
+                },
+              },
+            },
+          },
+          plugins: [ChartDataLabels],
+        });
+      }
+      // Call the function
+      fetchCategoryTruckCount();
+
+      //analytics-section4
+      async function fetchTruckStatusData() {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const statusMap = {};
+        const truckStatusCount = {};
+
+        const statusTranslations = {
+          pending: "قيد الانتظار", // Example translation
+          accepted: "مقبولة",
+          rejected: "مرفوضة",
         };
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // Real-Time User Authentication
-        onAuthStateChanged(auth, (user) => {
-            const statusElement = document.getElementById('status');
-            if (user) {
-                const username = user.email.split('@')[0];
-                statusElement.innerText = `مرحبًا ${username} !`;
-                // Fetch data and create the chart
-                fetchFoodTruckData();
-            } else {
-                statusElement.innerText = "لم يتم تسجيل الدخول";
-                window.location.href = "WelcomePage.html";
-            }
+        // Build a map of status IDs to status names
+        requestsSnapshot.forEach((doc) => {
+          const statusId = doc.id; // Auto-generated ID for request
+          const status = doc.data().status; // Status field
+          statusMap[statusId] = statusTranslations[status] || status; // Translate status to Arabic
         });
 
-        // Logout functionality
-        const logoutIcon = document.getElementById('logout-icon');
-        logoutIcon.addEventListener('click', async () => {
-            try {
-                await signOut(auth);
-                alert("تم تسجيل الخروج بنجاح!");
-                window.location.href = "WelcomePage.html";
-            } catch (error) {
-                alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-            }
+        // Count trucks per statusId using the statusMap
+        trucksSnapshot.forEach((doc) => {
+          const statusId = doc.data().statusId; // Get statusId from the truck document
+          if (statusId && statusMap[statusId]) {
+            const statusName = statusMap[statusId];
+            truckStatusCount[statusName] =
+              (truckStatusCount[statusName] || 0) + 1; // Count occurrences
+          }
         });
 
-        //Analytics Section ***********************************
-        //analytics-section1
-        // Function to fetch the total number of food trucks
-        async function fetchFoodTruckData() {
-            const querySnapshot = await getDocs(collection(db, "Food_Truck"));
-            const totalTrucksCount = querySnapshot.size;
-            document.getElementById('totalTrucksCount').innerText = totalTrucksCount; // Update the UI
-        }
+        // Prepare data for the pie chart
+        const labels = Object.keys(truckStatusCount);
+        const counts = Object.values(truckStatusCount);
 
-        // Function to fetch the total number of customers
-        async function fetchCustomersData() {
-            const querySnapshot = await getDocs(collection(db, "Customer"));
-            const totalCustomersCount = querySnapshot.size;
-            document.getElementById('totalCustomersCount').innerText = totalCustomersCount; // Update the UI
-        }
+        // Call the function to create the chart with prepared data
+        createTruckStatusChart(labels, counts);
+      }
 
-        // Call the functions to fetch data
-        fetchFoodTruckData();
-        fetchCustomersData();
-
-        //analytics-section2
-        async function fetchRegisteredTrucksData() {
-            const querySnapshot = await getDocs(collection(db, "Food_Truck"));
-            const dates = [];
-
-            querySnapshot.forEach((doc) => {
-                const date = doc.data().DateofReg.toDate();
-                dates.push(date);
-            });
-
-            createRegisteredTrucksChart(dates);
-        }
-
-        function createRegisteredTrucksChart(dates) {
-            const ctx = document.getElementById('registeredTrucksChart').getContext('2d');
-            const monthlyCounts = {};
-            const arabicMonths = [
-                "يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو",
-                "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"
-            ];
-
-            dates.forEach(date => {
-                const monthIndex = date.getMonth();
-                const year = date.getFullYear();
-                const monthYear = `${arabicMonths[monthIndex]} ${year}`;
-                monthlyCounts[monthYear] = (monthlyCounts[monthYear] || 0) + 1;
-            });
-
-            const sortedChartLabels = Object.keys(monthlyCounts).sort((a, b) => new Date(a.split(' ')[1], arabicMonths.indexOf(a.split(' ')[0])) - new Date(b.split(' ')[1], arabicMonths.indexOf(b.split(' ')[0])));
-            const sortedChartData = sortedChartLabels.map(label => monthlyCounts[label]);
-
-            new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: sortedChartLabels,
-                    datasets: [{
-                        label: 'عدد العربات',
-                        data: sortedChartData,
-                        backgroundColor: '#D1A7C8',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            title: {
-                                display: true,
-                                text: ' العربات ',
-                                font: {
-                                    family: 'Zain',
-                                    size: 14,
-                                    weight: 'bold',
-                                    color: '#7A557A'
-                                }
-                            },
-                            ticks: {
-                                color: '#7A557A'
-                            }
-                        },
-                        x: {
-                            title: {
-                                display: true,
-                                text: 'الأشهر',
-                                font: {
-                                    family: 'Zain',
-                                    size: 14,
-                                    weight: 'bold',
-                                    color: '#7A557A'
-                                }
-                            },
-                            ticks: {
-                                color: '#7A557A'
-                            }
-                        }
-                    },
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            labels: {
-                                font: {
-                                    family: 'Zain',
-                                    size: 14,
-                                    color: '#7A557A'
-                                }
-                            }
-                        },
-                        title: {
-                            display: true,
-                            font: {
-                                family: 'Zain',
-                                size: 16,
-                                weight: 'bold',
-                                color: '#7A557A'
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        // Call the function 
-        fetchRegisteredTrucksData();
-
-        //analytics-section3
-        async function fetchCategoryTruckCount() {
-
-            const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
-            const categoriesSnapshot = await getDocs(collection(db, "Food-Category"));
-
-
-            const categoryMap = {};
-            categoriesSnapshot.forEach((doc) => {
-                categoryMap[doc.id] = doc.data().name;
-            });
-
-            const truckCountMap = {};
-            trucksSnapshot.forEach((doc) => {
-                const categoryId = doc.data().categoryId;
-                if (categoryId) {
-                    if (truckCountMap[categoryId]) {
-                        truckCountMap[categoryId] += 1;
-                    } else {
-                        truckCountMap[categoryId] = 1;
-                    }
-                }
-            });
-
-            const labels = Object.keys(truckCountMap).map(id => categoryMap[id] || id);
-            const counts = Object.values(truckCountMap);
-
-            // Create the Pie Chart in the registeredCategoriesChart
-            const ctx = document.getElementById('registeredCategoriesChart').getContext('2d');
-            const registeredCategoriesChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'عدد العربات حسب الفئة',
-                        data: counts,
-                        backgroundColor: [
-                            '#f2e5ea',  // Color 1
-                            '#D1A7C8',  // Mauve
-                            '#FFABAB',  // Light Pink
-                            '#e7f2e5',  // Color 2
-                            '#a2a9a0',  // Color 3
-                            '#f2eae5',  // Color 4
-                            '#F7EFE5',  // Light Beige
-                            '#FFABAB',  // Light Pink
-                            '#C8A1E0',  // Lavender
-                            '#674188',  // Dark Purple
-                            '#F1C6B0',  // Soft Peach
-                            '#D1A7C8',  // Mauve
-                            '#4B2E6D',  // Deep Purple
-                            '#a9a4a0',  // Color 5
-                            '#A87BCE'  // Medium Lavender
-                        ],
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        datalabels: {
-                            color: '#7A557A',
-                            font: {
-                                family: 'Zain',
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            formatter: function (value, context) {
-                                const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                const label = context.chart.data.labels[context.dataIndex];
-                                return `${label}: ${percentage}%`;
-                            },
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels]
-            });
-        }
-        // Call the function 
-        fetchCategoryTruckCount();
-
-        //analytics-section4
-        async function fetchTruckStatusData() {
-            const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
-            const requestsSnapshot = await getDocs(collection(db, "Request"));
-
-            const statusMap = {};
-            const truckStatusCount = {};
-
-            const statusTranslations = {
-                "pending": "قيد الانتظار", // Example translation
-                "accepted": "مقبولة",
-                "rejected": "مرفوضة"
-            };
-
-            // Build a map of status IDs to status names
-            requestsSnapshot.forEach(doc => {
-                const statusId = doc.id; // Auto-generated ID for request
-                const status = doc.data().status; // Status field
-                statusMap[statusId] = statusTranslations[status] || status; // Translate status to Arabic
-            });
-
-            // Count trucks per statusId using the statusMap
-            trucksSnapshot.forEach(doc => {
-                const statusId = doc.data().statusId; // Get statusId from the truck document
-                if (statusId && statusMap[statusId]) {
-                    const statusName = statusMap[statusId];
-                    truckStatusCount[statusName] = (truckStatusCount[statusName] || 0) + 1; // Count occurrences
-                }
-            });
-
-            // Prepare data for the pie chart
-            const labels = Object.keys(truckStatusCount);
-            const counts = Object.values(truckStatusCount);
-
-            // Call the function to create the chart with prepared data
-            createTruckStatusChart(labels, counts);
-        }
-
-        // Function to create the pie chart for truck statuses
-        function createTruckStatusChart(labels, counts) {
-            const ctx = document.getElementById('s4').getContext('2d');
-            const truckStatusChart = new Chart(ctx, {
-                type: 'pie',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'إجمالي حالة العربات',
-                        data: counts,
-                        backgroundColor: [
-                            '#D1A7C8', // Mauve
-                            '#C8A1E0', // Lavender
-                            '#4B2E6D' // Deep Purple
-                        ],
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false,
-                        },
-                        datalabels: {
-                            color: '#7A557A',
-                            font: {
-                                family: 'Zain',
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            formatter: function (value, context) {
-                                const total = context.chart.data.datasets[0].data.reduce((acc, val) => acc + val, 0);
-                                const percentage = Math.round((value / total) * 100);
-                                return `${labels[context.dataIndex]} (${percentage}%)`;
-                            },
-                        }
-                    }
-                },
-                plugins: [ChartDataLabels] // Register the ChartDataLabels plugin
-            });
-        }
-
-        // Call the function to fetch truck status data
-        fetchTruckStatusData();
-
-        //analytics-section5
-        async function fetchLineChartData() {
-            const snapshot = await getDocs(collection(db, "Review"));
-            const ratingsData = [];
-
-            snapshot.forEach(doc => {
-                const data = doc.data();
-                const rating = parseFloat(data.rating);
-                const timestampString = data.timestamp;
-                const timestamp = new Date(timestampString);
-
-                if (!isNaN(rating)) {
-                    ratingsData.push({ rating, timestamp });
-                }
-            });
-
-            createLineChart(ratingsData);
-        }
-
-        function createLineChart(data) {
-    const ctx = document.getElementById('s5').getContext('2d');
-    const ratingsByMonth = {};
-
-    data.forEach(item => {
-        const monthYear = item.timestamp.toISOString().split('T')[0].substring(0, 7); // Format as 'YYYY-MM'
-        if (!ratingsByMonth[monthYear]) {
-            ratingsByMonth[monthYear] = { total: 0, count: 0 };
-        }
-        ratingsByMonth[monthYear].total += item.rating;
-        ratingsByMonth[monthYear].count += 1;
-    });
-
-    const labels = [];
-    const averages = [];
-
-    // Sort keys to ensure they are in chronological order
-    const sortedKeys = Object.keys(ratingsByMonth).sort((a, b) => new Date(a) - new Date(b));
-
-    sortedKeys.forEach(month => {
-        labels.push(month); // Push sorted monthYears for X-axis
-        const avgRating = ratingsByMonth[month].total / ratingsByMonth[month].count; // Calculate average rating
-        averages.push(avgRating); // Push average rating for each month
-    });
-
-    const lineChart = new Chart(ctx, {
-        type: 'line',
-        data: {
+      // Function to create the pie chart for truck statuses
+      function createTruckStatusChart(labels, counts) {
+        const ctx = document.getElementById("s4").getContext("2d");
+        const truckStatusChart = new Chart(ctx, {
+          type: "pie",
+          data: {
             labels: labels,
-            datasets: [{
-                label: 'متوسط التقييمات',
+            datasets: [
+              {
+                label: "إجمالي حالة العربات",
+                data: counts,
+                backgroundColor: [
+                  "#D1A7C8", // Mauve
+                  "#C8A1E0", // Lavender
+                  "#4B2E6D", // Deep Purple
+                ],
+                hoverOffset: 4,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              datalabels: {
+                color: "#7A557A",
+                font: {
+                  family: "Zain",
+                  size: 14,
+                  weight: "bold",
+                },
+                formatter: function (value, context) {
+                  const total = context.chart.data.datasets[0].data.reduce(
+                    (acc, val) => acc + val,
+                    0
+                  );
+                  const percentage = Math.round((value / total) * 100);
+                  return `${labels[context.dataIndex]} (${percentage}%)`;
+                },
+              },
+            },
+          },
+          plugins: [ChartDataLabels], // Register the ChartDataLabels plugin
+        });
+      }
+
+      // Call the function to fetch truck status data
+      fetchTruckStatusData();
+
+      //analytics-section5
+      async function fetchLineChartData() {
+        const snapshot = await getDocs(collection(db, "Review"));
+        const ratingsData = [];
+
+        snapshot.forEach((doc) => {
+          const data = doc.data();
+          const rating = parseFloat(data.rating);
+          const timestampString = data.timestamp;
+          const timestamp = new Date(timestampString);
+
+          if (!isNaN(rating)) {
+            ratingsData.push({ rating, timestamp });
+          }
+        });
+
+        createLineChart(ratingsData);
+      }
+
+      function createLineChart(data) {
+        const ctx = document.getElementById("s5").getContext("2d");
+        const ratingsByMonth = {};
+
+        data.forEach((item) => {
+          const monthYear = item.timestamp
+            .toISOString()
+            .split("T")[0]
+            .substring(0, 7); // Format as 'YYYY-MM'
+          if (!ratingsByMonth[monthYear]) {
+            ratingsByMonth[monthYear] = { total: 0, count: 0 };
+          }
+          ratingsByMonth[monthYear].total += item.rating;
+          ratingsByMonth[monthYear].count += 1;
+        });
+
+        const labels = [];
+        const averages = [];
+
+        // Sort keys to ensure they are in chronological order
+        const sortedKeys = Object.keys(ratingsByMonth).sort(
+          (a, b) => new Date(a) - new Date(b)
+        );
+
+        sortedKeys.forEach((month) => {
+          labels.push(month); // Push sorted monthYears for X-axis
+          const avgRating =
+            ratingsByMonth[month].total / ratingsByMonth[month].count; // Calculate average rating
+          averages.push(avgRating); // Push average rating for each month
+        });
+
+        const lineChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "متوسط التقييمات",
                 data: averages,
                 fill: false,
-                borderColor: '#7A557A',
-                tension: 0.1
-            }]
-        },
-        options: {
+                borderColor: "#7A557A",
+                tension: 0.1,
+              },
+            ],
+          },
+          options: {
             responsive: true,
             maintainAspectRatio: false,
             scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'التاريخ',
-                        font: {
-                            family: 'Zain',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#7A557A'
-                        }
-                    }
+              x: {
+                title: {
+                  display: true,
+                  text: "التاريخ",
+                  font: {
+                    family: "Zain",
+                    size: 14,
+                    weight: "bold",
+                    color: "#7A557A",
+                  },
                 },
-                y: {
-                    title: {
-                        display: true,
-                        text: 'التقييم',
-                        font: {
-                            family: 'Zain',
-                            size: 14,
-                            weight: 'bold',
-                            color: '#7A557A'
-                        }
-                    },
-                    min: 0,
-                    max: 5
-                }
+              },
+              y: {
+                title: {
+                  display: true,
+                  text: "التقييم",
+                  font: {
+                    family: "Zain",
+                    size: 14,
+                    weight: "bold",
+                    color: "#7A557A",
+                  },
+                },
+                min: 0,
+                max: 5,
+              },
             },
             plugins: {
-                legend: {
-                    display: true,
+              legend: {
+                display: true,
+              },
+              title: {
+                display: true,
+                text: "متوسط التقييمات",
+                font: {
+                  family: "Zain",
+                  size: 16,
+                  weight: "bold",
                 },
-                title: {
-                    display: true,
-                    text: 'متوسط التقييمات',
-                    font: {
-                        family: 'Zain',
-                        size: 16,
-                        weight: 'bold'
-                    }
-                }
-            }
-        }
-    });
-}
+              },
+            },
+          },
+        });
+      }
 
-        fetchLineChartData();
+      fetchLineChartData();
     </script>
-</body>
-
+  </body>
 </html>

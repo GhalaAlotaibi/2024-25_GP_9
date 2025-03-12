@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:tracki/Utils/constants.dart';
-import 'package:tracki/widgets/my_icon_button.dart';
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
@@ -11,10 +11,52 @@ class FavoritesPage extends StatefulWidget {
   State<FavoritesPage> createState() => _FavoritesPageState();
 }
 
-//users
 class _FavoritesPageState extends State<FavoritesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
+
+  // To store the last known location of the food truck
+  Map<String, String> _lastKnownLocations = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeNotifications();
+  }
+
+  // Initialize Flutter local notifications
+  void _initializeNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('app_icon');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+
+    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  // Send a local notification when the location changes
+  Future<void> _sendLocationChangeNotification(
+      String truckName, String newLocation) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+      'high_importance_channel',
+      'High Importance Notifications',
+      importance: Importance.high,
+      priority: Priority.high,
+    );
+    const NotificationDetails platformDetails = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      'Location Update: $truckName',
+      'The food truck has moved to a new location: $newLocation',
+      platformDetails,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,6 +92,17 @@ class _FavoritesPageState extends State<FavoritesPage> {
               itemCount: snapshot.data!.docs.length,
               itemBuilder: (context, index) {
                 final favoriteTruck = snapshot.data!.docs[index];
+                final truckId = favoriteTruck.id;
+                final truckName = favoriteTruck['truckName'];
+                final currentLocation = favoriteTruck[
+                    'location']; // Assuming the location is a string
+
+                // Check if the location has changed
+                if (_lastKnownLocations[truckId] != currentLocation) {
+                  // Update the last known location and send a notification
+                  _lastKnownLocations[truckId] = currentLocation;
+                  _sendLocationChangeNotification(truckName, currentLocation);
+                }
 
                 return Padding(
                   padding:
@@ -81,7 +134,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                favoriteTruck['truckName'],
+                                truckName,
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -91,6 +144,12 @@ class _FavoritesPageState extends State<FavoritesPage> {
                               Text(
                                 favoriteTruck['category'],
                                 style: const TextStyle(fontSize: 14),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                currentLocation,
+                                style: const TextStyle(
+                                    fontSize: 14, color: Colors.grey),
                               ),
                             ],
                           ),

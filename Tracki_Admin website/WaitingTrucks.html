@@ -1,146 +1,209 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Tracki - Waiting Trucks </title>
-    <link rel="stylesheet" href="Styles/Style.css">
-    <link rel="stylesheet" href="Styles/AllTrucks.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracki - Waiting Trucks</title>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
     <div class="main-container">
-        <!-- Sidebar -->
-        <div class="sidebar">
-            <!-- Header Section -->
-            <div class="headerOfBar">
-                <img src="images/TrackiLogo.png" alt="Logo">
-                <h1>Tracki</h1>
-            </div>
-        
-            <!-- Navigation Links -->
-            <ul style="list-style: none; padding: 0; margin: 20px 0;">
-                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="PendingTrucks.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-truck-loading"></i> قيد الإنتظار </a></li>
-                <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
-                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-            </ul>
-        </div>  
-        
-        <section class="status-section">
-            <div class="left-actions">
-                <p id="status">مرحبًا!</p>
-            </div>
-            <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
-                <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
-            </div>
-        </section>
-
-        <!-- Main Content -->
-        <div class="content">
-            <h2>عربات قيد الإنتظار</h2>
-            <p style="margin: 20px 0;"></p>
-            <div class="table-container">
-                <table id="food-trucks-table">
-                    <thead>
-                        <tr>
-                            <th>الاسم</th>
-                            <th>الشعار</th>
-                            <th>صورة العربة</th>
-                            <th>رقم الرخصة</th>
-                            <th>ملف الرخصة</th>
-                            <th>المالك</th>
-                            <th>التصنيف</th>
-                            <th>الموقع</th>
-                            <th>الحالة</th>
-                            <th>قبول/رفض</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Food truck rows will be added here dynamically -->
-                    </tbody>
-                </table>
-        
-                <div id="pagination-controls" style="text-align: center; margin-top: 20px;"></div>
-            </div>
-            <div class="loading" id="loading-message">
-                <img src="images/WaitingTruck2.png" alt="Loading Food Truck">
-                <p> الرجاء الإنتظار...</p>
-            </div>
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Header Section -->
+        <div class="headerOfBar">
+          <img src="images/TrackiLogo.png" alt="Logo" />
+          <h1>Tracki</h1>
         </div>
+
+        <!-- Navigation Links -->
+        <ul style="list-style: none; padding: 0; margin: 20px 0">
+          <li>
+            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+          </li>
+          <li>
+            <a
+              href="PendingTrucks.html"
+              style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "
+              ><i class="fas fa-truck-loading"></i> قيد الإنتظار
+            </a>
+          </li>
+          <li>
+            <a href="AllTrucks.html"
+              ><i class="fas fa-truck"></i> جميع العربات</a
+            >
+          </li>
+          <li>
+            <a href="LocationUpdateRequests.html"
+              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
+            >
+          </li>
+
+          <li>
+            <a href="History.html"
+              ><i class="fas fa-history"></i> سجل العمليات</a
+            >
+          </li>
+          <li>
+            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+          </li>
+          <li>
+            <a href="Complaints.html"
+              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
+            >
+          </li>
+        </ul>
+      </div>
+
+      <section class="status-section">
+        <div class="left-actions">
+          <p id="status">مرحبًا!</p>
+        </div>
+        <div class="right-actions">
+          <i
+            id="notification-icon"
+            class="fas fa-bell notification-icon"
+            title="الإشعارات"
+          ></i>
+          <i
+            id="logout-icon"
+            class="fas fa-sign-out-alt logout-icon"
+            title="تسجيل الخروج"
+          ></i>
+        </div>
+      </section>
+
+      <!-- Main Content -->
+      <div class="content">
+        <h2>عربات قيد الإنتظار</h2>
+        <p style="margin: 20px 0"></p>
+        <div class="table-container">
+          <table id="food-trucks-table">
+            <thead>
+              <tr>
+                <th>الاسم</th>
+                <th>الشعار</th>
+                <th>صورة العربة</th>
+                <th>رقم الرخصة</th>
+                <th>ملف الرخصة</th>
+                <th>المالك</th>
+                <th>التصنيف</th>
+                <th>الموقع</th>
+                <th>الحالة</th>
+                <th>قبول/رفض</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Food truck rows will be added here dynamically -->
+            </tbody>
+          </table>
+
+          <div
+            id="pagination-controls"
+            style="text-align: center; margin-top: 20px"
+          ></div>
+        </div>
+        <div class="loading" id="loading-message">
+          <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
+          <p>الرجاء الإنتظار...</p>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <div class="footer">
-        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
 
- <!-- Firebase Script -->
- <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import { getFirestore, collection, getDocs, doc,  getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <!-- Firebase Script -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+        updateDoc,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-const firebaseConfig = {
-apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-authDomain: "trucki-database.firebaseapp.com",
-projectId: "trucki-database",
-storageBucket: "trucki-database.appspot.com",
-messagingSenderId: "283818817351",
-appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
-};
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-onAuthStateChanged(auth, (user) => {
-const statusElement = document.getElementById('status');
-if (user) {
-    const username = user.email.split('@')[0];
-    statusElement.innerText = `مرحبًا ${username} !`;
-    fetchFoodTrucks(); // Fetch the trucks
-} else {
-    statusElement.innerText = "لم يتم تسجيل الدخول";
-    window.location.href = "WelcomePage.html";
-}
-});
+      onAuthStateChanged(auth, (user) => {
+        const statusElement = document.getElementById("status");
+        if (user) {
+          const username = user.email.split("@")[0];
+          statusElement.innerText = `مرحبًا ${username} !`;
+          fetchFoodTrucks(); // Fetch the trucks
+        } else {
+          statusElement.innerText = "لم يتم تسجيل الدخول";
+          window.location.href = "WelcomePage.html";
+        }
+      });
 
-const logoutIcon = document.getElementById('logout-icon');
-logoutIcon.addEventListener('click', async () => {
-try {
-    await signOut(auth);
-    alert("تم تسجيل الخروج بنجاح!");
-    window.location.href = "WelcomePage.html";
-} catch (error) {
-    alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-}
-});
+      const logoutIcon = document.getElementById("logout-icon");
+      logoutIcon.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          alert("تم تسجيل الخروج بنجاح!");
+          window.location.href = "WelcomePage.html";
+        } catch (error) {
+          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+        }
+      });
 
-let currentPage = 1;
-const rowsPerPage = 6;
-let allRows = [];
+      let currentPage = 1;
+      const rowsPerPage = 6;
+      let allRows = [];
 
-//Fetching food trucks 
-async function fetchFoodTrucks() {
-    try {
-        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+      //Fetching food trucks
+      async function fetchFoodTrucks() {
+        try {
+          const querySnapshot = await getDocs(collection(db, "Food_Truck"));
 
-        if (querySnapshot.empty) {
-            const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-            foodTrucksTableBody.innerHTML = ''; 
-            const noDataRow = document.createElement('tr');
+          if (querySnapshot.empty) {
+            const foodTrucksTableBody = document.querySelector(
+              "#food-trucks-table tbody"
+            );
+            foodTrucksTableBody.innerHTML = "";
+            const noDataRow = document.createElement("tr");
             noDataRow.innerHTML = `<td colspan="8" style="text-align: center;">لا توجد بيانات</td>`;
             foodTrucksTableBody.appendChild(noDataRow);
             return;
-        }
+          }
 
-        allRows = [];
-        for (const docSnapshot of querySnapshot.docs) {
+          allRows = [];
+          for (const docSnapshot of querySnapshot.docs) {
             const data = docSnapshot.data();
             const truckId = docSnapshot.id;
 
@@ -148,41 +211,47 @@ async function fetchFoodTrucks() {
             const ownerDocRef = doc(db, "Truck_Owner", ownerID);
             const ownerDoc = await getDoc(ownerDocRef);
 
-            const ownerName = ownerDoc.exists() ? ownerDoc.data().Name : "غير محدد";
-            const ownerEmail = ownerDoc.exists() ? ownerDoc.data().Email : "غير محدد";
-            const ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+            const ownerName = ownerDoc.exists()
+              ? ownerDoc.data().Name
+              : "غير محدد";
+            const ownerEmail = ownerDoc.exists()
+              ? ownerDoc.data().Email
+              : "غير محدد";
+            const ownerPhone = ownerDoc.exists()
+              ? ownerDoc.data().PhoneNum
+              : "غير محدد";
 
             const statusId = data.statusId;
-            let statusText = 'غير محددة';
+            let statusText = "غير محددة";
 
             if (statusId) {
-                const requestDocRef = doc(db, "Request", statusId);
-                const requestDoc = await getDoc(requestDocRef);
+              const requestDocRef = doc(db, "Request", statusId);
+              const requestDoc = await getDoc(requestDocRef);
 
-                if (requestDoc.exists()) {
-                    const requestData = requestDoc.data();
-                    // Filter to only include trucks with 'pending' status
-                    if (requestData.status === 'pending') {
-                        statusText = 'قيد الإنتظار'; // This row will be included
-                    } else {
-                        continue; // Skip this row if not pending
-                    }
+              if (requestDoc.exists()) {
+                const requestData = requestDoc.data();
+                // Filter to only include trucks with 'pending' status
+                if (requestData.status === "pending") {
+                  statusText = "قيد الإنتظار"; // This row will be included
+                } else {
+                  continue; // Skip this row if not pending
                 }
+              }
             } else {
-                continue; // Skip if no statusId
+              continue; // Skip if no statusId
             }
 
             const categoryId = data.categoryId;
-            let categoryText = 'غير محددة';
+            let categoryText = "غير محددة";
 
             if (categoryId) {
-                const categoryDocRef = doc(db, "Food-Category", categoryId);
-                const categoryDoc = await getDoc(categoryDocRef);
+              const categoryDocRef = doc(db, "Food-Category", categoryId);
+              const categoryDoc = await getDoc(categoryDocRef);
 
-                if (categoryDoc.exists()) {
-                    const categoryData = categoryDoc.data();
-                    categoryText = categoryData.name;
-                }
+              if (categoryDoc.exists()) {
+                const categoryData = categoryDoc.data();
+                categoryText = categoryData.name;
+              }
             }
 
             // Icons for accept and decline
@@ -190,17 +259,24 @@ async function fetchFoodTrucks() {
             const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="DeclineFoodTruck('${docSnapshot.id}')"></i>`;
 
             const licensePDFUrl = data.licensePDF; // Get the license PDF URL
-            const row = document.createElement('tr');
+            const row = document.createElement("tr");
 
-
-            row.classList.add('inactive-row'); // Default class for now
+            row.classList.add("inactive-row"); // Default class for now
             row.innerHTML = `
                 <td>${data.name}</td>
-                <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;"></td>
-                <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;"></td>
+                <td><img src="${
+                  data.businessLogo
+                }" alt="Logo" style="width: 100px; height: 100px;"></td>
+                <td><img src="${
+                  data.truckImage
+                }" alt="Truck Image" style="width: 100px; height: 100px;"></td>
                 <td>${data.licenseNo}</td>
                 <td>
-                    ${licensePDFUrl ? `<a href="${licensePDFUrl}" target="_blank">عرض الرخصة</a>` : "لا يوجد ملف"}
+                    ${
+                      licensePDFUrl
+                        ? `<a href="${licensePDFUrl}" target="_blank">عرض الرخصة</a>`
+                        : "لا يوجد ملف"
+                    }
                 </td>
                     <div class="owner-details">
                         <p><strong>الاسم:</strong> ${ownerName}</p>
@@ -209,100 +285,103 @@ async function fetchFoodTrucks() {
                     </div>
                 </td>
                 <td>${categoryText}</td>
-                <td><a href="TruckLoc.html?location=${encodeURIComponent(data.location)}">عرض</a></td>
+                <td><a href="TruckLoc.html?location=${encodeURIComponent(
+                  data.location
+                )}">عرض</a></td>
                 <td>${statusText}</td>
                 <td>${acceptIcon} ${declineIcon}</td>
             `;
 
             allRows.push(row); // Add row to the list
+          }
+
+          // After successful fetching, hide loading message and show content
+          document.getElementById("loading-message").style.display = "none";
+          document.querySelector(".content").style.display = "block";
+
+          displayPage(currentPage);
+        } catch (error) {
+          console.error("Error fetching food trucks:", error);
+          document.getElementById("loading-message").innerText =
+            "حدث خطأ أثناء تحميل البيانات.";
         }
+      }
+      //Ends fetching food trucks
 
-        // After successful fetching, hide loading message and show content
-        document.getElementById('loading-message').style.display = 'none'; 
-        document.querySelector('.content').style.display = 'block'; 
+      //Accept and Decline functions
+      async function acceptFoodTruck(docId) {
+        const isConfirmed = window.confirm("هل أنت متأكد من قبول العربة؟");
 
-        displayPage(currentPage);
-    } catch (error) {
-        console.error("Error fetching food trucks:", error);
-        document.getElementById('loading-message').innerText = "حدث خطأ أثناء تحميل البيانات."; 
-    }
-}
-//Ends fetching food trucks 
+        if (isConfirmed) {
+          const foodTruckRef = doc(db, "Food_Truck", docId);
+          const foodTruckDoc = await getDoc(foodTruckRef);
 
-//Accept and Decline functions 
-async function acceptFoodTruck(docId) {
-    const isConfirmed = window.confirm("هل أنت متأكد من قبول العربة؟");
-
-    if (isConfirmed) {
-        const foodTruckRef = doc(db, "Food_Truck", docId);
-        const foodTruckDoc = await getDoc(foodTruckRef);
-
-        if (foodTruckDoc.exists()) {
+          if (foodTruckDoc.exists()) {
             const statusId = foodTruckDoc.data().statusId;
 
             // Access the Request collection using statusId
             const requestDocRef = doc(db, "Request", statusId);
             const requestDoc = await getDoc(requestDocRef);
-            
+
             if (requestDoc.exists()) {
-                await updateDoc(requestDocRef, {
-                    status: "accepted",
-                });
-                alert("تم قبول العربة.");
+              await updateDoc(requestDocRef, {
+                status: "accepted",
+              });
+              alert("تم قبول العربة.");
             } else {
-                print(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
+              print(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
             }
-        } else {
+          } else {
             console.log("لم يتم العثور على مستند العربة");
+          }
+        } else {
+          alert("تم إلغاء قبول العربة.");
         }
+      }
 
-    } else {
-        alert("تم إلغاء قبول العربة.");
-    }
-}
+      // Decline the food truck
+      async function DeclineFoodTruck(docId) {
+        const isConfirmed = window.confirm("هل أنت متأكد من رفض العربة؟");
 
+        if (isConfirmed) {
+          const reason = prompt("يرجى إدخال سبب الرفض:");
 
-// Decline the food truck
-async function DeclineFoodTruck(docId) {
-    const isConfirmed = window.confirm("هل أنت متأكد من رفض العربة؟");
-
-    if (isConfirmed) {
-        const reason = prompt("يرجى إدخال سبب الرفض:");
-
-        if (reason && reason.trim() !== "") {
+          if (reason && reason.trim() !== "") {
             const foodTruckRef = doc(db, "Food_Truck", docId);
             const foodTruckDoc = await getDoc(foodTruckRef);
 
             if (foodTruckDoc.exists()) {
-                const statusId = foodTruckDoc.data().statusId;
+              const statusId = foodTruckDoc.data().statusId;
 
-                const requestDocRef = doc(db, "Request", statusId);
-                const requestDoc = await getDoc(requestDocRef);
+              const requestDocRef = doc(db, "Request", statusId);
+              const requestDoc = await getDoc(requestDocRef);
 
-                if (requestDoc.exists()) {
-                    await updateDoc(requestDocRef, {
-                        status: "rejected",
-                        message: reason.trim(),
-                    });
-                    alert("تم رفض العربة.");
-                } else {
-                    print(`:لا يوجد طلب تحت هذا المعرف ${statusId}`);
-                }
+              if (requestDoc.exists()) {
+                await updateDoc(requestDocRef, {
+                  status: "rejected",
+                  message: reason.trim(),
+                });
+                alert("تم رفض العربة.");
+              } else {
+                print(`:لا يوجد طلب تحت هذا المعرف ${statusId}`);
+              }
             } else {
-                console.log("لم يتم العثور على مستند العربة");
+              console.log("لم يتم العثور على مستند العربة");
             }
-        } else {
+          } else {
             alert("يجب إدخال سبب للرفض.");
+          }
+        } else {
+          alert("تم إلغاء رفض العربة.");
         }
-    } else {
-        alert("تم إلغاء رفض العربة.");
-    }
-}
+      }
 
-//Ends Accept and Decline functions 
-    function displayPage(page) {
-        const foodTrucksTableBody = document.querySelector('#food-trucks-table tbody');
-        foodTrucksTableBody.innerHTML = '';
+      //Ends Accept and Decline functions
+      function displayPage(page) {
+        const foodTrucksTableBody = document.querySelector(
+          "#food-trucks-table tbody"
+        );
+        foodTrucksTableBody.innerHTML = "";
 
         const start = (page - 1) * rowsPerPage;
         const end = start + rowsPerPage;
@@ -311,58 +390,60 @@ async function DeclineFoodTruck(docId) {
         rowsToDisplay.forEach((row) => foodTrucksTableBody.appendChild(row));
 
         updatePaginationControls();
-    }
+      }
 
-    function updatePaginationControls() {
-        const paginationContainer = document.getElementById('pagination-controls');
-        paginationContainer.innerHTML = '';
+      function updatePaginationControls() {
+        const paginationContainer = document.getElementById(
+          "pagination-controls"
+        );
+        paginationContainer.innerHTML = "";
 
         const totalPages = Math.ceil(allRows.length / rowsPerPage);
 
-        const prevLink = document.createElement('span');
-        prevLink.textContent = '<';
-        prevLink.classList.add('pagination-link');
+        const prevLink = document.createElement("span");
+        prevLink.textContent = "<";
+        prevLink.classList.add("pagination-link");
         if (currentPage === 1) {
-            prevLink.classList.add('disabled');
+          prevLink.classList.add("disabled");
         } else {
-            prevLink.addEventListener('click', () => {
-                currentPage--;
-                displayPage(currentPage);
-            });
+          prevLink.addEventListener("click", () => {
+            currentPage--;
+            displayPage(currentPage);
+          });
         }
         paginationContainer.appendChild(prevLink);
 
         for (let i = 1; i <= totalPages; i++) {
-            const pageLink = document.createElement('span');
-            pageLink.textContent = i;
-            pageLink.classList.add('pagination-link');
-            if (i === currentPage) {
-                pageLink.classList.add('active-page');
-            }
-            pageLink.addEventListener('click', () => {
-                currentPage = i;
-                displayPage(currentPage);
-            });
-            paginationContainer.appendChild(pageLink);
+          const pageLink = document.createElement("span");
+          pageLink.textContent = i;
+          pageLink.classList.add("pagination-link");
+          if (i === currentPage) {
+            pageLink.classList.add("active-page");
+          }
+          pageLink.addEventListener("click", () => {
+            currentPage = i;
+            displayPage(currentPage);
+          });
+          paginationContainer.appendChild(pageLink);
         }
 
-        const nextLink = document.createElement('span');
-        nextLink.textContent = '>';
-        nextLink.classList.add('pagination-link');
+        const nextLink = document.createElement("span");
+        nextLink.textContent = ">";
+        nextLink.classList.add("pagination-link");
         if (currentPage === totalPages) {
-            nextLink.classList.add('disabled');
+          nextLink.classList.add("disabled");
         } else {
-            nextLink.addEventListener('click', () => {
-                currentPage++;
-                displayPage(currentPage);
-            });
+          nextLink.addEventListener("click", () => {
+            currentPage++;
+            displayPage(currentPage);
+          });
         }
         paginationContainer.appendChild(nextLink);
-    }
+      }
 
-    // Attach function to the global scope
-    window.acceptFoodTruck = acceptFoodTruck;
-    window.DeclineFoodTruck = DeclineFoodTruck;
-</script>
-</body>
+      // Attach function to the global scope
+      window.acceptFoodTruck = acceptFoodTruck;
+      window.DeclineFoodTruck = DeclineFoodTruck;
+    </script>
+  </body>
 </html>

@@ -8,9 +8,10 @@ import 'package:tracki/screens/owner_settings.dart';
 import '../Utils/constants.dart';
 
 class OwnerMainScreen extends StatefulWidget {
- final String ownerID;
+  final String ownerID;
   final bool isSuspended; // New parameter for the suspension flag
- const OwnerMainScreen({super.key, required this.ownerID, this.isSuspended = false});
+  const OwnerMainScreen(
+      {super.key, required this.ownerID, this.isSuspended = false});
 
   @override
   State<OwnerMainScreen> createState() => _OwnerMainScreenState();
@@ -92,7 +93,10 @@ class _OwnerMainScreenState extends State<OwnerMainScreen> {
         OwnerHomeScreen(ownerID: currentOwnerID!),
         OwnerProfile(ownerID: currentOwnerID!),
         latitude != null && longitude != null
-            ? GoogleMapFlutter(latitude: latitude!, longitude: longitude!)
+            ? GoogleMapFlutter(
+                latitude: latitude!,
+                longitude: longitude!,
+                currentOwnerID: currentOwnerID!)
             : Center(child: Text('Failed to load map')),
         OwnerSettings(ownerID: currentOwnerID!),
       ];

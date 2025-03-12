@@ -7,7 +7,6 @@ import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
- 
 
 class CreateTruck1 extends StatefulWidget {
   final String ownerId;
