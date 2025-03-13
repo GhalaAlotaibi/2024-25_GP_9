@@ -58,6 +58,7 @@ dependencies:
   google_maps_flutter: ^2.9.0
   firebase_storage: ^12.3.4
   image_picker: ^0.8.8+3
+  geocoding: ^3.0.0
 
 dev_dependencies:
   flutter_test:

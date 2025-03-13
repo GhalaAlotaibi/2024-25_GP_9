@@ -9,6 +9,10 @@ import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import '../user_auth/firebase_auth_services.dart';
 import 'package:flutter/gestures.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:geolocator/geolocator.dart';
+import 'package:geocoding/geocoding.dart';
 
 class MyAppHomeScreen extends StatefulWidget {
   final String customerID;
@@ -22,9 +26,89 @@ class MyAppHomeScreen extends StatefulWidget {
 class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String category = "الكل";
   String selectedCategoryId = "";
-
   late final String cID = widget.customerID;
   final FirebaseAuthService _authService = FirebaseAuthService();
+  void initState() {
+    super.initState();
+    // Call getRecommendations when the page is loaded
+    getRecommendations();
+  }
+
+  List<DocumentSnapshot> recommendedTrucks = [];
+
+  void getRecommendations() async {
+    String userId = widget.customerID; // Use the logged-in user ID
+
+    // Fetch the user's current location
+    Position? currentPosition = await _getCurrentLocation();
+    if (currentPosition == null) {
+      print("Failed to fetch current location.");
+      return;
+    }
+
+    double lat = currentPosition.latitude;
+    double lon = currentPosition.longitude;
+
+    List<String> recommendedTruckIDs =
+        await fetchRecommendedFoodTrucks(userId, lat, lon);
+
+    if (recommendedTruckIDs.isNotEmpty) {
+      List<DocumentSnapshot> fetchedTrucks =
+          await fetchTruckDetails(recommendedTruckIDs);
+      setState(() {
+        recommendedTrucks = fetchedTrucks;
+      });
+    }
+  }
+
+  Future<Position?> _getCurrentLocation() async {
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        print("Location services are disabled.");
+        return null;
+      }
+
+      // Check location permissions
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          print("Location permissions are denied.");
+          return null;
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        print("Location permissions are permanently denied.");
+        return null;
+      }
+
+      // Fetch the current position
+      return await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+    } catch (e) {
+      print("Error fetching location: $e");
+      return null;
+    }
+  }
+
+  Future<List<DocumentSnapshot>> fetchTruckDetails(
+      List<String> truckIDs) async {
+    List<DocumentSnapshot> truckList = [];
+    for (String id in truckIDs) {
+      DocumentSnapshot doc = await FirebaseFirestore.instance
+          .collection("Food_Truck")
+          .doc(id)
+          .get();
+      if (doc.exists) {
+        truckList.add(doc);
+      }
+    }
+    return truckList;
+  }
 
   final CollectionReference categoriesItems =
       FirebaseFirestore.instance.collection("Food-Category");
@@ -161,7 +245,11 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                               const SizedBox(height: 20),
                               SingleChildScrollView(
                                 scrollDirection: Axis.horizontal,
-                                child: suggestedTrucksRow(trucks),
+                                child: recommendedTrucks.isNotEmpty
+                                    ? suggestedTrucksRow(recommendedTrucks)
+                                    : const Center(
+                                        child: Text(
+                                            "لا توجد عربات مقترحة متاحة.")),
                               ),
                             ],
                           );
@@ -474,3 +562,24 @@ Future<List<DocumentSnapshot>> _getAcceptedTrucks(
   }
   return acceptedTrucks;
 }
+
+Future<List<String>> fetchRecommendedFoodTrucks(
+    String userId, double lat, double lon) async {
+  final Uri url = Uri.parse(
+      'http://10.0.2.2:5000/recommend?user_id=$userId&lat=$lat&lon=$lon');
+
+  try {
+    final response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return List<String>.from(data["recommended_food_trucks"]);
+    } else {
+      throw Exception("Failed to load recommendations");
+    }
+  } catch (e) {
+    print("Error fetching recommendations: $e");
+    return [];
+  }
+}
+//24.7082, 46.5989
