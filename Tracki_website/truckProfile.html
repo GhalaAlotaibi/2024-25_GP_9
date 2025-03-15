@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style2.css" />
+
+    <title>صفحة عربة الطعام</title>
+
+    <script>
+      //Navigate to pages
+      function navigateTo(page) {
+        window.location.href = page; // Navigate to the provided page
+      }
+
+      // Sidebar toggle function
+      function toggleSidebar() {
+        document.body.classList.toggle("sidebar-open");
+        const sidebar = document.getElementById("sidebar");
+        sidebar.classList.toggle("expanded");
+        document.body.classList.toggle("sidebar-expanded");
+      }
+    </script>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getFirestore,
+        query,
+        where,
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js"; //done
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
+      const urlParams = new URLSearchParams(window.location.search);
+      const truckID = urlParams.get("truckID");
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app); //done
+
+      async function displayTruck(truckID) {
+        const truckRef = doc(db, "Food_Truck", truckID);
+        const truckSnap = await getDoc(truckRef);
+
+        if (truckSnap.exists()) {
+          const truckData = truckSnap.data();
+
+          document.getElementById("truckImage").src = truckData.truckImage;
+          document.getElementById("businessLogo").src = truckData.businessLogo;
+          document.getElementById("truckName").textContent = truckData.name;
+          displayStars(parseFloat(truckData.rating.trim()));
+
+          if (truckData.ownerID) {
+            displayOwner(truckData.ownerID);
+          }
+        } else {
+          console.log("No such truck!");
+        }
+      }
+
+      function displayStars(rating) {
+        const starsContainer = document.getElementById("starRating");
+        starsContainer.innerHTML = "";
+        const fullStars = Math.floor(rating);
+        const halfStar = rating % 1 >= 0.5;
+        const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+
+        for (let i = 0; i < fullStars; i++) {
+          starsContainer.innerHTML += "<i class='fas fa-star'></i>";
+        }
+        if (halfStar) {
+          starsContainer.innerHTML += "<i class='fas fa-star-half-alt'></i>";
+        }
+        for (let i = 0; i < emptyStars; i++) {
+          starsContainer.innerHTML += "<i class='far fa-star'></i>";
+        }
+      }
+
+      async function displayOwner(ownerID) {
+        const ownerRef = doc(db, "Truck_Owner", ownerID);
+        const ownerSnap = await getDoc(ownerRef);
+
+        if (ownerSnap.exists()) {
+          const ownerData = ownerSnap.data();
+
+          const ownerInfoCard = document.getElementById("ownerInfoCard");
+          ownerInfoCard.innerHTML += `
+            <div class="owner-info">
+              <div class="info-item">
+                <i class="fas fa-user"></i>
+                <span>${ownerData.Name}</span>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-envelope"></i>
+                <span>${ownerData.Email}</span>
+              </div>
+              <div class="info-item">
+                <i class="fas fa-phone"></i>
+                <span>${ownerData.PhoneNum}</span>
+              </div>
+              <div class="action-buttons">
+                <button class="btn">تواصل عبر البريد الالكتروني</button>
+                <button class="btn btn-danger">أرسل رسالة SMS</button>
+              </div>
+            </div>
+          `;
+        } else {
+          console.log("No such owner!");
+        }
+        async function displayReviews(truckID) {
+          const reviewsContainer = document.getElementById("reviewsCard");
+
+          try {
+            // Query the Review collection
+            const q = query(
+              collection(db, "Review"),
+              where("foodTruckId", "==", truckID)
+            );
+
+            const querySnapshot = await getDocs(q);
+
+            // Check if reviews exist
+            if (querySnapshot.empty) {
+              reviewsContainer.innerHTML += "<p>لا توجد تقييمات حاليا.</p>";
+              return;
+            }
+
+            // Display reviews
+            let reviewsHTML = "";
+            let reviewCount = 0;
+            for (const docSnap of querySnapshot.docs) {
+              const data = docSnap.data();
+              let customerName = "مستخدم مجهول";
+              let timestamp1 = data.timestamp;
+              let timestamp = timestamp1.slice(0, 10);
+
+              // Fetch customer name if available
+              if (data.customerId) {
+                const customerRef = doc(db, "Customer", data.customerId);
+                const customerSnap = await getDoc(customerRef);
+                if (customerSnap.exists()) {
+                  customerName = customerSnap.data().Name || "مستخدم مجهول";
+                }
+              }
+
+              // Generate dynamic star ratings
+              const rating = parseFloat(data.rating || "0");
+              const fullStars = Math.floor(rating);
+              const hasHalfStar = rating % 1 !== 0;
+              const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+              const stars = `${'<i class="fas fa-star star"></i>'.repeat(
+                fullStars
+              )}
+   ${hasHalfStar ? '<i class="fas fa-star-half-alt star"></i>' : ""}
+   ${'<i class="far fa-star star"></i>'.repeat(emptyStars)}`;
+
+              const reviewHTML = `
+        <div class="review ${reviewCount >= 2 ? "hidden" : ""}">
+          <div class="review-header">
+            <img src="/assets/images/user.jpg" alt="User Avatar" class="avatar">
+            <div class="nameAndTime">
+              <h4>${customerName}</h4>
+              <small>${timestamp}</small>
+            </div>
+          </div class="comment">
+          <p>${data.comment || "لا يوجد تعليق"}</p>
+          <div class="rating">${stars}</div>
+          <hr>
+        </div>
+      `;
+
+              reviewsHTML += reviewHTML;
+              reviewCount++;
+            }
+
+            if (reviewCount > 2) {
+              reviewsHTML += `<button id="showMoreBtn" class="btn">رؤية المزيد</button>`;
+            }
+
+            reviewsContainer.innerHTML = reviewsHTML;
+
+            // Add functionality for "Show More" button
+            const showMoreBtn = document.getElementById("showMoreBtn");
+            if (showMoreBtn) {
+              showMoreBtn.addEventListener("click", () => {
+                document
+                  .querySelectorAll(".review.hidden")
+                  .forEach((review) => {
+                    review.classList.remove("hidden");
+                  });
+                showMoreBtn.style.display = "none";
+              });
+            }
+          } catch (error) {
+            console.error("Error fetching reviews:", error);
+            reviewsContainer.innerHTML =
+              "<p>حدث خطأ أثناء تحميل التقييمات.</p>";
+          }
+        }
+        displayReviews(truckID);
+      }
+
+      displayTruck(truckID);
+      async function displayComplaints(truckID) {
+        const complaintsContainer = document.getElementById("complaintsCard");
+
+        try {
+          // Query the Complaints collection
+          const q = query(
+            collection(db, "Complaint"),
+            where("foodTruckId", "==", truckID)
+          );
+
+          const querySnapshot = await getDocs(q);
+
+          // Check if complaints exist
+          if (querySnapshot.empty) {
+            complaintsContainer.innerHTML += "<p>لا توجد شكاوي حاليا.</p>";
+            return;
+          }
+
+          let complaintsHTML = "";
+          let complaintCount = 0;
+
+          for (const docSnap of querySnapshot.docs) {
+            const data = docSnap.data();
+            let customerName = "مستخدم مجهول";
+
+            // Fetch customer name
+            if (data.customerId) {
+              const customerRef = doc(db, "Customer", data.customerId);
+              const customerSnap = await getDoc(customerRef);
+              if (customerSnap.exists()) {
+                customerName = customerSnap.data().Name || "مستخدم مجهول";
+              }
+            }
+
+            // Extract complaint data
+            const timestamp = data.timestamp.slice(0, 10);
+            const isResolved = data.status === "resolved";
+            const statusColor = isResolved ? "green-bar" : "red-bar";
+            const statusText = isResolved ? "تم الحل" : "قيد الانتظار";
+
+            // Complaint HTML structure
+            const complaintHTML = `
+        <div class="complaint ${complaintCount >= 1 ? "hidden" : ""}">
+          <div class="complaint-status ${statusColor}">
+            <span>${statusText}</span>
+          </div>
+          <div class="complaint-content">
+            <div class="complaint-header">
+              <img src="/assets/images/user.jpg" alt="User Avatar" class="avatar">
+              <div class="cHeader">
+                <h4>${customerName}</h4>
+                <small id="time">${timestamp}</small>
+              </div>
+            </div>
+            <p class="complaint-description">${data.description}</p>
+            ${
+              isResolved
+                ? `<div class="admin-comment"><strong>تعليق المدير:</strong> ${
+                    data.adminComment || "لا يوجد تعليق"
+                  }</div>`
+                : ""
+            }
+          </div>
+        </div>
+      `;
+
+            complaintsHTML += complaintHTML;
+            complaintCount++;
+          }
+
+          if (complaintCount > 1) {
+            complaintsHTML += `<button id="showMoreComplaintsBtn" class="btn complaintsBtn">رؤية المزيد</button>`;
+          }
+
+          complaintsContainer.innerHTML = complaintsHTML;
+
+          // Add functionality for "Show More" button
+          const showMoreComplaintsBtn = document.getElementById(
+            "showMoreComplaintsBtn"
+          );
+          if (showMoreComplaintsBtn) {
+            showMoreComplaintsBtn.addEventListener("click", () => {
+              document
+                .querySelectorAll(".complaint.hidden")
+                .forEach((complaint) => {
+                  complaint.classList.remove("hidden");
+                });
+              showMoreComplaintsBtn.style.display = "none";
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching complaints:", error);
+          complaintsContainer.innerHTML = "<p>حدث خطأ أثناء تحميل الشكاوي.</p>";
+        }
+      }
+
+      displayComplaints(truckID);
+    </script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/js/all.min.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- Sidebar -->
+    <div id="sidebar">
+      <div class="sidebar-logo">
+        <img src="images/TrackiLogo.png" alt="Logo" />
+        <h1>Tracki مشرف</h1>
+      </div>
+      <!-- Menu Items -->
+      <div class="menu-item" onclick="navigateTo('admindashboard.html')">
+        <i class="fas fa-tachometer-alt"></i>لوحة الإدارة
+      </div>
+      <div class="menu-item" style="background-color: #6f5d96">
+        <i class="fas fa-truck"></i>جميع العربات
+      </div>
+      <div class="menu-item" onclick="navigateTo('ratings.html')">
+        <i class="fas fa-star"></i>التقييمات
+      </div>
+      <div class="menu-item" onclick="navigateTo('complaints.html')">
+        <i class="fas fa-exclamation-circle"></i>الشكاوي والإقتراحات
+      </div>
+    </div>
+    <header>
+      <div class="header">
+        <!-- <button id="logout-button">تسجيل الخروج</button>
+        <img src="images/TrackiLogo.png" alt="Logo" />-->
+        <button id="toggle-btn" onclick="toggleSidebar()">
+          <!-- Toggle Button -->
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </header>
+    <div class="profile">
+      <div class="container">
+        <div class="truck-image-container">
+          <img id="truckImage" class="truck-image" src="" alt="صورة العربة" />
+          <img
+            id="businessLogo"
+            class="business-logo"
+            src=""
+            alt="شعار العربة"
+          />
+        </div>
+        <div class="truck-info">
+          <div id="truckName" class="truck-name"></div>
+          <div id="truckCategory" class="truck-category">قهوه</div>
+          <div id="starRating" class="stars"></div>
+        </div>
+      </div>
+      <div class="rowOfCards">
+        <div id="ownerInfoCard" class="card">
+          <h3 class="cardTitle">عن المالك</h3>
+        </div>
+
+        <div id="complaintsContainer" class="card complaints">
+          <h3 class="cardTitle">الشكاوي</h3>
+          <div id="complaintsCard"></div>
+        </div>
+
+        <div class="card reviews">
+          <h3 class="cardTitle">التقييمات</h3>
+          <div id="reviewsCard"></div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

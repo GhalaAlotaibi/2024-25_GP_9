@@ -245,28 +245,35 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
                           padding: const EdgeInsets.symmetric(horizontal: 10),
                           child: Row(
                             children: [
-                              const Icon(Icons.restaurant_menu,
-                                  size: 15, color: Colors.grey),
+                              const Icon(
+                                Icons.restaurant_menu,
+                                size: 15,
+                                color: Color.fromARGB(255, 113, 113, 113),
+                              ),
                               const SizedBox(width: 5),
                               Text(
                                 categoryName,
                                 style: const TextStyle(
-                                  color: Colors.grey,
+                                  color: Color.fromARGB(255, 113, 113, 113),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                               const Text("  ",
                                   style: TextStyle(
-                                      fontWeight: FontWeight.w900,
-                                      color: Colors.grey)),
-                              const Icon(Icons.punch_clock,
-                                  size: 16, color: Colors.grey),
+                                    fontWeight: FontWeight.w900,
+                                    color: Color.fromARGB(255, 113, 113, 113),
+                                  )),
+                              const Icon(
+                                Iconsax.clock,
+                                size: 16,
+                                color: Color.fromARGB(255, 113, 113, 113),
+                              ),
                               const SizedBox(width: 5),
                               Text(
                                 "${widget.documentSnapshot['operatingHours']} ",
                                 style: const TextStyle(
-                                  color: Colors.grey,
+                                  color: Color.fromARGB(255, 113, 113, 113),
                                   fontSize: 10,
                                   fontWeight: FontWeight.bold,
                                 ),

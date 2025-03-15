@@ -110,7 +110,7 @@ class ItemsDisplayRight extends StatelessWidget {
                         return Text(
                           categoryName,
                           style: const TextStyle(
-                            color: Colors.grey,
+                            color: Color.fromARGB(255, 113, 113, 113),
                             fontSize: 10,
                             fontWeight: FontWeight.bold,
                           ),
@@ -121,13 +121,13 @@ class ItemsDisplayRight extends StatelessWidget {
                     const Icon(
                       Iconsax.clock,
                       size: 16,
-                      color: Colors.grey,
+                      color: Color.fromARGB(255, 113, 113, 113),
                     ),
                     const SizedBox(width: 5),
                     Text(
                       "${documentSnapshot['operatingHours']} ",
                       style: const TextStyle(
-                        color: Colors.grey,
+                        color: Color.fromARGB(255, 113, 113, 113),
                         fontSize: 10,
                         fontWeight: FontWeight.bold,
                       ),

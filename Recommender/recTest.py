@@ -13,17 +13,26 @@ db = firestore.client()
 
 # Step 2: Fetch Data from Firestore
 def fetch_food_trucks():
-    """Fetch all food trucks from the database."""
+    """Fetch only food trucks that have been accepted."""
     food_trucks = db.collection('Food_Truck').stream()
-    data = []
+    accepted_trucks = []
+
     for truck in food_trucks:
         truck_data = truck.to_dict()
-        truck_data['foodTruckId'] = truck.id  # Use the document ID as foodTruckId
-        # Convert location string to tuple (lat, lon)
-        location = list(map(float, truck_data['location'].split(',')))
-        truck_data['location'] = location
-        data.append(truck_data)
-    return pd.DataFrame(data)
+        truck_data['foodTruckId'] = truck.id  
+
+        # Ensure the truck has a statusId field
+        if 'statusId' in truck_data:
+            status_doc = db.collection('Request').document(truck_data['statusId']).get()
+
+            if status_doc.exists and status_doc.to_dict().get('status') == "accepted":
+                # Only add trucks where the status is "accepted"
+                location = list(map(float, truck_data['location'].split(',')))
+                truck_data['location'] = location
+                accepted_trucks.append(truck_data)
+
+    return pd.DataFrame(accepted_trucks)  # Convert the accepted trucks to DataFrame
+
 
 def fetch_user_favorites(user_id):
     """Fetch the user's favorite food truck IDs."""
@@ -82,7 +91,7 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 # Step 5: Generate Recommendations  
-def recommend_food_trucks(user_id, user_location, top_n=5):
+def recommend_food_trucks(user_id, user_location, top_n=10):
     """Generate recommendations for a user and return only food truck IDs.
        Also print the scoring breakdown for each recommended truck.
     """
@@ -104,8 +113,18 @@ def recommend_food_trucks(user_id, user_location, top_n=5):
     if len(favorite_indices) == 0:
         similarity_scores = np.zeros(len(food_trucks_df))
     else:
-        similarity_scores = similarity_matrix[favorite_indices].mean(axis=0)
-        similarity_scores = np.array(similarity_scores)
+        favorite_categories = food_trucks_df.iloc[favorite_indices]['categoryId'].unique()
+        
+        category_similarities = []
+        for cat in favorite_categories:
+            cat_mask = food_trucks_df['categoryId'] == cat
+            if cat_mask.any():
+                category_similarities.append(similarity_matrix[cat_mask].mean(axis=0))
+        
+        similarity_scores = np.mean(category_similarities, axis=0) if category_similarities else np.zeros(len(food_trucks_df))
+
+        
+        similarity_scores = np.mean(category_similarities, axis=0) if category_similarities else np.zeros(len(food_trucks_df))
 
     # Step 5: Calculate proximity scores using the haversine formula
     food_trucks_df['distance'] = food_trucks_df['location'].apply(
@@ -114,13 +133,20 @@ def recommend_food_trucks(user_id, user_location, top_n=5):
     food_trucks_df['proximity_score'] = 1 / (food_trucks_df['distance'] + 1)
     food_trucks_df['normalized_proximity'] = food_trucks_df['proximity_score'] / food_trucks_df['proximity_score'].max()
 
-    # Step 6: Normalize ratings
+    # Step 6: normalize the ratings
     food_trucks_df['normalized_rating'] = food_trucks_df['avg_rating'] / food_trucks_df['avg_rating'].max()
 
-    # Step 7: Define weights for each component
-    w1, w2, w3 = 0.5, 0.3, 0.2  # Weights for similarity, rating, and proximity
+    # Step 7: define weights for each component
+ # If the customer has favorite food trucks, give more weight to similarity scores.  
+    if len(favorite_indices) > 0:  
+        w1, w2, w3 = 0.7, 0.15, 0.15  
+    else:  
+        # If there are no favorites, similarity scores don’t matter,  
+        # so we distribute the weight equally between proximity and ratings 
+        w1, w2, w3 = 0, 0.5, 0.5  
 
-    # Step 8: Calculate the contribution of each component
+
+    # Step 8: then we alculate the contribution of each component
     food_trucks_df['similarity_component'] = w1 * similarity_scores
     food_trucks_df['rating_component'] = w2 * food_trucks_df['normalized_rating']
     food_trucks_df['proximity_component'] = w3 * food_trucks_df['normalized_proximity']
@@ -138,13 +164,22 @@ def recommend_food_trucks(user_id, user_location, top_n=5):
             food_trucks_df['rating_component'] +
             food_trucks_df['proximity_component']
         )
-
-    # Step 11: Sort and select top N recommendations
-    recommendations = food_trucks_df.sort_values(by='final_score', ascending=False)
+    # Step 11: Ensure diversity in recommendations
+    # Step 11: Ensure category diversity
+    recommendations = (
+        food_trucks_df.groupby("categoryId")
+        .apply(lambda x: x.nlargest(max(1, min(3, len(x))), "final_score"))  # At least 1, max 3 per category
+        .reset_index(drop=True)
+        .sort_values(by="final_score", ascending=False)
+    )
 
     # Step 12: Print explanation for each recommended truck
     for idx, row in recommendations.iterrows():
+        print(f"Number of favourite food trucks: {len(favorite_indices)}")
+
         print(f"Truck ID: {row['foodTruckId']}")
+        print(f"  Food Truck Name: {row['name']}")
+      
         print(f"  Similarity Score: {row['similarity_component']:.3f}")
         print(f"  Average Rating:   {row['avg_rating']:.2f}")
         print(f"  Number of Ratings: {int(row['ratings_count'])}")
@@ -152,8 +187,7 @@ def recommend_food_trucks(user_id, user_location, top_n=5):
         print(f"  Proximity Score: {row['proximity_component']:.3f}")
         print(f"  Final Score:     {row['final_score']:.3f}")
         print("-----")
-
     # Step 13: Filter recommendations with a final score >= 0.3 and return the top N
-    recommendations = food_trucks_df[food_trucks_df['final_score'] >= 0.3].sort_values(by='final_score', ascending=False)
+    if len(recommendations) < top_n:  # If not enough results, lower threshold
+     recommendations = food_trucks_df.sort_values(by="final_score", ascending=False).head(top_n)
     return recommendations['foodTruckId'].tolist()[:top_n]
- 

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/food_truck_profile_display.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/view_all_items.dart';
 import 'package:tracki/widgets/banner.dart';
@@ -28,21 +29,27 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   String selectedCategoryId = "";
   late final String cID = widget.customerID;
   final FirebaseAuthService _authService = FirebaseAuthService();
+  bool isLoadingRecommendations = false; // Track loading state
   void initState() {
     super.initState();
-    // Call getRecommendations when the page is loaded
+    // we must call getRecommendations whenever the page is loaded
     getRecommendations();
   }
 
   List<DocumentSnapshot> recommendedTrucks = [];
-
   void getRecommendations() async {
-    String userId = widget.customerID; // Use the logged-in user ID
+    setState(() {
+      isLoadingRecommendations = true; // Start loading
+    });
 
-    // Fetch the user's current location
+    String userId = widget.customerID;
     Position? currentPosition = await _getCurrentLocation();
+
     if (currentPosition == null) {
       print("Failed to fetch current location.");
+      setState(() {
+        isLoadingRecommendations = false; // Stop loading
+      });
       return;
     }
 
@@ -55,8 +62,16 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     if (recommendedTruckIDs.isNotEmpty) {
       List<DocumentSnapshot> fetchedTrucks =
           await fetchTruckDetails(recommendedTruckIDs);
+      if (mounted) {
+        setState(() {
+          recommendedTrucks = fetchedTrucks;
+        });
+      }
+    }
+
+    if (mounted) {
       setState(() {
-        recommendedTrucks = fetchedTrucks;
+        isLoadingRecommendations = false; // Stop loading
       });
     }
   }
@@ -243,14 +258,19 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-                              SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: recommendedTrucks.isNotEmpty
-                                    ? suggestedTrucksRow(recommendedTrucks)
-                                    : const Center(
-                                        child: Text(
-                                            "لا توجد عربات مقترحة متاحة.")),
-                              ),
+
+                              // Show loading spinner while fetching recommendations
+                              if (isLoadingRecommendations)
+                                const Center(child: CircularProgressIndicator())
+                              else if (recommendedTrucks.isEmpty)
+                                const Center(
+                                    child: Text("لا توجد عربات مقترحة متاحة."))
+                              else
+                                SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: suggestedTrucksRow(
+                                      recommendedTrucks, widget.customerID),
+                                ),
                             ],
                           );
                         },
@@ -425,7 +445,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   }
 }
 
-Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
+Widget suggestedTrucksRow(List<DocumentSnapshot> trucks, String customerID) {
   return FutureBuilder<List<DocumentSnapshot>>(
     future: _getAcceptedTrucks(trucks),
     builder: (context, snapshot) {
@@ -451,88 +471,101 @@ Widget suggestedTrucksRow(List<DocumentSnapshot> trucks) {
             final imageUrl = truck['truckImage'] ?? ''; // Avoid null errors
             final truckName = truck['name'] ?? 'غير معروف'; // Default name
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Stack(
-                children: [
-                  // Truck Image Card
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(15),
-                    child: Container(
-                      width: 140,
-                      height: 180,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300], // Placeholder background
-                        borderRadius: BorderRadius.circular(15),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 8,
-                            spreadRadius: 2,
-                            offset: const Offset(2, 4),
-                          )
-                        ],
-                      ),
-                      child: imageUrl.isNotEmpty
-                          ? Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
-                                if (loadingProgress == null) return child;
-                                return const Center(
-                                  child: CircularProgressIndicator(),
-                                );
-                              },
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const Icon(Icons.image_not_supported,
-                                      size: 60),
-                            )
-                          : const Icon(Icons.image_not_supported, size: 60),
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => FoodTruckProfileDisplay(
+                      documentSnapshot: truck, // Pass the specific truck's data
+                      customerID: customerID,
                     ),
                   ),
-
-                  // Gradient Overlay
-                  Positioned(
-                    bottom: 0,
-                    left: 0,
-                    right: 0,
-                    child: Container(
-                      height: 60,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(15),
-                          bottomRight: Radius.circular(15),
-                        ),
-                        gradient: LinearGradient(
-                          begin: Alignment.bottomCenter,
-                          end: Alignment.topCenter,
-                          colors: [
-                            Colors.black.withOpacity(0.6),
-                            Colors.transparent,
+                );
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Stack(
+                  children: [
+                    // Truck Image Card
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Container(
+                        width: 140,
+                        height: 180,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300], // Placeholder background
+                          borderRadius: BorderRadius.circular(15),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.1),
+                              blurRadius: 8,
+                              spreadRadius: 2,
+                              offset: const Offset(2, 4),
+                            )
                           ],
                         ),
+                        child: imageUrl.isNotEmpty
+                            ? Image.network(
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return const Center(
+                                    child: CircularProgressIndicator(),
+                                  );
+                                },
+                                errorBuilder: (context, error, stackTrace) =>
+                                    const Icon(Icons.image_not_supported,
+                                        size: 60),
+                              )
+                            : const Icon(Icons.image_not_supported, size: 60),
                       ),
                     ),
-                  ),
 
-                  // Truck Name Overlay
-                  Positioned(
-                    bottom: 10,
-                    left: 10,
-                    right: 10,
-                    child: Text(
-                      truckName,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        overflow: TextOverflow.ellipsis,
+                    // Gradient Overlay
+                    Positioned(
+                      bottom: 0,
+                      left: 0,
+                      right: 0,
+                      child: Container(
+                        height: 60,
+                        decoration: BoxDecoration(
+                          borderRadius: const BorderRadius.only(
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15),
+                          ),
+                          gradient: LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              Colors.black.withOpacity(0.6),
+                              Colors.transparent,
+                            ],
+                          ),
+                        ),
                       ),
-                      textAlign: TextAlign.center,
                     ),
-                  ),
-                ],
+
+                    // Truck Name Overlay
+                    Positioned(
+                      bottom: 10,
+                      left: 10,
+                      right: 10,
+                      child: Text(
+                        truckName,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             );
           }).toList(),
