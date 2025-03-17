@@ -5,7 +5,9 @@ import 'package:lottie/lottie.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/Truck_Profile.dart';
 import 'package:tracki/screens/StatusRejected.dart';
+import 'package:tracki/screens/owner_home_screen.dart'; // dont know
 import 'login_screen.dart';
+import 'owner_main_screen.dart';
 
 class CreateTruck3 extends StatefulWidget {
   final String ownerId;
@@ -53,7 +55,10 @@ class _CreateTruck3State extends State<CreateTruck3> {
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => TruckProfile(truckId: widget.truckId), //
+        // builder: (context) => TruckProfile(truckId: widget.truckId), // old one
+        builder: (context) => OwnerMainScreen(
+          ownerID: widget.truckId,
+        ),
       ),
     );
   }
