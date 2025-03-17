@@ -7,10 +7,11 @@ import 'package:tracki/widgets/my_icon_button.dart';
 import 'add_item.dart';
 import 'edit_item.dart';
 import 'owner_main_screen.dart';
+//needs update! g
 
 // Not used !
 class TruckProfile extends StatefulWidget {
-  final String truckId;
+  final String truckId; //real truck id
 
   const TruckProfile({Key? key, required this.truckId}) : super(key: key);
 
@@ -212,8 +213,7 @@ class _TruckProfileState extends State<TruckProfile> {
 
                 Center(
                   child: SizedBox(
-                    width: MediaQuery.of(context).size.width *
-                        0.8,  
+                    width: MediaQuery.of(context).size.width * 0.8,
                     child: ElevatedButton(
                       onPressed: () {
                         Navigator.push(
@@ -227,7 +227,6 @@ class _TruckProfileState extends State<TruckProfile> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: kBannerColor,
-                      
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
                         ),
@@ -235,7 +234,7 @@ class _TruckProfileState extends State<TruckProfile> {
                       child: const Text(
                         "انتهيت",
                         style: TextStyle(
-                          fontSize: 15,  
+                          fontSize: 15,
                           color: Colors.white,
                         ),
                       ),
