@@ -74,6 +74,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
           'item_prices_list': [],
           'item_images_list': [],
           'statusId': requestId, // Link to the Request document
+          'DateofReg': FieldValue.serverTimestamp(),
         });
 
         String truckId = truckRef.id;
