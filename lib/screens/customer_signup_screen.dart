@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/user_type_selection_screen.dart';
@@ -229,6 +230,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       'Name': username,
                                       'email': email,
                                     });
+
+                                    // ADD TO HISTORY
+                                    await _addToHistoryCollection(userID);
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                           content:
@@ -308,6 +312,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
         ));
   }
 
+// ADD TO HISTORY
+  Future<void> _addToHistoryCollection(String userID) async {
+    try {
+      // Add a document to the History collection
+      await FirebaseFirestore.instance.collection('History').add({
+        'timestamp': FieldValue.serverTimestamp(), // Add the current timestamp
+        'docType': 'Customer Registration',
+        'Details':
+            'إنشاء حساب عميل ${usernameController.text} برقم المعرف $userID',
+      });
+    } catch (e) {
+      print("Error adding entry to History collection: $e");
+    }
+  }
+
   bool isErrorMessage(String message) {
     const List<String> errorMessages = [
       'يرجى إدخال بريد إلكتروني صالح',
@@ -326,4 +345,3 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return errorMessages.contains(message);
   }
 }
-//
