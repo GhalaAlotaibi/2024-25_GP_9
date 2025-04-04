@@ -41,5 +41,5 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
-# Ignore Firebase credentials
 Recommender/cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json
+Recommender/cred/*.json
