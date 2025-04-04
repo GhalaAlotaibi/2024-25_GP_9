@@ -47,6 +47,9 @@ class _CreateTruck2State extends State<CreateTruck2> {
           FirebaseFirestore.instance.collection('Food_Truck');
       CollectionReference requests =
           FirebaseFirestore.instance.collection('Request');
+      //HISTORY
+      CollectionReference history =
+          FirebaseFirestore.instance.collection('History');
 
       try {
         DocumentReference requestRef = await requests.add({
@@ -87,6 +90,13 @@ class _CreateTruck2State extends State<CreateTruck2> {
 
         print(
             "Truck and request created successfully. Truck ID: $truckId, Request ID: $requestId");
+
+        //ADD TO HISTORY
+        await history.add({
+          'docType':'Food Truck Registration Request',
+          'Details':'طلب تسجيل عربة ${widget.truckName} برقم المعرف $truckId',
+          'timestamp': FieldValue.serverTimestamp(),
+        });
 
         Navigator.push(
           context,

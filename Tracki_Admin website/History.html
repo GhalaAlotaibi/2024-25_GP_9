@@ -1,153 +1,280 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracki - History</title>
-    <link rel="stylesheet" href="Styles/Style.css" />
-    <link rel="stylesheet" href="Styles/" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
-      rel="stylesheet"
-    />
-  </head>
-  <body>
-    <!-- Header -->
 
-    <div class="main-container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <!-- Header Section -->
-        <div class="headerOfBar">
-          <img src="images/TrackiLogo.png" alt="Logo" />
-          <h1>Tracki</h1>
-        </div>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracki - History</title>
+  <link rel="stylesheet" href="Styles/Style.css" />
+  <link rel="stylesheet" href="Styles/AllTrucks.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet" />
+</head>
 
-        <!-- Navigation Links -->
-        <ul style="list-style: none; padding: 0; margin: 20px 0">
-          <li>
-            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
-          </li>
-          <li>
-            <a href="WaitingTrucks.html"
-              ><i class="fas fa-truck-loading"></i> قيد الإنتظار
-            </a>
-          </li>
-          <li>
-            <a href="AllTrucks.html"
-              ><i class="fas fa-truck"></i> جميع العربات</a
-            >
-          </li>
-          <li>
-            <a href="LocationUpdateRequests.html"
-              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
-            >
-          </li>
-          <li>
-            <a
-              href="History.html"
-              style="
-                background-color: #7a557a;
-                color: #faf3f0;
-                font-weight: bold;
-                border-radius: 8px;
-              "
-              ><i class="fas fa-history"></i> سجل العمليات</a
-            >
-          </li>
-          <li>
-            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
-          </li>
-          <li>
-            <a href="Complaints.html"
-              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
-            >
-          </li>
-        </ul>
+<body>
+  <!-- Header -->
+
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Header Section -->
+      <div class="headerOfBar">
+        <img src="images/TrackiLogo.png" alt="Logo" />
+        <h1>Tracki</h1>
       </div>
 
-      <section class="status-section">
-        <div class="left-actions">
-          <p id="status">مرحبًا!</p>
-        </div>
-        <div class="right-actions">
-          <i
-            id="notification-icon"
-            class="fas fa-bell notification-icon"
-            title="الإشعارات"
-          ></i>
-          <i
-            id="logout-icon"
-            class="fas fa-sign-out-alt logout-icon"
-            title="تسجيل الخروج"
-          ></i>
-        </div>
-      </section>
+      <!-- Navigation Links -->
+      <ul style="list-style: none; padding: 0; margin: 20px 0">
+        <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+        <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
+        <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
+        <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
+        <li><a href="History.html"style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
+        <i class="fas fa-history"></i> سجل العمليات</a></li>
+        <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
+        <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
 
-      <!-- Main Content -->
-      <div class="content">
-        <h2>سجل العمليات</h2>
-        <p>Still under develpment</p>
+      </ul>
+    </div>
+
+    <section class="status-section">
+      <div class="left-actions">
+        <p id="status">مرحبًا!</p>
       </div>
+      <div class="right-actions">
+        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+      </div>
+    </section>
+
+    <!-- Main Content -->
+    <div class="content">
+      <h2>سجل العمليات</h2>
+      <table id="history-table">
+        <thead>
+          <tr>
+            <th>نوع العملية</th>
+            <th>التفاصيل</th>
+            <th>التاريخ والوقت</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Data will be dynamically added here -->
+        </tbody>
+      </table>
+
+      <!-- Pagination Controls -->
+      <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
     </div>
+  </div>
 
-    <!-- Footer -->
-    <div class="footer">
-      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
-    </div>
+  <!-- Footer -->
+  <div class="footer">
+    <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+  </div>
 
-    <!-- Firebase Script -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import {
-        getAuth,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import { collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-        authDomain: "trucki-database.firebaseapp.com",
-        projectId: "trucki-database",
-        storageBucket: "trucki-database.appspot.com",
-        messagingSenderId: "283818817351",
-        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
-      };
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+      authDomain: "trucki-database.firebaseapp.com",
+      projectId: "trucki-database",
+      storageBucket: "trucki-database.appspot.com",
+      messagingSenderId: "283818817351",
+      appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+    };
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-      // Check authentication status on page load
-      onAuthStateChanged(auth, (user) => {
-        const statusElement = document.getElementById("status");
-        if (user) {
-          const username = user.email.split("@")[0];
-          statusElement.innerText = `مرحبًا ${username} !`;
-        } else {
-          statusElement.innerText = "لم يتم تسجيل الدخول";
-          window.location.href = "WelcomePage.html";
-        }
+    // Check authentication status on page load
+    onAuthStateChanged(auth, (user) => {
+      const statusElement = document.getElementById("status");
+      if (user) {
+        const username = user.email.split("@")[0];
+        statusElement.innerText = `مرحبًا ${username} !`;
+      } else {
+        statusElement.innerText = "لم يتم تسجيل الدخول";
+        window.location.href = "WelcomePage.html";
+      }
+    });
+
+    // Pagination Variables
+    const rowsPerPage = 10;
+    let currentPage = 1;
+    let allRows = [];
+    let totalPages = 0;
+
+    // Fetch History Data
+    // Fetch History Data
+    async function fetchHistoryData() {
+      const historyTableBody = document.querySelector("#history-table tbody");
+
+      try {
+        // Reference to the "History" collection
+        const historyCollection = collection(db, "History");
+        const querySnapshot = await getDocs(historyCollection);
+
+        // Store all data for pagination
+        allRows = [];
+        querySnapshot.forEach((doc) => {
+          const data = doc.data(); // Get document data
+          let docType = data.docType || "No type"; // Use "No type" if docType is not available
+          let details = data.Details || "No details"; // Use "No details" if Details is not available
+
+          // Check the docType and update it with the Arabic equivalent
+          switch (docType) {
+            case "Truck Owner Registration":
+              docType = "تسجيل صاحب عربة";
+              break;
+            case "Location Update Request":
+              docType = "طلب تحديث موقع عربة";
+              break;
+            case "Food Truck Registration Request":
+              docType = "طلب تسجيل عربة";
+              break;
+            case "Customer Deletion":
+              docType = "حذف حساب عميل";
+              break;
+            case "Owner Deletion":
+              docType = "حذف حساب صاحب عربة";
+              break;
+            case "Customer Registration":
+              docType = "تسجيل عميل";
+              break;
+            default:
+              docType = docType;
+              break;
+          }
+
+          // Get the timestamp and convert it to a readable date format
+          const timestamp = data.timestamp ? data.timestamp.toDate() : new Date();
+          const formattedTimestamp = timestamp.toLocaleString("ar-SA", {
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+            hour: "numeric",
+            minute: "numeric",
+            second: "numeric"
+          });
+
+          // Add data to rows
+          allRows.push({
+            docType,
+            details,
+            formattedTimestamp,
+            timestamp // Store the raw timestamp for sorting
+          });
+        });
+
+        // Sort the rows by timestamp in descending order (most recent first)
+        allRows.sort((a, b) => b.timestamp - a.timestamp);
+
+        totalPages = Math.ceil(allRows.length / rowsPerPage);
+
+        // Display the current page
+        displayPage(currentPage);
+        updatePaginationControls();
+      } catch (error) {
+        console.error("Error fetching history data:", error);
+      }
+    }
+
+
+    // Display data for the current page
+    function displayPage(page) {
+      const historyTableBody = document.querySelector("#history-table tbody");
+      historyTableBody.innerHTML = ""; // Clear current table rows
+
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const rowsToDisplay = allRows.slice(start, end);
+
+      rowsToDisplay.forEach((rowData) => {
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+          <td>${rowData.docType}</td>
+          <td>${rowData.details}</td>
+          <td>${rowData.formattedTimestamp}</td>
+        `;
+
+        historyTableBody.appendChild(row);
       });
+    }
 
-      // Logout functionality
-      const logoutIcon = document.getElementById("logout-icon");
-      logoutIcon.addEventListener("click", async () => {
-        try {
-          await signOut(auth);
-          alert("تم تسجيل الخروج بنجاح!");
-          window.location.href = "WelcomePage.html";
-        } catch (error) {
-          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+    // Update pagination controls
+    function updatePaginationControls() {
+      const paginationContainer = document.getElementById("pagination-controls");
+      paginationContainer.innerHTML = "";
+
+      const prevLink = document.createElement("span");
+      prevLink.textContent = "<";
+      prevLink.classList.add("pagination-link");
+      if (currentPage === 1) {
+        prevLink.classList.add("disabled");
+      } else {
+        prevLink.addEventListener("click", () => {
+          currentPage--;
+          displayPage(currentPage);
+          updatePaginationControls();
+        });
+      }
+      paginationContainer.appendChild(prevLink);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageLink = document.createElement("span");
+        pageLink.textContent = i;
+        pageLink.classList.add("pagination-link");
+        if (i === currentPage) {
+          pageLink.classList.add("active-page");
         }
-      });
-    </script>
-  </body>
+        pageLink.addEventListener("click", () => {
+          currentPage = i;
+          displayPage(currentPage);
+          updatePaginationControls();
+        });
+        paginationContainer.appendChild(pageLink);
+      }
+
+      const nextLink = document.createElement("span");
+      nextLink.textContent = ">";
+      nextLink.classList.add("pagination-link");
+      if (currentPage === totalPages) {
+        nextLink.classList.add("disabled");
+      } else {
+        nextLink.addEventListener("click", () => {
+          currentPage++;
+          displayPage(currentPage);
+          updatePaginationControls();
+        });
+      }
+      paginationContainer.appendChild(nextLink);
+    }
+
+    // Call the function to fetch and display data when the page loads
+    fetchHistoryData();
+
+    // Logout functionality
+    const logoutIcon = document.getElementById("logout-icon");
+    logoutIcon.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        alert("تم تسجيل الخروج بنجاح!");
+        window.location.href = "WelcomePage.html";
+      } catch (error) {
+        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+      }
+    });
+  </script>
+</body>
+
 </html>

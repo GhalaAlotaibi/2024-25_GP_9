@@ -361,6 +361,16 @@ class _OwnerSignUpScreenState extends State<OwnerSignUpScreen> {
                                   'Email': _emailController.text,
                                 });
 
+                                // ADD TO HISTORY
+                                await FirebaseFirestore.instance
+                                    .collection('History')
+                                    .add({
+                                  'docType': 'Truck Owner Registration',
+                                  'Details':
+                                      'إنشاء حساب صاحب عربة ${_firstNameController.text} ${_lastNameController.text} برقم المعرف $userID',
+                                  'timestamp': FieldValue.serverTimestamp(),
+                                });
+
                                 // Navigate to CreateTruck1
                                 Navigator.push(
                                   context,

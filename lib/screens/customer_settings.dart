@@ -271,10 +271,32 @@ class _CustomerSettingsState extends State<CustomerSettings> {
 
     if (shouldDelete == true) {
       try {
-        // Delete account from Firestore
+        DocumentSnapshot customerDoc = await _firestore
+            .collection('Customer')
+            .doc(widget.customerID)
+            .get();
+
+        String customerName = "";
+        if (customerDoc.exists) {
+          customerName = customerDoc['Name']; // Fetch the name
+        }
+
+        // Delete the account from Firestore
         await _firestore.collection('Customer').doc(widget.customerID).delete();
-        // Navigate to login screen after deletion
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+
+        // Add the deletion event to the History collection
+        await FirebaseFirestore.instance.collection('History').add({
+          'docType': 'Customer Deletion',
+          'Details':'حذف حساب عميل $customerName برقم المعرّف ${widget.customerID}',
+          'timestamp': FieldValue
+              .serverTimestamp(), 
+        });
+
+        // Navigate to the login screen after deletion
+        WidgetsBinding.instance!.addPostFrameCallback((_) {
+          Navigator.pushNamedAndRemoveUntil(
+              context, '/login', (route) => false);
+        });
       } catch (e) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

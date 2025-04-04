@@ -59,7 +59,7 @@ class UserTypeSelectionPage extends StatelessWidget {
                   foregroundColor: Colors.white,
                   textStyle: const TextStyle(fontSize: 20),
                 ),
-                child: const Text('زبون'),
+                child: const Text('عميل'),
               ),
             ),
             const SizedBox(height: 40.0),

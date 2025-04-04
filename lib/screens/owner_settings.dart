@@ -193,14 +193,39 @@ class _OwnerSettingsState extends State<OwnerSettings> {
               onPressed: () async {
                 try {
                   Navigator.pop(context);
-                  // Delete account from Firestore
-                  await _firestore
+
+                  //ADD TO HISTORY
+                  // Retrieve the owner details before deletion (owner name, ownerID)
+                  DocumentSnapshot ownerDoc = await FirebaseFirestore.instance
                       .collection('Truck_Owner')
                       .doc(truckOwnerID)
-                      .delete();
-                  // Navigate to login screen after deletion
-                  Navigator.pushNamedAndRemoveUntil(
-                      context, '/login', (route) => false);
+                      .get();
+
+                  if (ownerDoc.exists) {
+                    String ownerName = ownerDoc.get('Name');
+                    String ownerID = ownerDoc.id;
+
+                    // Save the deletion history to the History collection
+                    await FirebaseFirestore.instance.collection('History').add({
+                      'docType': 'Owner Deletion',
+                      'details': 'حذف حساب $ownerName برقم المعرف $ownerID',
+                      'timestamp': FieldValue.serverTimestamp(),
+                    });
+
+                    // Delete account from Firestore
+                    await FirebaseFirestore.instance
+                        .collection('Truck_Owner')
+                        .doc(truckOwnerID)
+                        .delete();
+
+                    // Navigate to login screen after deletion
+                    Navigator.pushNamedAndRemoveUntil(
+                        context, '/login', (route) => false);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('لم يتم العثور على بيانات صاحب العربة.'),
+                    ));
+                  }
                 } catch (e) {
                   ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                     content: Text('حدث خطأ أثناء حذف الحساب: $e'),
@@ -220,86 +245,87 @@ class _OwnerSettingsState extends State<OwnerSettings> {
       },
     );
   }
-void _showUpdateNameDialog() {
-  TextEditingController nameController = TextEditingController();
-  showDialog(
-    context: context,
-    builder: (context) {
-      return AlertDialog(
-        backgroundColor: kbackgroundColor,
-        title: const Text(
-          'تحديث الاسم',
-          textDirection: TextDirection.rtl,
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        content: SingleChildScrollView(
-          child: Directionality(
+
+  void _showUpdateNameDialog() {
+    TextEditingController nameController = TextEditingController();
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          backgroundColor: kbackgroundColor,
+          title: const Text(
+            'تحديث الاسم',
             textDirection: TextDirection.rtl,
-            child: TextFormField(
-              controller: nameController,
-              decoration: InputDecoration(
-                labelText: 'الاسم الجديد',
-                labelStyle: const TextStyle(
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+          ),
+          content: SingleChildScrollView(
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: TextFormField(
+                controller: nameController,
+                decoration: InputDecoration(
+                  labelText: 'الاسم الجديد',
+                  labelStyle: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black,
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: kBannerColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: kBannerColor),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                ),
+                style: const TextStyle(fontSize: 16, color: Colors.black),
+              ),
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'إلغاء',
+                style: TextStyle(
                   fontSize: 16,
-                  color: Colors.black,
                 ),
-                border: OutlineInputBorder(
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                if (nameController.text.trim().isNotEmpty) {
+                  _updateOwnerName(nameController.text.trim());
+                  Navigator.pop(context);
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kBannerColor,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
                 ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: kBannerColor),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+              ),
+              child: const Text(
+                'حفظ',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white,
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              ),
-              style: const TextStyle(fontSize: 16, color: Colors.black),
-            ),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              'إلغاء',
-              style: TextStyle(
-                fontSize: 16,
               ),
             ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (nameController.text.trim().isNotEmpty) {
-                _updateOwnerName(nameController.text.trim());
-                Navigator.pop(context);
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: kBannerColor,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-            ),
-            child: const Text(
-              'حفظ',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.white,
-              ),
-            ),
-          ),
-        ],
-      );
-    },
-  );
-}
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

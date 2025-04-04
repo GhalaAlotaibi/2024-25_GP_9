@@ -169,6 +169,10 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
         return;
       }
 
+      //HISTORY RELATED
+      String truckId_h = foodTruckDoc.id;
+      String truckName_h = foodTruckDoc.get('name');
+
       // Extract the correct ownerID from Food_Truck
       String ownerID = foodTruckDoc.get('ownerID');
 
@@ -182,6 +186,12 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
         'timestamp': FieldValue.serverTimestamp(),
       });
 
+//ADD TO HISTORY
+      await FirebaseFirestore.instance.collection('History').add({
+        'docType': 'Location Update Request',
+        'Details':'طلب تحديث موقع عربة $truckName_h برقم المعرف $truckId_h',
+        'timestamp': FieldValue.serverTimestamp(),
+      });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
