@@ -180,7 +180,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-/* Old Code before Notifications Center import 'package:flutter/material.dart';
+ Old Code before Notifications Center import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -206,5 +206,4 @@ class MyApp extends StatelessWidget {
       home: const WelcomeScreen(),
     );
   }
-}
-*/
+}*/
