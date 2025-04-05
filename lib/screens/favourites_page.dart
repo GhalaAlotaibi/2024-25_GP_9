@@ -14,49 +14,49 @@ class FavoritesPage extends StatefulWidget {
 class _FavoritesPageState extends State<FavoritesPage> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  // final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+  //     FlutterLocalNotificationsPlugin();
 
   // To store the last known location of the food truck
-  Map<String, String> _lastKnownLocations = {};
+  // Map<String, String> _lastKnownLocations = {};
 
   @override
   void initState() {
     super.initState();
-    _initializeNotifications();
+    // _initializeNotifications();
   }
 
-  // Initialize Flutter local notifications
-  void _initializeNotifications() async {
-    const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('app_icon');
-    final InitializationSettings initializationSettings =
-        InitializationSettings(android: initializationSettingsAndroid);
+  // // Initialize Flutter local notifications
+  // void _initializeNotifications() async {
+  //   const AndroidInitializationSettings initializationSettingsAndroid =
+  //       AndroidInitializationSettings('app_icon');
+  //   final InitializationSettings initializationSettings =
+  //       InitializationSettings(android: initializationSettingsAndroid);
 
-    await flutterLocalNotificationsPlugin.initialize(initializationSettings);
-  }
+  //   await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  // }
 
-  // Send a local notification when the location changes
-  Future<void> _sendLocationChangeNotification(
-      String truckName, String newLocation) async {
-    const AndroidNotificationDetails androidDetails =
-        AndroidNotificationDetails(
-      'high_importance_channel',
-      'High Importance Notifications',
-      importance: Importance.high,
-      priority: Priority.high,
-    );
-    const NotificationDetails platformDetails = NotificationDetails(
-      android: androidDetails,
-    );
+  // // Send a local notification when the location changes
+  // Future<void> _sendLocationChangeNotification(
+  //     String truckName, String newLocation) async {
+  //   const AndroidNotificationDetails androidDetails =
+  //       AndroidNotificationDetails(
+  //     'high_importance_channel',
+  //     'High Importance Notifications',
+  //     importance: Importance.high,
+  //     priority: Priority.high,
+  //   );
+  //   const NotificationDetails platformDetails = NotificationDetails(
+  //     android: androidDetails,
+  //   );
 
-    await flutterLocalNotificationsPlugin.show(
-      0,
-      'Location Update: $truckName',
-      'The food truck has moved to a new location: $newLocation',
-      platformDetails,
-    );
-  }
+  //   await flutterLocalNotificationsPlugin.show(
+  //     0,
+  //     'Location Update: $truckName',
+  //     'The food truck has moved to a new location: $newLocation',
+  //     platformDetails,
+  //   );
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +98,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                     'location']; // Assuming the location is a string
 
                 // Check if the location has changed
-                if (_lastKnownLocations[truckId] != currentLocation) {
-                  // Update the last known location and send a notification
-                  _lastKnownLocations[truckId] = currentLocation;
-                  _sendLocationChangeNotification(truckName, currentLocation);
-                }
+                // if (_lastKnownLocations[truckId] != currentLocation) {
+                //   // Update the last known location and send a notification
+                //   _lastKnownLocations[truckId] = currentLocation;
+                //   // _sendLocationChangeNotification(truckName, currentLocation);
+                // }
 
                 return Padding(
                   padding:
@@ -146,11 +146,11 @@ class _FavoritesPageState extends State<FavoritesPage> {
                                 style: const TextStyle(fontSize: 14),
                               ),
                               const SizedBox(height: 4),
-                              Text(
-                                currentLocation,
-                                style: const TextStyle(
-                                    fontSize: 14, color: Colors.grey),
-                              ),
+                              // Text(
+                              //   currentLocation,
+                              //   style: const TextStyle(
+                              //       fontSize: 14, color: Colors.grey),
+                              // ),
                             ],
                           ),
                         ),

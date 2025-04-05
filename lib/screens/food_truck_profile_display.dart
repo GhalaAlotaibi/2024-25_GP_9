@@ -419,6 +419,10 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
           'businessLogo': widget.documentSnapshot['businessLogo'],
           'category': categoryName,
           'operatingHours': widget.documentSnapshot['operatingHours'],
+          'location':
+              widget.documentSnapshot.data().toString().contains('location')
+                  ? widget.documentSnapshot['location']
+                  : null,
         });
       }
       setState(() {
