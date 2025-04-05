@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:flutter/scheduler.dart';
 
 class MyAppHomeScreen extends StatefulWidget {
   final String customerID;
@@ -260,17 +261,15 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                               const SizedBox(height: 20),
 
                               // Show loading spinner while fetching recommendations
+                              // Replace this code block in the build method
                               if (isLoadingRecommendations)
                                 const Center(child: CircularProgressIndicator())
                               else if (recommendedTrucks.isEmpty)
                                 const Center(
                                     child: Text("لا توجد عربات مقترحة متاحة."))
                               else
-                                SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  child: suggestedTrucksRow(
-                                      recommendedTrucks, widget.customerID),
-                                ),
+                                suggestedTrucksRow(
+                                    recommendedTrucks, widget.customerID),
                             ],
                           );
                         },
@@ -463,112 +462,126 @@ Widget suggestedTrucksRow(List<DocumentSnapshot> trucks, String customerID) {
         return const Center(child: Text("لا توجد عربات مقترحة متاحة."));
       }
 
-      return SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          children: acceptedTrucks.reversed.map((truck) {
-            // Reverse list manually
-            final imageUrl = truck['truckImage'] ?? ''; // Avoid null errors
-            final truckName = truck['name'] ?? 'غير معروف'; // Default name
+      // Create a list widget with RTL direction
+      return Container(
+        width: double.infinity,
+        alignment: Alignment.centerRight,
+        child: Directionality(
+          textDirection: TextDirection.rtl,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            reverse: false, // This is important
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: acceptedTrucks.map((truck) {
+                final imageUrl = truck['truckImage'] ?? '';
+                final truckName = truck['name'] ?? 'غير معروف';
 
-            return GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FoodTruckProfileDisplay(
-                      documentSnapshot: truck, // Pass the specific truck's data
-                      customerID: customerID,
+                return GestureDetector(
+                  onTap: () {
+                    // Use post-frame callback for navigation
+                    SchedulerBinding.instance.addPostFrameCallback((_) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => FoodTruckProfileDisplay(
+                            documentSnapshot: truck,
+                            customerID: customerID,
+                          ),
+                        ),
+                      );
+                    });
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Stack(
+                      children: [
+                        // The rest of your Stack widget code remains the same
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(15),
+                          child: Container(
+                            width: 140,
+                            height: 180,
+                            decoration: BoxDecoration(
+                              color: Colors.grey[300],
+                              borderRadius: BorderRadius.circular(15),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.1),
+                                  blurRadius: 8,
+                                  spreadRadius: 2,
+                                  offset: const Offset(2, 4),
+                                )
+                              ],
+                            ),
+                            child: imageUrl.isNotEmpty
+                                ? Image.network(
+                                    imageUrl,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return const Center(
+                                        child: CircularProgressIndicator(),
+                                      );
+                                    },
+                                    errorBuilder: (context, error,
+                                            stackTrace) =>
+                                        const Icon(Icons.image_not_supported,
+                                            size: 60),
+                                  )
+                                : const Icon(Icons.image_not_supported,
+                                    size: 60),
+                          ),
+                        ),
+
+                        // Gradient Overlay
+                        Positioned(
+                          bottom: 0,
+                          left: 0,
+                          right: 0,
+                          child: Container(
+                            height: 60,
+                            decoration: BoxDecoration(
+                              borderRadius: const BorderRadius.only(
+                                bottomLeft: Radius.circular(15),
+                                bottomRight: Radius.circular(15),
+                              ),
+                              gradient: LinearGradient(
+                                begin: Alignment.bottomCenter,
+                                end: Alignment.topCenter,
+                                colors: [
+                                  Colors.black.withOpacity(0.6),
+                                  Colors.transparent,
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Truck Name Overlay
+                        Positioned(
+                          bottom: 10,
+                          left: 10,
+                          right: 10,
+                          child: Text(
+                            truckName,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 );
-              },
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Stack(
-                  children: [
-                    // Truck Image Card
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(15),
-                      child: Container(
-                        width: 140,
-                        height: 180,
-                        decoration: BoxDecoration(
-                          color: Colors.grey[300], // Placeholder background
-                          borderRadius: BorderRadius.circular(15),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              blurRadius: 8,
-                              spreadRadius: 2,
-                              offset: const Offset(2, 4),
-                            )
-                          ],
-                        ),
-                        child: imageUrl.isNotEmpty
-                            ? Image.network(
-                                imageUrl,
-                                fit: BoxFit.cover,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return const Center(
-                                    child: CircularProgressIndicator(),
-                                  );
-                                },
-                                errorBuilder: (context, error, stackTrace) =>
-                                    const Icon(Icons.image_not_supported,
-                                        size: 60),
-                              )
-                            : const Icon(Icons.image_not_supported, size: 60),
-                      ),
-                    ),
-
-                    // Gradient Overlay
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 60,
-                        decoration: BoxDecoration(
-                          borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(15),
-                            bottomRight: Radius.circular(15),
-                          ),
-                          gradient: LinearGradient(
-                            begin: Alignment.bottomCenter,
-                            end: Alignment.topCenter,
-                            colors: [
-                              Colors.black.withOpacity(0.6),
-                              Colors.transparent,
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    // Truck Name Overlay
-                    Positioned(
-                      bottom: 10,
-                      left: 10,
-                      right: 10,
-                      child: Text(
-                        truckName,
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }).toList(),
+              }).toList(),
+            ),
+          ),
         ),
       );
     },
