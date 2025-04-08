@@ -61,34 +61,40 @@ tr:hover {
     font-weight: bold;
 }
 
+/*----------Accept and Decline button for UpdateLocationRequests----------*/
 /* Accept button styling */
 .accept-btn {
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
+    background-color: transparent;  /* No background color */
+    color: #048404;                 /* Green color for the icon */
+    border: none;                   /* Remove the border */
+    font-size: 16px;                /* Size of the icon */
+    padding: 0;                     /* No padding */
+    cursor: pointer;               /* Pointer cursor on hover */
+    display: inline-flex;           /* Display icon inline */
+    align-items: center;            /* Align icon vertically */
 }
 
 .accept-btn:hover {
-    background-color: #45a049;
+    color: #45a049;                 /* Darker green when hovering */
 }
 
-/* Decline button styling */
-.decline-btn {
-    background-color: #f44336;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    cursor: pointer;
-    border-radius: 4px;
+/* Reject button styling */
+.reject-btn {
+    background-color: transparent;  /* No background color */
+    color: #fc0707;                 /* Red color for the icon */
+    border: none;                   /* Remove the border */
+    font-size: 16px;                /* Size of the icon */
+    padding: 0;                     /* No padding */
+    cursor: pointer;               /* Pointer cursor on hover */
+    display: inline-flex;           /* Display icon inline */
+    align-items: center;            /* Align icon vertically */
 }
 
-.decline-btn:hover {
-    background-color: #e53935;
+.reject-btn:hover {
+    color: #e53e3e;                 /* Darker red when hovering */
 }
 
+/*------------------------------------------------------------------------*/
 /* Hover effect for active and inactive rows */
 .active-row:hover {
     background-color: #f3dada;

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tracki - Waiting Trucks</title>
+  <title>Tracki - عربات قيد الإنتظار</title>
   <link rel="stylesheet" href="Styles/Style.css" />
   <link rel="stylesheet" href="Styles/AllTrucks.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
@@ -24,7 +24,9 @@
       <!-- Navigation Links -->
       <ul style="list-style: none; padding: 0; margin: 20px 0">
         <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-        <li><a href="WaitingTrucks.html" style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
+        <li><a href="WaitingTrucks.html"
+            style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
+              class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
         <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
         <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
         <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
@@ -71,7 +73,7 @@
         <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
       </div>
       <div class="loading" id="loading-message">
-        <img src="images/WaitingTruck2.png" alt="Loading Food Truck" loading="lazy"/>
+        <img src="images/WaitingTruck2.png" alt="Loading Food Truck" loading="lazy" />
         <p>الرجاء الإنتظار...</p>
       </div>
     </div>
@@ -97,6 +99,7 @@
       doc,
       getDoc,
       updateDoc,
+      addDoc,
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -260,6 +263,7 @@
     //Ends fetching food trucks
 
     //Accept and Decline functions
+    // Accept the food truck
     async function acceptFoodTruck(docId) {
       const isConfirmed = window.confirm("هل أنت متأكد من قبول العربة؟");
 
@@ -269,6 +273,8 @@
 
         if (foodTruckDoc.exists()) {
           const statusId = foodTruckDoc.data().statusId;
+          const truckName = foodTruckDoc.data().name;
+          const truckId = foodTruckDoc.id;
 
           // Access the Request collection using statusId
           const requestDocRef = doc(db, "Request", statusId);
@@ -278,9 +284,18 @@
             await updateDoc(requestDocRef, {
               status: "accepted",
             });
+
+            // Add a new document to the history collection
+            const historyRef = collection(db, "History");
+            await addDoc(historyRef, {
+              docType: 'Truck Acceptance',
+              Details: `قبول طلب تسجيل عربة ${truckName} برقم المعرف ${truckId}`,
+              timestamp: new Date(),
+            });
+
             alert("تم قبول العربة.");
           } else {
-            print(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
+            console.log(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
           }
         } else {
           console.log("لم يتم العثور على مستند العربة");
@@ -303,6 +318,8 @@
 
           if (foodTruckDoc.exists()) {
             const statusId = foodTruckDoc.data().statusId;
+            const truckName = foodTruckDoc.data().name;
+            const truckId = foodTruckDoc.id;
 
             const requestDocRef = doc(db, "Request", statusId);
             const requestDoc = await getDoc(requestDocRef);
@@ -311,6 +328,14 @@
               await updateDoc(requestDocRef, {
                 status: "rejected",
                 message: reason.trim(),
+              });
+
+              // Add a new document to the history collection
+              const historyRef = collection(db, "History");
+              await addDoc(historyRef, {
+                docType: 'Truck Rejection',
+                Details: `رفض طلب تسجيل عربة ${truckName} برقم المعرف ${truckId} بسبب: ${reason.trim()}`, // Including the rejection reason
+                timestamp: new Date(),
               });
               alert("تم رفض العربة.");
             } else {

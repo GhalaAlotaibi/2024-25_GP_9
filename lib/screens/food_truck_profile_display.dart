@@ -36,9 +36,25 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
   @override
   void initState() {
     super.initState();
+    _incrementViewCounter(); // COUNTER
     _checkIfFavorite();
     _loadCategoryName();
     _fetchReviews();
+  }
+
+//COUNTER
+  Future<void> _incrementViewCounter() async {
+    try {
+      await _firestore
+          .collection('Food_Truck')
+          .doc(widget.documentSnapshot.id)
+          .update({
+        'TruckCounter': FieldValue.increment(1), // Increment by 1
+      });
+      print("Counter incremented for ${widget.documentSnapshot.id}");
+    } catch (e) {
+      print("Error incrementing counter: $e");
+    }
   }
 
   Future<void> _fetchReviews() async {

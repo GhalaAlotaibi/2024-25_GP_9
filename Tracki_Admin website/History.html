@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tracki - History</title>
+  <title>Tracki - سجل العمليات</title>
   <link rel="stylesheet" href="Styles/Style.css" />
   <link rel="stylesheet" href="Styles/AllTrucks.css" />
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
@@ -50,6 +50,7 @@
     <!-- Main Content -->
     <div class="content">
       <h2>سجل العمليات</h2>
+      <p style="margin: 20px 0"></p>
       <table id="history-table">
         <thead>
           <tr>
@@ -149,6 +150,18 @@
               break;
             case "Customer Registration":
               docType = "تسجيل عميل";
+              break;
+              case "Truck Acceptance":
+              docType = "قبول عربة";
+              break;
+              case "Truck Rejection":
+              docType = "رفض عربة";
+              break;
+              case "Location Change Acceptance":
+              docType = "قبول تحديث موقع عربة";
+              break;
+              case "Location Change Rejection":
+              docType = "رفض تحديث موقع عربة";
               break;
             default:
               docType = docType;

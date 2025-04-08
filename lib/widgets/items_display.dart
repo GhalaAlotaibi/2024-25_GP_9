@@ -33,6 +33,18 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
     _checkTruckStatus();
   }
 
+// COUNTER PURPOSE
+  Future<void> _incrementViewCounter() async {
+    try {
+      await _firestore
+          .collection('Food_Truck')
+          .doc(widget.documentSnapshot.id)
+          .update({'TruckCounter': FieldValue.increment(1)});
+    } catch (e) {
+      print('Error incrementing view counter: $e');
+    }
+  }
+
   Future<void> _checkTruckStatus() async {
     final statusId = widget.documentSnapshot['statusId'];
     try {
@@ -151,6 +163,7 @@ class _ItemsDisplayState extends State<ItemsDisplay> {
       textDirection: TextDirection.rtl,
       child: GestureDetector(
         onTap: () {
+          _incrementViewCounter(); // COUNTER RELATED
           Navigator.push(
             context,
             MaterialPageRoute(
