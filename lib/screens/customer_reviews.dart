@@ -359,9 +359,12 @@ class _CustomerReviewsState extends State<CustomerReviews> {
               child: ElevatedButton(
                 onPressed: () async {
                   if (commentController.text.isNotEmpty) {
-                    FocusScope.of(context).unfocus();
+                    if (mounted) {
+                      FocusScope.of(context).unfocus();
+                    }
+
                     await FirebaseFirestore.instance.collection('Review').add({
-                      'comment': commentController.text ?? "",
+                      'comment': commentController.text,
                       'customerId': widget.customerID,
                       'foodTruckId': widget.truckID,
                       'rating': rating.toString(),
@@ -370,7 +373,9 @@ class _CustomerReviewsState extends State<CustomerReviews> {
 
                     await _updateFoodTruckRating(widget.truckID);
 
-                    Navigator.pop(context);
+                    if (context.mounted) {
+                      Navigator.of(context).pop();
+                    }
                   }
                 },
                 style: ElevatedButton.styleFrom(

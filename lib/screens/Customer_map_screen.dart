@@ -120,88 +120,100 @@ class _CustomerMapScreenState extends State<CustomerMapScreen> {
             child: Container(
               height: 180,
               margin: const EdgeInsets.only(bottom: 20),
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: foodTrucks.length,
-                itemBuilder: (context, index) {
-                  final foodTruck = foodTrucks[index];
-                  final isSelected = selectedTruckIndex == index;
+              child: Directionality(
+                // Add Directionality for RTL
+                textDirection: TextDirection.rtl,
+                child: ListView.builder(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: foodTrucks.length,
+                  itemBuilder: (context, index) {
+                    final foodTruck = foodTrucks[index];
+                    final isSelected = selectedTruckIndex == index;
 
-                  return GestureDetector(
-                    onTap: () {
-                      _onTruckCardTap(index);
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 300),
-                      width: 260,
-                      margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                      padding: const EdgeInsets.all(16.0),
-                      decoration: BoxDecoration(
-                        color:
-                            isSelected ? const Color(0xFFE0E0E0) : Colors.white,
-                        borderRadius: BorderRadius.circular(12.0),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.5),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8.0),
-                                child: Image.network(
-                                  foodTruck['businessLogo'],
-                                  height: 50,
+                    return GestureDetector(
+                      onTap: () {
+                        _onTruckCardTap(index);
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        width: 260,
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: const EdgeInsets.all(16.0),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? const Color(0xFFE0E0E0)
+                              : Colors.white,
+                          borderRadius: BorderRadius.circular(12.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.5),
+                              spreadRadius: 2,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Container(
                                   width: 50,
-                                  fit: BoxFit.cover,
+                                  height: 50,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    image: DecorationImage(
+                                      fit: BoxFit.cover,
+                                      image: NetworkImage(
+                                          foodTruck['businessLogo']),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Text(
+                                const SizedBox(width: 8),
+                                Text(
                                   foodTruck['name'],
                                   style: const TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'ساعات العمل: ${foodTruck['operatingHours']}',
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey,
+                              ],
                             ),
-                          ),
-                          const SizedBox(height: 10),
-                          Row(
-                            children: [
-                              const Icon(Icons.star, color: Colors.amber),
-                              Text(
-                                foodTruck['rating'].toString(),
+                            const SizedBox(height: 10),
+                            Align(
+                              alignment: Alignment.centerRight,
+                              child: Text(
+                                'ساعات العمل: ${foodTruck['operatingHours']}',
                                 style: const TextStyle(
                                   fontSize: 14,
-                                  fontWeight: FontWeight.bold,
+                                  color: Colors.grey,
                                 ),
+                                textAlign: TextAlign.right,
                               ),
-                            ],
-                          ),
-                        ],
+                            ),
+                            const SizedBox(height: 10),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.star, color: Colors.amber),
+                                const SizedBox(width: 4),
+                                Text(
+                                  foodTruck['rating'].toString(),
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
             ),
           ),

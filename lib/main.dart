@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
+//import 'package:google_fonts_arabic/fonts.dart';
 
 // Notifications Center
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -76,12 +78,14 @@ class _MyAppState extends State<MyApp> {
       }
     });
   }
+// Check for internet connectivity
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Tracki App',
       theme: ThemeData(
+        fontFamily: 'NotoSansArabic',
         colorScheme: ColorScheme.fromSeed(seedColor: kBannerColor),
         useMaterial3: true,
       ),
@@ -180,7 +184,7 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
- Old Code before Notifications Center import 'package:flutter/material.dart';
+  Old Code before Notifications Center import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -205,5 +209,4 @@ class MyApp extends StatelessWidget {
       ),
       home: const WelcomeScreen(),
     );
-  }
-}*/
+  }*/

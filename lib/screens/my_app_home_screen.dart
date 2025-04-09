@@ -1,3 +1,6 @@
+import 'dart:math';
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
@@ -12,8 +15,9 @@ import '../user_auth/firebase_auth_services.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+
 import 'package:flutter/scheduler.dart';
 
 class MyAppHomeScreen extends StatefulWidget {
@@ -259,9 +263,6 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                                 ),
                               ),
                               const SizedBox(height: 20),
-
-                              // Show loading spinner while fetching recommendations
-                              // Replace this code block in the build method
                               if (isLoadingRecommendations)
                                 const Center(child: CircularProgressIndicator())
                               else if (recommendedTrucks.isEmpty)
@@ -444,148 +445,300 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
   }
 }
 
+Future<Position?> _getCurrentLocation() async {
+  try {
+    // Check if location services are enabled
+    bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      print("Location services are disabled.");
+      return null;
+    }
+
+    // Check location permissions
+    LocationPermission permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        print("Location permissions are denied.");
+        return null;
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      print("Location permissions are permanently denied.");
+      return null;
+    }
+
+    return await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+  } catch (e) {
+    print("Error fetching location: $e");
+    return null;
+  }
+}
+
 Widget suggestedTrucksRow(List<DocumentSnapshot> trucks, String customerID) {
-  return FutureBuilder<List<DocumentSnapshot>>(
-    future: _getAcceptedTrucks(trucks),
-    builder: (context, snapshot) {
-      if (snapshot.connectionState == ConnectionState.waiting) {
+  return FutureBuilder<Position?>(
+    future: _getCurrentLocation(),
+    builder: (context, locationSnapshot) {
+      if (locationSnapshot.connectionState == ConnectionState.waiting) {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (snapshot.hasError) {
-        return const Center(child: Text("Error loading data"));
+      if (!locationSnapshot.hasData || locationSnapshot.data == null) {
+        return const Center(child: Text("تعذر تحديد موقعك الحالي."));
       }
 
-      final acceptedTrucks = snapshot.data ?? [];
+      final userPosition = locationSnapshot.data!;
 
-      if (acceptedTrucks.isEmpty) {
-        return const Center(child: Text("لا توجد عربات مقترحة متاحة."));
-      }
+      return FutureBuilder<List<DocumentSnapshot>>(
+        future: _getAcceptedTrucks(trucks),
+        builder: (context, truckSnapshot) {
+          if (truckSnapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-      // Create a list widget with RTL direction
-      return Container(
-        width: double.infinity,
-        alignment: Alignment.centerRight,
-        child: Directionality(
-          textDirection: TextDirection.rtl,
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            reverse: false, // This is important
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: acceptedTrucks.map((truck) {
-                final imageUrl = truck['truckImage'] ?? '';
-                final truckName = truck['name'] ?? 'غير معروف';
+          if (truckSnapshot.hasError) {
+            return const Center(child: Text("حدث خطأ أثناء تحميل البيانات"));
+          }
 
-                return GestureDetector(
-                  onTap: () {
-                    // Use post-frame callback for navigation
-                    SchedulerBinding.instance.addPostFrameCallback((_) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => FoodTruckProfileDisplay(
-                            documentSnapshot: truck,
-                            customerID: customerID,
-                          ),
-                        ),
+          final acceptedTrucks = truckSnapshot.data ?? [];
+
+          if (acceptedTrucks.isEmpty) {
+            return const Center(child: Text("لا توجد عربات مقترحة متاحة."));
+          }
+
+          return Container(
+            width: double.infinity,
+            alignment: Alignment.centerRight,
+            child: Directionality(
+              textDirection: TextDirection.rtl,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: acceptedTrucks.map((truck) {
+                    final imageUrl = truck['truckImage'] ?? '';
+                    final truckName = truck['name'] ?? 'غير معروف';
+                    final truckRate = truck['rating'] ?? 'غير معروف';
+                    final locationString = truck['location'] ?? '';
+                    double? distanceInKm;
+
+                    try {
+                      final locationParts = locationString.split(',');
+                      final truckLat = double.parse(locationParts[0].trim());
+                      final truckLon = double.parse(locationParts[1].trim());
+
+                      distanceInKm = haversineDistance(
+                        userPosition.latitude,
+                        userPosition.longitude,
+                        truckLat,
+                        truckLon,
                       );
-                    });
-                  },
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: Stack(
-                      children: [
-                        // The rest of your Stack widget code remains the same
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(15),
-                          child: Container(
-                            width: 140,
-                            height: 180,
-                            decoration: BoxDecoration(
-                              color: Colors.grey[300],
-                              borderRadius: BorderRadius.circular(15),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.1),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                  offset: const Offset(2, 4),
-                                )
-                              ],
-                            ),
-                            child: imageUrl.isNotEmpty
-                                ? Image.network(
-                                    imageUrl,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder:
-                                        (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return const Center(
-                                        child: CircularProgressIndicator(),
-                                      );
-                                    },
-                                    errorBuilder: (context, error,
-                                            stackTrace) =>
-                                        const Icon(Icons.image_not_supported,
-                                            size: 60),
-                                  )
-                                : const Icon(Icons.image_not_supported,
-                                    size: 60),
-                          ),
-                        ),
+                    } catch (e) {
+                      distanceInKm = null;
+                    }
 
-                        // Gradient Overlay
-                        Positioned(
-                          bottom: 0,
-                          left: 0,
-                          right: 0,
-                          child: Container(
-                            height: 60,
-                            decoration: BoxDecoration(
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(15),
+                    return GestureDetector(
+                      onTap: () {
+                        SchedulerBinding.instance.addPostFrameCallback((_) {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => FoodTruckProfileDisplay(
+                                documentSnapshot: truck,
+                                customerID: customerID,
                               ),
-                              gradient: LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  Colors.black.withOpacity(0.6),
-                                  Colors.transparent,
+                            ),
+                          );
+                        });
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
+                        child: Stack(
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(15),
+                              child: Container(
+                                width: 160,
+                                height: 190,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[300],
+                                  borderRadius: BorderRadius.circular(15),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withOpacity(0.1),
+                                      blurRadius: 8,
+                                      spreadRadius: 2,
+                                      offset: const Offset(2, 4),
+                                    )
+                                  ],
+                                ),
+                                child: imageUrl.isNotEmpty
+                                    ? Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.cover,
+                                        loadingBuilder:
+                                            (context, child, progress) {
+                                          if (progress == null) return child;
+                                          return const Center(
+                                              child:
+                                                  CircularProgressIndicator());
+                                        },
+                                        errorBuilder: (context, error, _) =>
+                                            const Icon(
+                                                Icons.image_not_supported,
+                                                size: 60),
+                                      )
+                                    : const Icon(Icons.image_not_supported,
+                                        size: 60),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 0,
+                              left: 0,
+                              right: 0,
+                              child: Container(
+                                height: 60,
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                  ),
+                                  gradient: LinearGradient(
+                                    begin: Alignment.bottomCenter,
+                                    end: Alignment.topCenter,
+                                    colors: [
+                                      Colors.black.withOpacity(0.6),
+                                      Colors.transparent,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              top: 5,
+                              left: 5,
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 4, vertical: 1),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Icon(
+                                      Icons.star,
+                                      color: Colors.amber,
+                                      size: 16,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      truckRate.toString(),
+                                      style: const TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Positioned(
+                              bottom: 10,
+                              left: 10,
+                              right: 10,
+                              child: Column(
+                                children: [
+                                  Text(
+                                    truckName,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: BackdropFilter(
+                                      filter: ImageFilter.blur(
+                                          sigmaX: 6, sigmaY: 6),
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: Colors.white.withOpacity(0.15),
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          border: Border.all(
+                                            color: Colors
+                                                .transparent, // ← No colored border
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.location_on,
+                                                color: Colors.white, size: 16),
+                                            const SizedBox(width: 4),
+                                            Text(
+                                              distanceInKm != null
+                                                  ? '${distanceInKm.toStringAsFixed(2)} كم'
+                                                  : 'المسافة غير متوفرة',
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.normal,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
-                          ),
+                          ],
                         ),
-
-                        // Truck Name Overlay
-                        Positioned(
-                          bottom: 10,
-                          left: 10,
-                          right: 10,
-                          child: Text(
-                            truckName,
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       );
     },
   );
+}
+
+// Distance formula (Haversine)
+double haversineDistance(double lat1, double lon1, double lat2, double lon2) {
+  const earthRadius = 6371; // in km
+  final dLat = _degreesToRadians(lat2 - lat1);
+  final dLon = _degreesToRadians(lon2 - lon1);
+  final a = sin(dLat / 2) * sin(dLat / 2) +
+      cos(_degreesToRadians(lat1)) *
+          cos(_degreesToRadians(lat2)) *
+          sin(dLon / 2) *
+          sin(dLon / 2);
+  final c = 2 * atan2(sqrt(a), sqrt(1 - a));
+  return earthRadius * c;
+}
+
+double _degreesToRadians(double degrees) {
+  return degrees * pi / 180;
 }
 
 Future<List<DocumentSnapshot>> _getAcceptedTrucks(
