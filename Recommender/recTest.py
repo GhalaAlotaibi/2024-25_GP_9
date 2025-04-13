@@ -138,12 +138,14 @@ def recommend_food_trucks(user_id, user_location, top_n=10):
 
     # Step 7: define weights for each component
  # If the customer has favorite food trucks, give more weight to similarity scores.  
+    #was=> 0.7 for similarity and 0.15 for rating and proximity
     if len(favorite_indices) > 0:  
-        w1, w2, w3 = 0.4, 0.2, 0.4  
+        w1, w2, w3 = 0.5, 0.2, 0.3  
     else:  
         # If there are no favorites, similarity scores don’t matter,  
         # so we distribute the weight equally between proximity and ratings 
-        w1, w2, w3 = 0, 0.3, 0.7  
+     #was=> 0.5 similarity and for rating and proximity 
+        w1, w2, w3 = 0, 0.1, 0.9  
 
 
     # Step 8: then we alculate the contribution of each component
