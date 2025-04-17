@@ -277,38 +277,39 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                             String imageUrl = entry.value;
 
                             return Container(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              padding: const EdgeInsets.all(5),
+                              margin: const EdgeInsets.symmetric(vertical: 8),
+                              padding: const EdgeInsets.all(8),
+                              width: MediaQuery.of(context).size.width * 0.9,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 boxShadow: [
                                   const BoxShadow(
                                     color: Color.fromARGB(31, 154, 154, 154),
-                                    blurRadius: 5,
-                                    offset: Offset(0, 3),
+                                    blurRadius: 3,
+                                    offset: Offset(0, 2),
                                   ),
                                 ],
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(10),
                                 border: Border.all(
                                   color:
-                                      const Color.fromARGB(255, 255, 255, 255),
+                                      const Color.fromARGB(255, 245, 245, 245),
+                                  width: 1,
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  // Image container
                                   Container(
-                                    height: 90,
-                                    width: 90,
+                                    height: 70,
+                                    width: 70,
                                     decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(12),
+                                      borderRadius: BorderRadius.circular(8),
                                       image: DecorationImage(
                                         fit: BoxFit.cover,
                                         image: NetworkImage(imageUrl),
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 20),
+                                  const SizedBox(width: 12),
                                   Expanded(
                                     child: Text(
                                       (widget.documentSnapshot[
@@ -318,25 +319,40 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                                               'item_names_list']
                                           : [])[index],
                                       style: const TextStyle(
-                                        fontSize: 17,
+                                        fontSize: 15,
                                         color: Colors.black,
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w500,
                                       ),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  Row(
-                                    children: [
-                                      const SizedBox(width: 5),
-                                      Text(
-                                        "${(widget.documentSnapshot['item_prices_list'] != null ? widget.documentSnapshot['item_prices_list'] : [])[index]} ريال",
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Color.fromARGB(
-                                              255, 113, 113, 113),
-                                          fontWeight: FontWeight.w600,
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 8),
+                                    child: Row(
+                                      children: [
+                                        Text(
+                                          (widget.documentSnapshot[
+                                                      'item_prices_list'] !=
+                                                  null
+                                              ? widget.documentSnapshot[
+                                                      'item_prices_list'][index]
+                                                  .toString()
+                                              : "0"),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Color.fromARGB(255, 0, 0, 0),
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                        const SizedBox(width: 3),
+                                        Image.asset(
+                                          'assets/images/Riyal.png',
+                                          width: 15,
+                                          height: 15,
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ],
                               ),

@@ -301,6 +301,7 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                   final categoryDoc = streamSnapshot.data!.docs[index];
                   final categoryName = categoryDoc["name"];
                   final categoryId = categoryDoc.id;
+                  final categoryImage = categoryDoc["categoryImage"] ?? '';
 
                   return GestureDetector(
                     onTap: () {
@@ -312,23 +313,74 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
                       }
                     },
                     child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: selectedCategoryId == categoryId
-                            ? kprimaryColor
-                            : Colors.white,
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 10),
-                      margin: const EdgeInsets.only(right: 1, left: 15),
-                      child: Text(
-                        categoryName,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w500,
-                          color: selectedCategoryId == categoryId
-                              ? Colors.white
-                              : Colors.grey,
-                        ),
+                      width: 80, // Fixed width for all containers
+                      margin: const EdgeInsets.only(left: 15),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Category Image Circle
+                          Container(
+                            width: 65,
+                            height: 65,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white,
+                              border: Border.all(
+                                color: selectedCategoryId == categoryId
+                                    ? kBannerColor
+                                    : const Color.fromARGB(136, 255, 255, 255),
+                                width: 2,
+                              ),
+                            ),
+                            child: ClipOval(
+                              child: categoryImage.isNotEmpty
+                                  ? Image.network(
+                                      categoryImage,
+                                      fit: BoxFit.cover,
+                                      loadingBuilder:
+                                          (context, child, progress) {
+                                        if (progress == null) return child;
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: progress
+                                                        .expectedTotalBytes !=
+                                                    null
+                                                ? progress
+                                                        .cumulativeBytesLoaded /
+                                                    progress.expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (context, error, _) => Icon(
+                                          Icons.fastfood,
+                                          size: 30,
+                                          color: Colors.grey[400]),
+                                    )
+                                  : Icon(Icons.fastfood,
+                                      size: 30, color: Colors.grey[400]),
+                            ),
+                          ),
+                          const SizedBox(height: 5),
+                          // Category Name Container
+                          SizedBox(
+                            width: 100, // Matches parent container width
+                            child: Text(
+                              categoryName,
+                              textAlign: TextAlign.center,
+                              maxLines:
+                                  2, // Allow text to wrap to 2 lines if needed
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w500,
+                                color: selectedCategoryId == categoryId
+                                    ? kBannerColor
+                                    : const Color.fromARGB(255, 0, 0, 0),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -368,6 +420,25 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
     );
   }
 
+// Add this function to fetch customer name
+  Future<String> fetchCustomerName(String customerID) async {
+    try {
+      DocumentSnapshot customerDoc = await FirebaseFirestore.instance
+          .collection("Customer")
+          .doc(customerID)
+          .get();
+
+      if (customerDoc.exists) {
+        return customerDoc['Name'] ?? 'مستخدم';
+      }
+      return 'مستخدم';
+    } catch (e) {
+      print("Error fetching customer name: $e");
+      return 'مستخدم';
+    }
+  }
+
+// Modify the headerParts() method to include the welcome message:
   Row headerParts() {
     return Row(
       children: [
@@ -434,11 +505,66 @@ class _MyAppHomeScreenState extends State<MyAppHomeScreen> {
               }
             }),
         const Spacer(),
-        const Text(
-          "ما هي عربة \nالطعام التي تبحث عنها؟",
-          style:
-              TextStyle(fontSize: 32, fontWeight: FontWeight.bold, height: 1),
-          textAlign: TextAlign.right,
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            FutureBuilder<String>(
+              future: fetchCustomerName(widget.customerID),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text(
+                    "مرحبا",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      height: 1,
+                      fontFamily: 'NotoSansArabic', // Add your font family here
+                    ),
+                    textAlign: TextAlign.right,
+                  );
+                }
+                return Directionality(
+                  textDirection: TextDirection.rtl,
+                  child: RichText(
+                    text: TextSpan(
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        height: 1,
+                        fontFamily: "NotoSansArabic",
+                        color: Colors
+                            .black, // This will be the default color for all text
+                      ),
+                      children: [
+                        const TextSpan(
+                          text: "مرحبا ",
+                        ),
+                        TextSpan(
+                          text: snapshot.data ?? 'مستخدم',
+                          style: TextStyle(
+                            color: kBannerColor, // Use your desired color here
+                            // Keep other properties from parent
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "NotoSansArabic",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+            Text(
+              "ما هي عربة الطعام التي تبحث عنها؟",
+              style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  height: 1,
+                  fontFamily: "NotoSansArabic"),
+              textAlign: TextAlign.right,
+            ),
+          ],
         ),
       ],
     );
