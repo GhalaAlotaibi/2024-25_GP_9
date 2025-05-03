@@ -7,6 +7,7 @@ import 'package:tracki/screens/owner_main_screen.dart';
 import 'package:tracki/screens/truck_details_update.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 
+// truck profile
 class OwnerProfile extends StatefulWidget {
   final String ownerID;
 
