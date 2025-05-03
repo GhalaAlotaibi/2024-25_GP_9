@@ -97,6 +97,7 @@ flutter:
     - assets/images/user.png
     - assets/images/user.jpg
     - assets/fonts/NotoSansArabic-VariableFont_wdth,wght.ttf
+    - assets/images/Riyal.png
 
   fonts:
     - family: NotoSansArabic

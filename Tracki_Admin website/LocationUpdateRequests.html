@@ -54,6 +54,7 @@
         <table id="location-update-table">
           <thead>
             <tr>
+              <th>العربة</th>
               <th>المالك</th>
               <th>موقع قديم على الخريطة</th>
               <th>موقع جديد على الخريطة</th>
@@ -194,11 +195,15 @@
               where("ownerID", "==", ownerID)
             )
           );
-          let oldLatitude, oldLongitude;
+          let oldLatitude, oldLongitude, foodTruckName = "غير محدد";
           if (!foodTruckQuerySnapshot.empty) {
             const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
             const data = foodTruckDoc.data();
             console.log("Food truck data:", data);
+
+            //Name 
+            foodTruckName = data.name || "غير محدد"; // Fallback if name doesn't exist
+
             const oldLocation = data.location;
             [oldLatitude, oldLongitude] = oldLocation.split(",");
           }
@@ -231,6 +236,7 @@
           // Create table row
           const row = document.createElement("tr");
           row.innerHTML = `
+          <td>${foodTruckName}</td>
           <td>${ownerDetails}</td>
           <td><a href="${oldLocationMapUrl}" target="_blank">عرض الموقع القديم على الخريطة</a></td>
           <td><a href="${newLocationMapUrl}" target="_blank">عرض الموقع الجديد على الخريطة</a></td>
@@ -286,7 +292,7 @@ ${data.status === "pending" ? `
 
         try {
           // Accept Action
-          if (acceptBtn) {
+          if (acceptBtn) { //******************************************ACCEPT********************************************
             await updateDoc(doc(db, "Location_Update", requestId), {
               status: "accepted",
             });
@@ -321,15 +327,27 @@ ${data.status === "pending" ? `
 
             alert("تم قبول الطلب وإرسال بريد إلكتروني للمالك!");
 
-             // HISTORY RELATED!!
+            // HISTORY RELATED!!
             const historyRef = collection(db, "History");
             await addDoc(historyRef, {
               docType: "Location Change Acceptance",
               Details: `قبول طلب تحديث موقع عربة ${foodTruckDoc.data().name} برقم المعرف ${foodTruckDoc.id}`,
               timestamp: new Date(),
-            });           
+            });
+
+            // NOTIFICATION RELATED!!************************************************************************************
+            const NotifiRef = collection(db, "Notification");
+            await addDoc(NotifiRef, {
+              Title: '📍 تحديث موقع',
+              Msg: `!!🎉🚚انتقلت إلى موقع جديد ${foodTruckDoc.data().name} عربة`,
+              TruckId: `${foodTruckDoc.id}`,
+              isRead: false,
+              Time: new Date(),
+            });
+
           }
 
+          //******************************************ACCEPT*************************************************************
           // Reject Action
           if (rejectBtn) {
             const reason = prompt("يرجى إدخال سبب الرفض:");
@@ -342,7 +360,7 @@ ${data.status === "pending" ? `
               status: "rejected",
               rejectionReason: reason,
             });
-            
+
             // Fetch the Food_Truck document using ownerID
             const foodTruckQuerySnapshot = await getDocs(
               query(
@@ -357,7 +375,7 @@ ${data.status === "pending" ? `
             }
 
             const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
-            const foodTruckDocRef = foodTruckDoc.ref;            
+            const foodTruckDocRef = foodTruckDoc.ref;
 
             // Send email notification to the owner
             await sendEmail(
@@ -372,7 +390,7 @@ ${data.status === "pending" ? `
             const historyRef = collection(db, "History");
             await addDoc(historyRef, {
               docType: "Location Change Rejection",
-              Details: `رفض طلب تحديث موقع عربة ${foodTruckDoc.data().name} برقم المعرف ${foodTruckDoc.id}. السبب: ${reason}`, 
+              Details: `رفض طلب تحديث موقع عربة ${foodTruckDoc.data().name} برقم المعرف ${foodTruckDoc.id}. السبب: ${reason}`,
               timestamp: new Date(),
             });
           }
