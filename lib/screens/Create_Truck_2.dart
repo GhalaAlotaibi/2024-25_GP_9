@@ -279,6 +279,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           markers: {
                             Marker(
                               markerId: MarkerId('selected_location'),
+                               position: _selectedLocation,//the only addition to make marker/pin show
                             ),
                           },
                         ),
