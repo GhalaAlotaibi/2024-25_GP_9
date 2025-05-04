@@ -2,39 +2,22 @@
 <html lang="en" dir="rtl">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> Tracki - الشكاوى </title>
-    <link rel="stylesheet" href="Styles/Style.css">
-    <link rel="stylesheet" href="Styles/AllTrucks.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracki - الشكاوى</title>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet" />
     <style>
-        /* Style for the 'حل' button */
-        .resolve-btn {
-            width: 100px;
-            padding: 10px;
-            background-color: #d6b6f2;
-            /* Light purple */
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-            /* Shadow */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+        /* Modern, clean styling */
+        body {
+            font-family: "Zain", sans-serif;
+            background-color: #f8f9fa;
         }
 
-        .resolve-btn:hover {
-            background-color: #c093e0;
-            /* Slightly darker purple on hover */
-            transform: scale(1.05);
-            /* Slight hover effect */
-        }
-
-        .resolve-btn:active {
-            transform: scale(1);
-            /* Reset scale when active */
+        h2 {
+            color: #7a557a;
         }
 
         .filter-container {
@@ -45,177 +28,109 @@
         }
 
         #status-filter {
-            padding: 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
-        /*remove later */
-        .suspend-btn {
-            width: 100px;
-            padding: 10px;
-            background-color: #f2b6b6;
-            /* Light red */
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
-            /* Shadow */
-            cursor: pointer;
-            transition: background-color 0.3s ease, transform 0.2s ease;
-        }
-
-        .suspend-btn:hover {
-            background-color: #e09393;
-            /* Slightly darker red on hover */
-            transform: scale(1.05);
-            /* Slight hover effect */
-        }
-
-        .suspend-btn:active {
-            transform: scale(1);
-            /* Reset scale when active */
-        }
-
-        /* Adjust table cell layout */
-        /* General table styling */
-        /* Table Header */
-        th {
-            background-color: #7A557A;
-            color: #faf3f0;
-            font-weight: bold;
-            letter-spacing: 1px;
-            padding: 10px;
-            text-align: center;
-            /* Center-align headers */
-            font-size: 16px;
-            /* Adjust font size for better readability */
-            border-bottom: 2px solid #ddd;
-            /* Border for distinction */
-        }
-
-        /* Table Cells */
-        td {
-            padding: 10px;
-            text-align: center;
-            /* Center-align all table cells */
-            font-size: 14px;
-            /* Slightly smaller than headers */
-            border-bottom: 1px solid #ddd;
-            /* Row separator */
-            vertical-align: middle;
-            /* Ensure content is vertically centered */
-        }
-
-        /* Table Rows */
-
-        tr:nth-child(odd),
-        tr:nth-child(even) {
-            background-color: #faf1f4;
-        }
-
-        th,
-        td {
-            padding: 10px;
-            text-align: right;
-            border-bottom: 1px solid #ddd;
-            word-wrap: break-word;
-            white-space: normal;
-        }
-
-        /* Buttons in the Action Column */
-        td button {
-            margin: 0 5px;
-            /* Add horizontal space between buttons */
             padding: 8px 12px;
-            /* Adjust padding for consistent button size */
-            font-size: 14px;
-            /* Match button font size with cell text */
-            border: none;
             border-radius: 5px;
+            border: 1px solid #ddd;
+            background-color: white;
+            color: #333;
+        }
+
+        .complaints-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .complaint-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid #7a557a;
             cursor: pointer;
-            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
-            /* Add subtle shadow */
         }
 
-        /* 'حل' Button */
-        .resolve-btn {
-            background-color: #d6b6f2;
-            /* Light purple */
-            color: white;
+        .complaint-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            border-left-color: #c093e0;
         }
 
-        .resolve-btn:hover {
-            background-color: #c093e0;
-            /* Darker purple on hover */
+        .complaint-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            align-items: center;
         }
 
-        /* 'تعليق' Button */
-        .suspend-btn {
-            background-color: #f2b6b6;
-            /* Light red */
-            color: white;
+        .complaint-title {
+            font-weight: bold;
+            color: #333;
+            flex-grow: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .suspend-btn:hover {
-            background-color: #e09393;
-            /* Darker red on hover */
+        .complaint-time {
+            color: #666;
+            font-size: 0.9em;
+            margin-left: 15px;
         }
 
-        .comment-box {
-            width: 100%;
-            height: 50px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            padding: 5px;
-            font-size: 14px;
-            resize: none;
+        .complaint-preview {
+            color: #555;
+            margin-bottom: 10px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
-        .comment-box:focus {
-            border-color: #7A557A;
-            /* Match your theme's purple color */
-            outline: none;
+        .complaint-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .save-btn,
-        .edit-btn {
-            width: 80px;
-            padding: 5px;
-            background-color: #d6b6f2;
-            /* Light purple */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 5px;
-            transition: background-color 0.3s ease, transform 0.2s ease;
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: bold;
         }
 
-        .save-btn:hover,
-        .edit-btn:hover {
-            background-color: #c093e0;
-            /* Darker purple */
-            transform: scale(1.05);
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .status-resolved {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .truck-info {
+            color: #6c757d;
+            font-size: 0.9em;
         }
 
         #loading-spinner {
-            display: table-row;
-            /* Table rows require this display style */
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100px;
         }
 
         .spinner {
-            width: 50px;
-            height: 50px;
-            border: 5px solid #ccc;
-            border-top: 5px solid #7A557A;
-            /* Match theme color */
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #7a557a;
             border-radius: 50%;
             animation: spin 1s linear infinite;
-            margin: auto;
-            display: inline-block;
-            /* Ensure spinner is visible */
         }
 
         @keyframes spin {
@@ -228,55 +143,16 @@
             }
         }
 
-        /* FAke loading message (for consistency) */
-        .main-container {
-            position: relative;
+        .no-complaints {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
         }
 
-        /* Loading overlay styles */
-        .loading-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #ffffff;
-            z-index: 1000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-top: 5%;
-        }
-
-        .loading-content {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .loading-overlay img {
-            width: 60px;
-            animation: moveTruck 2s linear infinite;
-        }
-
-        .loading-overlay p {
-            margin-top: 10px;
-            font-size: 20px;
-            color: #674188;
-        }
-
-        @keyframes moveTruck {
-            0% {
-                transform: translateX(-100px);
-            }
-
-            50% {
-                transform: translateX(0);
-            }
-
-            100% {
-                transform: translateX(100px);
-            }
+        .error-message {
+            text-align: center;
+            padding: 40px;
+            color: #dc3545;
         }
     </style>
 </head>
@@ -288,22 +164,39 @@
         <div class="sidebar">
             <!-- Header Section -->
             <div class="headerOfBar">
-                <img src="images/TrackiLogo.png" alt="Logo">
+                <img src="images/TrackiLogo.png" alt="Logo" />
                 <h1>Tracki</h1>
             </div>
 
             <!-- Navigation Links -->
-            <ul style="list-style: none; padding: 0; margin: 20px 0;">
-                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-                <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
-                <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a>
+            <ul style="list-style: none; padding: 0; margin: 20px 0">
+                <li>
+                    <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
                 </li>
-                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
-                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html"
-                        style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
-                            class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+                <li>
+                    <a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a>
+                </li>
+                <li>
+                    <a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a>
+                </li>
+                <li>
+                    <a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a>
+                </li>
+                <li>
+                    <a href="History.html"><i class="fas fa-history"></i> سجل العمليات
+                    </a>
+                </li>
+                <li>
+                    <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+                </li>
+                <li>
+                    <a href="Complaints.html" style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "><i class="fas fa-exclamation-circle"></i> الشكاوى</a>
+                </li>
             </ul>
         </div>
 
@@ -311,6 +204,7 @@
             <div class="left-actions">
                 <p id="status">مرحبًا!</p>
             </div>
+
             <div class="right-actions">
                 <!--*************************************************************************************************************-->
                 <div class="notification-wrapper">
@@ -325,9 +219,16 @@
                 </div>
                 <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
             </div>
+
         </section>
         <!-- Main Content -->
         <div class="content">
+
+            <div class="loading" id="loading-message">
+                <img src="images/WaitingTruck2.png" alt="Loading Food Truck" loading="lazy" />
+                <p>الرجاء الإنتظار...</p>
+            </div>
+
             <h2>الشكاوى</h2>
             <div class="filter-container">
                 <label for="status-filter">تصفية حسب الحالة:</label>
@@ -338,73 +239,38 @@
                 </select>
             </div>
 
-
-
-            <div class="table-container">
-                <table id="complaints-table">
-                    <thead>
-                        <tr>
-                            <th>اسم العربة</th>
-                            <th>رقم هاتف المالك</th>
-                            <th>وصف الشكوى</th>
-                            <th>الوقت</th>
-                            <th>الحالة</th>
-                            <th>حل الشكوى</th>
-                            <th>تعليق/ تفعيل</th>
-                            <th>التعليقات</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr id="loading-spinner">
-                            <td colspan="8" style="text-align: center;">
-                                <div class="spinner"></div>
-                                <p style="margin-top: 10px; font-size: 14px; color: #7A557A;">جاري تحميل الشكاوى...</p>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-            <!-- Fake loading message (For consistency)-->
-            <div id="fake-loading" class="loading-overlay" style="display: none;">
-                <div class="loading-content">
-                    <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
-                    <p>الرجاء الإنتظار...</p>
+            <div class="complaints-list" id="complaints-container">
+                <div id="loading-spinner">
+                    <div class="spinner"></div>
                 </div>
             </div>
-            <script>
-                // Show fake loading for 2 seconds when page loads
-                document.addEventListener('DOMContentLoaded', function () {
-                    const fakeLoading = document.getElementById('fake-loading');
-                    fakeLoading.style.display = 'block';
 
-                    setTimeout(function () {
-                        fakeLoading.style.display = 'none';
-                    }, 3000); // 2 seconds
-                });
-            </script>
+            <!-- Pagination -->
+            <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
+
         </div>
     </div>
     <!-- Footer -->
     <div class="footer">
-      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
     <!-- Firebase Script -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import {
-        getAuth,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-      import {
-        collection,
-        getDocs,
-        doc,
-        getDoc,
-        updateDoc,
-        addDoc,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import {
+            getAuth,
+            onAuthStateChanged,
+            signOut,
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+        import {
+            collection,
+            getDocs,
+            doc,
+            getDoc,
+            updateDoc,
+            addDoc,
+        } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -413,17 +279,19 @@
             projectId: "trucki-database",
             storageBucket: "trucki-database.appspot.com",
             messagingSenderId: "283818817351",
-            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
         };
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+
         // Check authentication status on page load
         onAuthStateChanged(auth, (user) => {
-            const statusElement = document.getElementById('status');
+            const statusElement = document.getElementById("status");
             if (user) {
-                const username = user.email.split('@')[0];
+                const username = user.email.split("@")[0];
                 statusElement.innerText = `مرحبًا ${username} !`;
                 loadComplaints(); // Trigger complaints loading here
                 checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
@@ -434,285 +302,184 @@
             }
         });
 
-        const comments = {}; // To store comments temporarily
-        // Save comment to database
-        function saveComment(complaintId) {
-            const commentTextarea = document.getElementById(`comment-${complaintId}`);
-            const saveButton = document.getElementById(`save-${complaintId}`);
-            const editButton = document.getElementById(`edit-${complaintId}`);
-            const comment = commentTextarea.value;
-            // Save comment to Firestore
-            const complaintRef = doc(db, "Complaint", complaintId);
-            updateDoc(complaintRef, { adminComment: comment })
-                .then(() => {
-                    console.log(`Comment for complaint ${complaintId} saved successfully.`);
-                    alert("تم حفظ التعليق بنجاح!");
-                    // Disable textarea and adjust button states
-                    commentTextarea.disabled = true;
-                    saveButton.disabled = true;
-                    editButton.disabled = false;
-                })
-                .catch((error) => {
-                    console.error("Error saving comment:", error);
-                    alert("حدث خطأ أثناء حفظ التعليق.");
-                });
-        }
-        // Enable editing for the comment
-        function enableEdit(complaintId) {
-            const commentTextarea = document.getElementById(`comment-${complaintId}`);
-            const saveButton = document.getElementById(`save-${complaintId}`);
-            const editButton = document.getElementById(`edit-${complaintId}`);
-            // Enable the textarea and adjust button states
-            commentTextarea.disabled = false;
-            saveButton.disabled = false;
-            editButton.disabled = true;
-        }
+        //Pagination ---------------------------------
+        const rowsPerPage = 6; // Number of complaints per page
+        let currentPage = 1;
+        let allComplaints = [];
+        let totalPages = 0;
 
         function formatTimestamp(timestamp) {
             if (timestamp && timestamp.seconds) {
-                const date = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
-                return date.toLocaleString('ar-SA', {
-                    weekday: 'long',
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                    second: '2-digit',
-                }); // Adjust formatting as needed
+                const date = new Date(timestamp.seconds * 1000);
+                return date.toLocaleString("ar-SA", {
+                    weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
             }
-            return "غير محدد"; // Default value if no timestamp is available
+            return "غير محدد";
         }
-        // Load complaints using AJAX
+
+        // Load complaints -----------added pagination
         async function loadComplaints(filter = "all") {
-            const complaintsTableBody = document.querySelector('#complaints-table tbody');
-            // Add this line
-            const loadingSpinner = document.getElementById('loading-spinner');
+            const container = document.getElementById("complaints-container");
+            container.innerHTML = '<div id="loading-spinner"><div class="spinner"></div></div>';
 
-            console.log(loadingSpinner); // Ensure the spinner element is correctly referenced
+            const loadingMessage = document.getElementById('loading-message');
 
-
-            complaintsTableBody.innerHTML = ''; // Clear the table
-
-            complaintsTableBody.appendChild(loadingSpinner);
-            loadingSpinner.style.display = 'table-row'; // Correct display style for a table row
-            // Or adjust depending on parent structure
-
-            console.log('Spinner displayed');
+            // Show loading message
+            loadingMessage.style.display = 'flex';
+            container.innerHTML = '';
 
             try {
-                console.log('Spinner visibility:', window.getComputedStyle(loadingSpinner).display);
-                // Fetch all complaints from the "Complaint" collection
                 const complaintsSnapshot = await getDocs(collection(db, "Complaint"));
-                const complaints = complaintsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                if (complaints.length === 0) {
-                    const noDataRow = document.createElement('tr');
-                    noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
-                    complaintsTableBody.appendChild(noDataRow);
+                allComplaints = complaintsSnapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                if (allComplaints.length === 0) {
+                    container.innerHTML = '<div class="no-complaints">لا توجد شكاوي</div>';
                     return;
                 }
-                // Fetch all requests from the "Request" collection
-                const requestSnapshot = await getDocs(collection(db, "Request"));
-                const requests = requestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                // Process complaints with matched requests
+
                 const processedComplaints = await Promise.all(
-                    complaints.map(async (complaint) => {
+                    allComplaints.map(async (complaint) => {
                         const foodTruckDoc = await getDoc(doc(db, "Food_Truck", complaint.foodTruckId));
                         const foodTruckName = foodTruckDoc.exists() ? foodTruckDoc.data().name : "غير محدد";
-                        let ownerPhone = "غير محدد";
-                        let requestStatus = "accepted"; // Default status
-                        let requestId = null;
-                        // Find matching request based on foodTruckId
-                        const matchingRequest = requests.find(request => request.foodTruckId === complaint.foodTruckId);
-                        if (matchingRequest) {
-                            requestStatus = matchingRequest.status;
-                            requestId = matchingRequest.id;
-                        }
-                        if (foodTruckDoc.exists() && foodTruckDoc.data().ownerID) {
-                            const ownerDoc = await getDoc(doc(db, "Truck_Owner", foodTruckDoc.data().ownerID));
-                            ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
-                        }
+
                         return {
                             ...complaint,
                             foodTruckName,
-                            ownerPhone,
-                            requestStatus,
-                            requestId,
+                            statusText: complaint.status === "pending" ? "قيد الإنتظار" : "تم الحل",
+                            statusClass: complaint.status === "pending" ? "status-pending" : "status-resolved",
                         };
                     })
                 );
-                console.log("Processed Complaints:", processedComplaints); // Log for debugging
-                // Apply the filter
+
+                // Apply filter
                 const filteredComplaints = processedComplaints.filter(complaint => {
                     return filter === "all" || complaint.status === filter;
                 });
-                // Render filtered complaints
-                if (filteredComplaints.length === 0) {
-                    const noDataRow = document.createElement('tr');
-                    noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
-                    complaintsTableBody.appendChild(noDataRow);
-                } else {
-                    filteredComplaints.forEach((complaint) => {
-                        const row = document.createElement('tr');
-                        row.setAttribute("data-id", complaint.id);
-                        row.innerHTML = `
-                    <td>${complaint.foodTruckName || "غير محدد"}</td>
-                    <td>${complaint.ownerPhone || "غير محدد"}</td>
-                    <td>${complaint.description || "غير محدد"}</td>
-                    <td>${formatTimestamp(complaint.timestamp)}</td>
-                    <td>${complaint.status === "pending" ? "قيد الإنتظار" : "تم الحل"}</td>
-                     <td>
-            ${complaint.status === "pending" ? `
-                <button class="resolve-btn" onclick="resolveComplaint('${complaint.id}')">حل</button>
-            ` : `
-                <span class="status-text">تم الحل</span>
-            `}
-        </td>
-        <td>
-            ${complaint.status === "resolved" ? `
-                <span class="status-text">تم الحل</span>
-            ` : `
-                <button class="suspend-btn">${complaint.requestStatus === "suspended" ? "إعادة تفعيل" : "تعليق"}</button>
-            `}
-        </td>
-        <td>
-    <textarea 
-        id="comment-${complaint.id}" 
-        placeholder="اكتب تعليقًا..." 
-        class="comment-box" 
-        disabled>${complaint.adminComment || ""}</textarea>
-    <button 
-        class="save-btn" 
-        id="save-${complaint.id}" 
-        onclick="saveComment('${complaint.id}')" 
-        disabled>حفظ</button>
-    <button 
-        class="edit-btn" 
-        id="edit-${complaint.id}" 
-        onclick="enableEdit('${complaint.id}')">تعديل</button>
-</td>
-            `;
-                        // Attach event listeners for تعليق and إعادة تفعيل buttons
-                        const suspendButton = row.querySelector('.suspend-btn');
-                        if (suspendButton) {
-                            if (complaint.requestStatus === "suspended") {
-                                suspendButton.onclick = () => reactivateTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
-                            } else {
-                                suspendButton.onclick = () => suspendTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
-                            }
-                        }
-                        complaintsTableBody.appendChild(row);
-                    });
-                }
+
+                // Store filtered complaints for pagination
+                allComplaints = filteredComplaints;
+                totalPages = Math.ceil(allComplaints.length / rowsPerPage);
+
+                // Display current page
+                displayComplaintsPage(currentPage);
+                updatePaginationControls();
+
             } catch (error) {
                 console.error("Error loading complaints:", error);
-                const errorRow = document.createElement('tr');
-                errorRow.innerHTML = `<td colspan="6" style="text-align: center; color: red;">خطأ في استرداد البيانات</td>`;
-                complaintsTableBody.appendChild(errorRow);
+                container.innerHTML = '<div class="error-message">حدث خطأ أثناء تحميل الشكاوي</div>';
             } finally {
-                // Hide the loading spinner
-                loadingSpinner.style.display = 'none'; // Hide spinner
-                console.log('Spinner hidden');
+                // Hide loading message after minimum 2 seconds
+                setTimeout(() => {
+                    loadingMessage.style.display = 'none';
+                }, 3000);
             }
         }
 
+        // functions for pagination
+        function displayComplaintsPage(page) {
+            const container = document.getElementById("complaints-container");
+            container.innerHTML = "";
 
+            if (allComplaints.length === 0) {
+                container.innerHTML = '<div class="no-complaints">لا توجد شكاوي تطابق معايير التصفية</div>';
+                return;
+            }
 
+            const start = (page - 1) * rowsPerPage;
+            const end = start + rowsPerPage;
+            const complaintsToDisplay = allComplaints.slice(start, end);
 
+            complaintsToDisplay.forEach(complaint => {
+                const complaintCard = document.createElement("div");
+                complaintCard.className = "complaint-card";
+                complaintCard.setAttribute("data-id", complaint.id);
+                complaintCard.onclick = () => {
+                    window.location.href = `ComplaintDetails.html?id=${complaint.id}`;
+                };
 
-        // Expose the function to the global scope
+                complaintCard.innerHTML = `
+      <div class="complaint-header">
+        <div class="complaint-title">${complaint.foodTruckName || "غير محدد"}</div>
+        <div class="complaint-time">${formatTimestamp(complaint.timestamp)}</div>
+      </div>
+      <div class="complaint-preview">${complaint.description || "لا يوجد وصف"}</div>
+      <div class="complaint-footer">
+        <span class="status-badge ${complaint.statusClass}">${complaint.statusText}</span>
+        <span class="truck-info">${complaint.foodTruckName || "عربة غير معروفة"}</span>
+      </div>
+    `;
+
+                container.appendChild(complaintCard);
+            });
+        }
+
+        function updatePaginationControls() {
+            const paginationContainer = document.getElementById("pagination-controls");
+            paginationContainer.innerHTML = "";
+
+            const prevLink = document.createElement("span");
+            prevLink.textContent = "<";
+            prevLink.classList.add("pagination-link");
+            if (currentPage === 1) {
+                prevLink.classList.add("disabled");
+            } else {
+                prevLink.addEventListener("click", () => {
+                    currentPage--;
+                    displayComplaintsPage(currentPage);
+                    updatePaginationControls();
+                });
+            }
+            paginationContainer.appendChild(prevLink);
+
+            for (let i = 1; i <= totalPages; i++) {
+                const pageLink = document.createElement("span");
+                pageLink.textContent = i;
+                pageLink.classList.add("pagination-link");
+                if (i === currentPage) {
+                    pageLink.classList.add("active-page");
+                }
+                pageLink.addEventListener("click", () => {
+                    currentPage = i;
+                    displayComplaintsPage(currentPage);
+                    updatePaginationControls();
+                });
+                paginationContainer.appendChild(pageLink);
+            }
+
+            const nextLink = document.createElement("span");
+            nextLink.textContent = ">";
+            nextLink.classList.add("pagination-link");
+            if (currentPage === totalPages) {
+                nextLink.classList.add("disabled");
+            } else {
+                nextLink.addEventListener("click", () => {
+                    currentPage++;
+                    displayComplaintsPage(currentPage);
+                    updatePaginationControls();
+                });
+            }
+            paginationContainer.appendChild(nextLink);
+        }
+
+        // Modify your filterComplaints function to reset to page 1 when filtering
         window.filterComplaints = function () {
+            currentPage = 1;
             const statusFilter = document.getElementById("status-filter").value;
-            console.log("Selected filter:", statusFilter); // Debug log
-            loadComplaints(statusFilter); // Call `loadComplaints` with the selected filter
+            loadComplaints(statusFilter);
         };
 
-
-        // Resolve complaint
-        async function resolveComplaint(complaintId) {
-            console.log("Resolving complaint with ID:", complaintId); // Debugging log
-            const isConfirmed = window.confirm("هل تريد وضع هذه الشكوى كـ'تم الحل'؟");
-            if (isConfirmed) {
-                try {
-                    const complaintRef = doc(db, "Complaint", complaintId);
-                    await updateDoc(complaintRef, {
-                        status: "resolved"  // Update status
-                    });
-                    alert("تم تحديث حالة الشكوى إلى 'تم الحل'.");
-                    // Update the UI dynamically for this row
-                    const row = document.querySelector(`[data-id="${complaintId}"]`);
-                    if (row) {
-                        row.querySelector("td:nth-child(5)").textContent = "تم الحل"; // Update the "الحالة" column
-                        // Update الإجراء - حل column
-                        row.querySelector("td:nth-child(6)").innerHTML = `<span class="status-text">تم الحل</span>`;
-
-                        // Update الإجراء - تعليق column
-                        row.querySelector("td:nth-child(7)").innerHTML = `<span class="status-text">تم الحل</span>`;
-                    }
-                    console.log(`Complaint with ID ${complaintId} updated to 'resolved'.`);
-                } catch (error) {
-                    console.error("Error resolving complaint:", error);
-                    alert("حدث خطأ أثناء تحديث حالة الشكوى.");
-                }
-            }
-        }
-
-        // Expose the function to the global scope
-        window.resolveComplaint = resolveComplaint;
-        //remove later
-        async function suspendTruck(statusId, foodTruckId, button) {
-            console.log("Suspending truck with:", { statusId, foodTruckId }); // Debug log
-            if (!statusId || !foodTruckId) {
-                alert("تعذر العثور على معرف العربة أو الحالة.");
-                return;
-            }
-            const confirmSuspend = window.confirm("هل تريد تعليق العربة؟");
-            if (!confirmSuspend) return;
-            try {
-                // Update Firestore document
-                const requestRef = doc(db, "Request", statusId);
-                await updateDoc(requestRef, { status: "suspended" });
-                console.log(`Truck with ID ${foodTruckId} suspended.`);
-                // Update button to "إعادة تفعيل"
-                button.textContent = "إعادة تفعيل";
-                button.onclick = () => reactivateTruck(statusId, foodTruckId, button);
-                alert("تم تعليق العربة بنجاح.");
-            } catch (error) {
-                console.error("Error suspending truck:", error);
-                alert("حدث خطأ أثناء تعليق العربة.");
-            }
-        }
-        async function reactivateTruck(statusId, foodTruckId, button) {
-            console.log("Reactivating truck with:", { statusId, foodTruckId }); // Debug log
-            if (!statusId || !foodTruckId) {
-                alert("تعذر العثور على معرف العربة أو الحالة.");
-                return;
-            }
-            const confirmReactivate = window.confirm("هل تريد إعادة تفعيل العربة؟");
-            if (!confirmReactivate) return;
-            try {
-                // Update Firestore document
-                const requestRef = doc(db, "Request", statusId);
-                await updateDoc(requestRef, { status: "accepted" });
-                console.log(`Truck with ID ${foodTruckId} reactivated.`);
-                // Update button to "تعليق"
-                button.textContent = "تعليق";
-                button.onclick = () => suspendTruck(statusId, foodTruckId, button);
-                alert("تم إعادة تفعيل العربة بنجاح.");
-            } catch (error) {
-                console.error("Error reactivating truck:", error);
-                alert("حدث خطأ أثناء إعادة تفعيل العربة.");
-            }
-        }
-
-
-
-        // Expose suspendTruck to the global scope
-        window.suspendTruck = suspendTruck;
-
         // Logout functionality
-        const logoutIcon = document.getElementById('logout-icon');
-        logoutIcon.addEventListener('click', async () => {
+        const logoutIcon = document.getElementById("logout-icon");
+        logoutIcon.addEventListener("click", async () => {
             try {
                 await signOut(auth);
                 alert("تم تسجيل الخروج بنجاح!");
@@ -721,9 +488,20 @@
                 alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
             }
         });
-        window.enableEdit = enableEdit;
-        window.saveComment = saveComment;
 
+        //Loading
+        // Show loading message when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            const loadingMessage = document.getElementById('loading-message');
+
+            // Show loading message
+            loadingMessage.style.display = 'flex';
+
+            // Hide after 2 seconds
+            setTimeout(() => {
+                loadingMessage.style.display = 'none';
+            }, 2000);
+        });
 
         // Notification Functions<!--*************************************************************************************************************-->
         async function checkPendingTrucks() {
@@ -787,5 +565,6 @@
             document.getElementById("notification-popup").classList.add("hidden");
         });
     </script>
-  </body>
+</body>
+
 </html>

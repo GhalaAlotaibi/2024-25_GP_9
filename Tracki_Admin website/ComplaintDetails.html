@@ -1,425 +1,416 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tracki - تفاصيل الشكوى</title>
-    <link rel="stylesheet" href="Styles/Style.css" />
-    <link
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      /* Modern, clean styling */
-      body {
-        font-family: "Zain", sans-serif;
-        background-color: #f8f9fa;
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tracki - تفاصيل الشكوى</title>
+  <link rel="stylesheet" href="Styles/Style.css" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet" />
+  <style>
+    /* Modern, clean styling */
+    body {
+      font-family: "Zain", sans-serif;
+      background-color: #f8f9fa;
+    }
+
+    h2 {
+      color: #7a557a;
+    }
+
+    .back-button {
+      background-color: #f8f9fa;
+      border: 1px solid #ddd;
+      padding: 8px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .back-button:hover {
+      background-color: #e9ecef;
+    }
+
+    .complaint-details {
+      background-color: #faf1f4;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 25px;
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 15px;
+    }
+
+    .detail-label {
+      font-weight: bold;
+      color: #7a557a;
+      min-width: 120px;
+    }
+
+    .detail-value {
+      flex-grow: 1;
+      color: #333;
+    }
+
+    .status-badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-weight: bold;
+      font-size: 0.9em;
+    }
+
+    .status-pending {
+      background-color: #fff3cd;
+      color: #856404;
+    }
+
+    .status-resolved {
+      background-color: #d4edda;
+      color: #155724;
+    }
+
+    .action-section {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .resolve-btn {
+      padding: 10px 20px;
+      background-color: #7a557a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .resolve-btn:hover {
+      background-color: #634a63;
+    }
+
+    .suspend-btn {
+      padding: 10px 20px;
+      background-color: #dc3545;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .suspend-btn:hover {
+      background-color: #c82333;
+    }
+
+    .reactivate-btn {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+
+    .reactivate-btn:hover {
+      background-color: #218838;
+    }
+
+    .comment-section {
+      margin-top: 30px;
+    }
+
+    .comment-box {
+      width: 100%;
+      height: 100px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      font-family: inherit;
+      margin-bottom: 15px;
+      resize: vertical;
+    }
+
+    .comment-box:focus {
+      border-color: #7a557a;
+      outline: none;
+    }
+
+    .comment-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .save-btn {
+      padding: 8px 20px;
+      background-color: #7a557a;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .edit-btn {
+      padding: 8px 20px;
+      background-color: #6c757d;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #loading-spinner {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 200px;
+    }
+
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #7a557a;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
       }
 
-      h2 {
-        color: #7a557a;
-        margin-bottom: 20px;
-        padding-bottom: 10px;
-        border-bottom: 1px solid #eee;
+      100% {
+        transform: rotate(360deg);
       }
+    }
+  </style>
+</head>
 
-      .back-button {
-        background-color: #f8f9fa;
-        border: 1px solid #ddd;
-        padding: 8px 15px;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-bottom: 20px;
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-      }
-
-      .back-button:hover {
-        background-color: #e9ecef;
-      }
-
-      .complaint-details {
-        background-color: #faf1f4;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 25px;
-      }
-
-      .detail-row {
-        display: flex;
-        margin-bottom: 15px;
-      }
-
-      .detail-label {
-        font-weight: bold;
-        color: #7a557a;
-        min-width: 120px;
-      }
-
-      .detail-value {
-        flex-grow: 1;
-        color: #333;
-      }
-
-      .status-badge {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 20px;
-        font-weight: bold;
-        font-size: 0.9em;
-      }
-
-      .status-pending {
-        background-color: #fff3cd;
-        color: #856404;
-      }
-
-      .status-resolved {
-        background-color: #d4edda;
-        color: #155724;
-      }
-
-      .action-section {
-        margin-top: 30px;
-        padding-top: 20px;
-        border-top: 1px solid #eee;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 15px;
-        margin-top: 20px;
-      }
-
-      .resolve-btn {
-        padding: 10px 20px;
-        background-color: #7a557a;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      .resolve-btn:hover {
-        background-color: #634a63;
-      }
-
-      .suspend-btn {
-        padding: 10px 20px;
-        background-color: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      .suspend-btn:hover {
-        background-color: #c82333;
-      }
-
-      .reactivate-btn {
-        padding: 10px 20px;
-        background-color: #28a745;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s;
-      }
-
-      .reactivate-btn:hover {
-        background-color: #218838;
-      }
-
-      .comment-section {
-        margin-top: 30px;
-      }
-
-      .comment-box {
-        width: 100%;
-        height: 100px;
-        border: 1px solid #ddd;
-        border-radius: 5px;
-        padding: 10px;
-        font-family: inherit;
-        margin-bottom: 15px;
-        resize: vertical;
-      }
-
-      .comment-box:focus {
-        border-color: #7a557a;
-        outline: none;
-      }
-
-      .comment-actions {
-        display: flex;
-        gap: 10px;
-      }
-
-      .save-btn {
-        padding: 8px 20px;
-        background-color: #7a557a;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      .edit-btn {
-        padding: 8px 20px;
-        background-color: #6c757d;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-      }
-
-      #loading-spinner {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 200px;
-      }
-
-      .spinner {
-        width: 40px;
-        height: 40px;
-        border: 4px solid #f3f3f3;
-        border-top: 4px solid #7a557a;
-        border-radius: 50%;
-        animation: spin 1s linear infinite;
-      }
-
-      @keyframes spin {
-        0% {
-          transform: rotate(0deg);
-        }
-        100% {
-          transform: rotate(360deg);
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Header -->
-    <div class="main-container">
-      <!-- Sidebar -->
-      <div class="sidebar">
-        <!-- Header Section -->
-        <div class="headerOfBar">
-          <img src="images/TrackiLogo.png" alt="Logo" />
-          <h1>Tracki</h1>
-        </div>
-
-        <!-- Navigation Links -->
-        <ul style="list-style: none; padding: 0; margin: 20px 0">
-          <li>
-            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
-          </li>
-          <li>
-            <a href="WaitingTrucks.html"
-              ><i class="fas fa-truck-loading"></i> قيد الإنتظار</a
-            >
-          </li>
-          <li>
-            <a href="AllTrucks.html"
-              ><i class="fas fa-truck"></i> جميع العربات</a
-            >
-          </li>
-          <li>
-            <a href="LocationUpdateRequests.html"
-              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
-            >
-          </li>
-          <li>
-            <a href="History.html"
-              ><i class="fas fa-history"></i> سجل العمليات
-            </a>
-          </li>
-          <li>
-            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
-          </li>
-          <li>
-            <a href="Complaints.html"
-              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
-            >
-          </li>
-        </ul>
+<body>
+  <!-- Header -->
+  <div class="main-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <!-- Header Section -->
+      <div class="headerOfBar">
+        <img src="images/TrackiLogo.png" alt="Logo" />
+        <h1>Tracki</h1>
       </div>
 
-      <section class="status-section">
-        <div class="left-actions">
-          <p id="status">مرحبًا!</p>
-        </div>
-        <div class="right-actions">
-          <i
-            id="notification-icon"
-            class="fas fa-bell notification-icon"
-            title="الإشعارات"
-          ></i>
-          <i
-            id="logout-icon"
-            class="fas fa-sign-out-alt logout-icon"
-            title="تسجيل الخروج"
-          ></i>
-        </div>
-      </section>
-      <!-- Main Content -->
-      <div class="content">
-        <button class="back-button" onclick="window.history.back()">
-          <i class="fas fa-arrow-right"></i> العودة
-        </button>
+      <!-- Navigation Links -->
+      <ul style="list-style: none; padding: 0; margin: 20px 0">
+        <li>
+          <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+        </li>
+        <li>
+          <a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a>
+        </li>
+        <li>
+          <a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a>
+        </li>
+        <li>
+          <a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a>
+        </li>
+        <li>
+          <a href="History.html"><i class="fas fa-history"></i> سجل العمليات
+          </a>
+        </li>
+        <li>
+          <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+        </li>
+        <li>
+          <a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a>
+        </li>
+      </ul>
+    </div>
 
-        <h2>تفاصيل الشكوى</h2>
+    <section class="status-section">
+      <div class="left-actions">
+        <p id="status">مرحبًا!</p>
+      </div>
 
-        <div id="complaint-container">
-          <div id="loading-spinner">
-            <div class="spinner"></div>
+      <div class="right-actions">
+        <!--*************************************************************************************************************-->
+        <div class="notification-wrapper">
+          <div id="notification-trigger" class="notification-trigger">
+            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+            <span id="notification-badge" class="notification-badge hidden"></span>
+          </div>
+          <div id="notification-popup" class="notification-popup hidden">
+            <span id="notification-message"></span>
+            <button id="notification-confirm" class="notification-confirm">عرض</button>
           </div>
         </div>
+        <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
+      </div>
+
+    </section>
+    <!-- Main Content -->
+    <div class="content">
+      <button class="back-button" onclick="window.history.back()">
+        <i class="fas fa-arrow-right"></i> العودة
+      </button>
+
+      <h2>تفاصيل الشكوى</h2>
+
+      <div id="complaint-container">
+        <div id="loading-spinner">
+          <div class="spinner"></div>
+        </div>
       </div>
     </div>
-    <!-- Footer -->
-    <div class="footer">
-      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
-    </div>
-    <!-- Firebase Script -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-      import {
-        getAuth,
-        onAuthStateChanged,
-        signOut,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-      import {
-        collection,
-        getDocs,
-        doc,
-        getDoc,
-        updateDoc,
-      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+  </div>
+  <!-- Footer -->
+  <div class="footer">
+    <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+  </div>
+  <!-- Firebase Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+    import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    import {
+      collection,
+      getDocs,
+      doc,
+      getDoc,
+      updateDoc,
+    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-      // Firebase configuration
-      const firebaseConfig = {
-        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-        authDomain: "trucki-database.firebaseapp.com",
-        projectId: "trucki-database",
-        storageBucket: "trucki-database.appspot.com",
-        messagingSenderId: "283818817351",
-        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
-      };
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+      authDomain: "trucki-database.firebaseapp.com",
+      projectId: "trucki-database",
+      storageBucket: "trucki-database.appspot.com",
+      messagingSenderId: "283818817351",
+      appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+    };
 
-      // Initialize Firebase
-      const app = initializeApp(firebaseConfig);
-      const auth = getAuth(app);
-      const db = getFirestore(app);
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-      // Check authentication status on page load
-      onAuthStateChanged(auth, (user) => {
-        const statusElement = document.getElementById("status");
-        if (user) {
-          const username = user.email.split("@")[0];
-          statusElement.innerText = `مرحبًا ${username} !`;
-          loadComplaintDetails();
-        } else {
-          statusElement.innerText = "لم يتم تسجيل الدخول";
-          window.location.href = "WelcomePage.html";
-        }
-      });
+    // Check authentication status on page load
+    onAuthStateChanged(auth, (user) => {
+      const statusElement = document.getElementById("status");
+      if (user) {
+        const username = user.email.split("@")[0];
+        statusElement.innerText = `مرحبًا ${username} !`;
+        loadComplaintDetails();
+        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
+      } else {
+        statusElement.innerText = "لم يتم تسجيل الدخول";
+        window.location.href = "WelcomePage.html";
+      }
+    });
 
-      function formatTimestamp(timestamp) {
-        if (timestamp && timestamp.seconds) {
-          const date = new Date(timestamp.seconds * 1000);
-          return date.toLocaleString("ar-SA", {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-          });
-        }
-        return "غير محدد";
+    function formatTimestamp(timestamp) {
+      if (timestamp && timestamp.seconds) {
+        const date = new Date(timestamp.seconds * 1000);
+        return date.toLocaleString("ar-SA", {
+          weekday: "long",
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+      return "غير محدد";
+    }
+
+    // Get complaint ID from URL
+    function getComplaintId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get("id");
+    }
+
+    // Load complaint details
+    async function loadComplaintDetails() {
+      const complaintId = getComplaintId();
+      const container = document.getElementById("complaint-container");
+
+      if (!complaintId) {
+        container.innerHTML =
+          '<div class="error-message">لم يتم العثور على معرف الشكوى</div>';
+        return;
       }
 
-      // Get complaint ID from URL
-      function getComplaintId() {
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get("id");
-      }
+      container.innerHTML =
+        '<div id="loading-spinner"><div class="spinner"></div></div>';
 
-      // Load complaint details
-      async function loadComplaintDetails() {
-        const complaintId = getComplaintId();
-        const container = document.getElementById("complaint-container");
+      try {
+        // Get complaint details
+        const complaintRef = doc(db, "Complaint", complaintId);
+        const complaintSnap = await getDoc(complaintRef);
 
-        if (!complaintId) {
+        if (!complaintSnap.exists()) {
           container.innerHTML =
-            '<div class="error-message">لم يتم العثور على معرف الشكوى</div>';
+            '<div class="error-message">الشكوى غير موجودة</div>';
           return;
         }
 
-        container.innerHTML =
-          '<div id="loading-spinner"><div class="spinner"></div></div>';
+        const complaint = complaintSnap.data();
 
-        try {
-          // Get complaint details
-          const complaintRef = doc(db, "Complaint", complaintId);
-          const complaintSnap = await getDoc(complaintRef);
+        // Get food truck details
+        const foodTruckRef = doc(db, "Food_Truck", complaint.foodTruckId);
+        const foodTruckSnap = await getDoc(foodTruckRef);
+        const foodTruckName = foodTruckSnap.exists()
+          ? foodTruckSnap.data().name
+          : "غير محدد";
 
-          if (!complaintSnap.exists()) {
-            container.innerHTML =
-              '<div class="error-message">الشكوى غير موجودة</div>';
-            return;
-          }
-
-          const complaint = complaintSnap.data();
-
-          // Get food truck details
-          const foodTruckRef = doc(db, "Food_Truck", complaint.foodTruckId);
-          const foodTruckSnap = await getDoc(foodTruckRef);
-          const foodTruckName = foodTruckSnap.exists()
-            ? foodTruckSnap.data().name
-            : "غير محدد";
-
-          // Get owner details
-          let ownerPhone = "غير محدد";
-          if (foodTruckSnap.exists() && foodTruckSnap.data().ownerID) {
-            const ownerRef = doc(
-              db,
-              "Truck_Owner",
-              foodTruckSnap.data().ownerID
-            );
-            const ownerSnap = await getDoc(ownerRef);
-            ownerPhone = ownerSnap.exists()
-              ? ownerSnap.data().PhoneNum
-              : "غير محدد";
-          }
-
-          // Get request status
-          const requestSnapshot = await getDocs(collection(db, "Request"));
-          const requests = requestSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          const matchingRequest = requests.find(
-            (request) => request.foodTruckId === complaint.foodTruckId
+        // Get owner details
+        let ownerPhone = "غير محدد";
+        if (foodTruckSnap.exists() && foodTruckSnap.data().ownerID) {
+          const ownerRef = doc(
+            db,
+            "Truck_Owner",
+            foodTruckSnap.data().ownerID
           );
-          const requestStatus = matchingRequest
-            ? matchingRequest.status
-            : "accepted";
-          const requestId = matchingRequest ? matchingRequest.id : null;
+          const ownerSnap = await getDoc(ownerRef);
+          ownerPhone = ownerSnap.exists()
+            ? ownerSnap.data().PhoneNum
+            : "غير محدد";
+        }
 
-          // Render complaint details
-          container.innerHTML = `
+        // Get request status
+        const requestSnapshot = await getDocs(collection(db, "Request"));
+        const requests = requestSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        const matchingRequest = requests.find(
+          (request) => request.foodTruckId === complaint.foodTruckId
+        );
+        const requestStatus = matchingRequest
+          ? matchingRequest.status
+          : "accepted";
+        const requestId = matchingRequest ? matchingRequest.id : null;
+
+        // Render complaint details
+        container.innerHTML = `
                     <div class="complaint-details">
                         <div class="detail-row">
                             <div class="detail-label">اسم العربة:</div>
@@ -432,62 +423,56 @@
                         <div class="detail-row">
                             <div class="detail-label">وقت الشكوى:</div>
                             <div class="detail-value">${formatTimestamp(
-                              complaint.timestamp
-                            )}</div>
+          complaint.timestamp
+        )}</div>
                         </div>
                         <div class="detail-row">
                             <div class="detail-label">حالة الشكوى:</div>
                             <div class="detail-value">
-                                <span class="status-badge ${
-                                  complaint.status === "pending"
-                                    ? "status-pending"
-                                    : "status-resolved"
-                                }">
-                                    ${
-                                      complaint.status === "pending"
-                                        ? "قيد الإنتظار"
-                                        : "تم الحل"
-                                    }
+                                <span class="status-badge ${complaint.status === "pending"
+            ? "status-pending"
+            : "status-resolved"
+          }">
+                                    ${complaint.status === "pending"
+            ? "قيد الإنتظار"
+            : "تم الحل"
+          }
                                 </span>
                             </div>
                         </div>
                         <div class="detail-row">
                             <div class="detail-label">وصف الشكوى:</div>
-                            <div class="detail-value">${
-                              complaint.description || "لا يوجد وصف"
-                            }</div>
+                            <div class="detail-value">${complaint.description || "لا يوجد وصف"
+          }</div>
                         </div>
                     </div>
                     
                     <div class="action-section">
                         <h3>إجراءات الشكوى</h3>
                         <div class="action-buttons">
-                            ${
-                              complaint.status === "pending"
-                                ? `
+                            ${complaint.status === "pending"
+            ? `
                                 <button class="resolve-btn" onclick="resolveComplaint('${complaintId}')">حل الشكوى</button>
-                                ${
-                                  requestStatus === "suspended"
-                                    ? `
+                                ${requestStatus === "suspended"
+              ? `
                                     <button class="reactivate-btn" onclick="reactivateTruck('${requestId}', '${complaint.foodTruckId}')">إعادة تفعيل العربة</button>
                                 `
-                                    : `
+              : `
                                     <button class="suspend-btn" onclick="suspendTruck('${requestId}', '${complaint.foodTruckId}')">تعليق العربة</button>
                                 `
-                                }
+            }
                             `
-                                : `
+            : `
                                 <div style="color: #28a745; font-weight: bold;">تم حل هذه الشكوى</div>
                             `
-                            }
+          }
                         </div>
                     </div>
                     
                     <div class="comment-section">
                         <h3>التعليقات</h3>
-                        <textarea id="comment-box" class="comment-box" placeholder="اكتب تعليقًا...">${
-                          complaint.adminComment || ""
-                        }</textarea>
+                        <textarea id="comment-box" class="comment-box" placeholder="اكتب تعليقًا...">${complaint.adminComment || ""
+          }</textarea>
                         <div class="comment-actions">
                             <button class="save-btn" onclick="saveComment('${complaintId}')">حفظ</button>
                             <button class="edit-btn" onclick="enableEdit()">إضافة تعليق</button>
@@ -495,130 +480,193 @@
                     </div>
                 `;
 
-          // Set initial state of comment box
-          const commentBox = document.getElementById("comment-box");
-          const saveBtn = document.querySelector(".save-btn");
-          const editBtn = document.querySelector(".edit-btn");
-
-          commentBox.disabled = true;
-          saveBtn.disabled = true;
-        } catch (error) {
-          console.error("Error loading complaint details:", error);
-          container.innerHTML =
-            '<div class="error-message">حدث خطأ أثناء تحميل تفاصيل الشكوى</div>';
-        }
-      }
-
-      // Enable comment editing
-      function enableEdit() {
+        // Set initial state of comment box
         const commentBox = document.getElementById("comment-box");
         const saveBtn = document.querySelector(".save-btn");
         const editBtn = document.querySelector(".edit-btn");
 
-        commentBox.disabled = false;
-        saveBtn.disabled = false;
-        editBtn.disabled = true;
-        commentBox.focus();
+        commentBox.disabled = true;
+        saveBtn.disabled = true;
+      } catch (error) {
+        console.error("Error loading complaint details:", error);
+        container.innerHTML =
+          '<div class="error-message">حدث خطأ أثناء تحميل تفاصيل الشكوى</div>';
+      }
+    }
+
+    // Enable comment editing
+    function enableEdit() {
+      const commentBox = document.getElementById("comment-box");
+      const saveBtn = document.querySelector(".save-btn");
+      const editBtn = document.querySelector(".edit-btn");
+
+      commentBox.disabled = false;
+      saveBtn.disabled = false;
+      editBtn.disabled = true;
+      commentBox.focus();
+    }
+
+    // Save comment to database
+    async function saveComment(complaintId) {
+      const commentBox = document.getElementById("comment-box");
+      const saveBtn = document.querySelector(".save-btn");
+      const editBtn = document.querySelector(".edit-btn");
+      const comment = commentBox.value;
+
+      try {
+        const complaintRef = doc(db, "Complaint", complaintId);
+        await updateDoc(complaintRef, { adminComment: comment });
+
+        alert("تم حفظ التعليق بنجاح!");
+        commentBox.disabled = true;
+        saveBtn.disabled = true;
+        editBtn.disabled = false;
+      } catch (error) {
+        console.error("Error saving comment:", error);
+        alert("حدث خطأ أثناء حفظ التعليق");
+      }
+    }
+
+    // Resolve complaint
+    async function resolveComplaint(complaintId) {
+      const isConfirmed = confirm("هل تريد وضع هذه الشكوى كـ'تم الحل'؟");
+      if (!isConfirmed) return;
+
+      try {
+        const complaintRef = doc(db, "Complaint", complaintId);
+        await updateDoc(complaintRef, { status: "resolved" });
+
+        alert("تم تحديث حالة الشكوى إلى 'تم الحل'");
+        loadComplaintDetails(); // Refresh the page
+      } catch (error) {
+        console.error("Error resolving complaint:", error);
+        alert("حدث خطأ أثناء تحديث حالة الشكوى");
+      }
+    }
+
+    // Suspend truck
+    async function suspendTruck(requestId, foodTruckId) {
+      if (!requestId || !foodTruckId) {
+        alert("تعذر العثور على معرف العربة أو الحالة.");
+        return;
       }
 
-      // Save comment to database
-      async function saveComment(complaintId) {
-        const commentBox = document.getElementById("comment-box");
-        const saveBtn = document.querySelector(".save-btn");
-        const editBtn = document.querySelector(".edit-btn");
-        const comment = commentBox.value;
+      const confirmSuspend = confirm("هل تريد تعليق العربة؟");
+      if (!confirmSuspend) return;
 
-        try {
-          const complaintRef = doc(db, "Complaint", complaintId);
-          await updateDoc(complaintRef, { adminComment: comment });
+      try {
+        const requestRef = doc(db, "Request", requestId);
+        await updateDoc(requestRef, { status: "suspended" });
+        alert("تم تعليق العربة بنجاح");
+        loadComplaintDetails(); // Refresh the page
+      } catch (error) {
+        console.error("Error suspending truck:", error);
+        alert("حدث خطأ أثناء تعليق العربة");
+      }
+    }
 
-          alert("تم حفظ التعليق بنجاح!");
-          commentBox.disabled = true;
-          saveBtn.disabled = true;
-          editBtn.disabled = false;
-        } catch (error) {
-          console.error("Error saving comment:", error);
-          alert("حدث خطأ أثناء حفظ التعليق");
-        }
+    // Reactivate truck
+    async function reactivateTruck(requestId, foodTruckId) {
+      if (!requestId || !foodTruckId) {
+        alert("تعذر العثور على معرف العربة أو الحالة.");
+        return;
       }
 
-      // Resolve complaint
-      async function resolveComplaint(complaintId) {
-        const isConfirmed = confirm("هل تريد وضع هذه الشكوى كـ'تم الحل'؟");
-        if (!isConfirmed) return;
+      const confirmReactivate = confirm("هل تريد إعادة تفعيل العربة؟");
+      if (!confirmReactivate) return;
 
-        try {
-          const complaintRef = doc(db, "Complaint", complaintId);
-          await updateDoc(complaintRef, { status: "resolved" });
-
-          alert("تم تحديث حالة الشكوى إلى 'تم الحل'");
-          loadComplaintDetails(); // Refresh the page
-        } catch (error) {
-          console.error("Error resolving complaint:", error);
-          alert("حدث خطأ أثناء تحديث حالة الشكوى");
-        }
+      try {
+        const requestRef = doc(db, "Request", requestId);
+        await updateDoc(requestRef, { status: "accepted" });
+        alert("تم إعادة تفعيل العربة بنجاح");
+        loadComplaintDetails(); // Refresh the page
+      } catch (error) {
+        console.error("Error reactivating truck:", error);
+        alert("حدث خطأ أثناء إعادة تفعيل العربة");
       }
+    }
 
-      // Suspend truck
-      async function suspendTruck(requestId, foodTruckId) {
-        if (!requestId || !foodTruckId) {
-          alert("تعذر العثور على معرف العربة أو الحالة.");
-          return;
-        }
+    // Expose functions to global scope
+    window.enableEdit = enableEdit;
+    window.saveComment = saveComment;
+    window.resolveComplaint = resolveComplaint;
+    window.suspendTruck = suspendTruck;
+    window.reactivateTruck = reactivateTruck;
 
-        const confirmSuspend = confirm("هل تريد تعليق العربة؟");
-        if (!confirmSuspend) return;
-
-        try {
-          const requestRef = doc(db, "Request", requestId);
-          await updateDoc(requestRef, { status: "suspended" });
-          alert("تم تعليق العربة بنجاح");
-          loadComplaintDetails(); // Refresh the page
-        } catch (error) {
-          console.error("Error suspending truck:", error);
-          alert("حدث خطأ أثناء تعليق العربة");
-        }
+    // Logout functionality
+    const logoutIcon = document.getElementById("logout-icon");
+    logoutIcon.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        alert("تم تسجيل الخروج بنجاح!");
+        window.location.href = "WelcomePage.html";
+      } catch (error) {
+        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
       }
+    });
 
-      // Reactivate truck
-      async function reactivateTruck(requestId, foodTruckId) {
-        if (!requestId || !foodTruckId) {
-          alert("تعذر العثور على معرف العربة أو الحالة.");
-          return;
+    // Notification Functions<!--*************************************************************************************************************-->
+    async function checkPendingTrucks() {
+      try {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const requestStatusMap = {};
+        requestsSnapshot.forEach(doc => {
+          requestStatusMap[doc.id] = doc.data().status;
+        });
+
+        let pendingCount = 0;
+        trucksSnapshot.forEach(doc => {
+          const statusId = doc.data().statusId;
+          if (statusId && requestStatusMap[statusId] === "pending") {
+            pendingCount++;
+          }
+        });
+
+        const badge = document.getElementById("notification-badge");
+        const icon = document.getElementById("notification-icon");
+
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove("hidden");
+          badge.classList.add("has-notifications");
+          icon.style.color = "#7A557A"; // Change icon color
+        } else {
+          badge.classList.add("hidden");
+          badge.classList.remove("has-notifications");
+          icon.style.color = ""; // Reset icon color
         }
-
-        const confirmReactivate = confirm("هل تريد إعادة تفعيل العربة؟");
-        if (!confirmReactivate) return;
-
-        try {
-          const requestRef = doc(db, "Request", requestId);
-          await updateDoc(requestRef, { status: "accepted" });
-          alert("تم إعادة تفعيل العربة بنجاح");
-          loadComplaintDetails(); // Refresh the page
-        } catch (error) {
-          console.error("Error reactivating truck:", error);
-          alert("حدث خطأ أثناء إعادة تفعيل العربة");
-        }
+      } catch (error) {
+        console.error("Error checking pending trucks:", error);
       }
+    }
 
-      // Expose functions to global scope
-      window.enableEdit = enableEdit;
-      window.saveComment = saveComment;
-      window.resolveComplaint = resolveComplaint;
-      window.suspendTruck = suspendTruck;
-      window.reactivateTruck = reactivateTruck;
+    // Add click handler for notification icon
+    // Notification click handler
+    document.getElementById("notification-trigger").addEventListener("click", function (e) {
+      e.stopPropagation();
+      const badge = document.getElementById("notification-badge");
+      const popup = document.getElementById("notification-popup");
+      const message = document.getElementById("notification-message");
 
-      // Logout functionality
-      const logoutIcon = document.getElementById("logout-icon");
-      logoutIcon.addEventListener("click", async () => {
-        try {
-          await signOut(auth);
-          alert("تم تسجيل الخروج بنجاح!");
-          window.location.href = "WelcomePage.html";
-        } catch (error) {
-          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-        }
-      });
-    </script>
-  </body>
+      if (!badge.classList.contains("hidden")) {
+        const count = badge.textContent;
+        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+        popup.classList.toggle("hidden");
+      }
+    });
+
+    // Confirm button handler
+    document.getElementById("notification-confirm").addEventListener("click", function () {
+      window.location.href = "WaitingTrucks.html";
+    });
+
+    // Close when clicking elsewhere
+    document.addEventListener("click", function () {
+      document.getElementById("notification-popup").classList.add("hidden");
+    });
+  </script>
+</body>
+
 </html>
