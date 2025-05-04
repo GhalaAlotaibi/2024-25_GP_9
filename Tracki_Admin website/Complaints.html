@@ -386,14 +386,25 @@
     </div>
     <!-- Footer -->
     <div class="footer">
-        <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
     </div>
     <!-- Firebase Script -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-        import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-        import { collection, getDocs, doc, getDoc, updateDoc, addDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+      import {
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+        updateDoc,
+        addDoc,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
         // Firebase configuration
         const firebaseConfig = {
@@ -776,5 +787,5 @@
             document.getElementById("notification-popup").classList.add("hidden");
         });
     </script>
-
+  </body>
 </html>

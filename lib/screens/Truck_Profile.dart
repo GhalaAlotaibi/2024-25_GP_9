@@ -2,10 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/Add_Item.dart';
+import 'package:tracki/screens/Edit_Item.dart';
 import 'package:tracki/widgets/items_display_right.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import 'add_item.dart';
-import 'edit_item.dart';
+ 
 import 'owner_main_screen.dart';
 //needs update! g
 

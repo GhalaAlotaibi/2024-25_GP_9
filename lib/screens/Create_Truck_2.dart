@@ -93,8 +93,8 @@ class _CreateTruck2State extends State<CreateTruck2> {
 
         //ADD TO HISTORY
         await history.add({
-          'docType':'Food Truck Registration Request',
-          'Details':'طلب تسجيل عربة ${widget.truckName} برقم المعرف $truckId',
+          'docType': 'Food Truck Registration Request',
+          'Details': 'طلب تسجيل عربة ${widget.truckName} برقم المعرف $truckId',
           'timestamp': FieldValue.serverTimestamp(),
         });
 
@@ -142,7 +142,7 @@ class _CreateTruck2State extends State<CreateTruck2> {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: Color(0xFF674188),
+        backgroundColor: kBannerColor,
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
@@ -279,6 +279,8 @@ class _CreateTruck2State extends State<CreateTruck2> {
                           markers: {
                             Marker(
                               markerId: MarkerId('selected_location'),
+                              position:
+                                  _selectedLocation, //the only addition to make marker/pin show
                             ),
                           },
                         ),

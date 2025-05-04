@@ -138,7 +138,7 @@ class _MenuUpdateState extends State<MenuUpdate> {
           children: [
             const SizedBox(width: 115),
             const Text(
-              "تحديث قائمة الطعام ",
+              "قائمة الطعام ",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -178,158 +178,187 @@ class _MenuUpdateState extends State<MenuUpdate> {
                   return const Center(child: Text("Truck not found."));
                 }
 
+                final itemCount = truckData['item_names_list']?.length ?? 0;
+
+                var children = [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              AddItem(truckId: widget.ownerID),
+                        ),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kBannerColor,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(15),
+                      ),
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add_circle_outline, color: Colors.white),
+                        SizedBox(width: 8),
+                        Text(
+                          "إضافة صنف",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  if (itemCount == 0)
+                    Column(
+                      children: [
+                        const SizedBox(height: 40),
+                        Center(
+                          child: Image.asset(
+                            'assets/images/emptyState.png',
+                            width: 200,
+                            height: 200,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        const Text(
+                          'لا توجد أصناف في القائمة بعد',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Color.fromARGB(255, 167, 167, 167),
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 40),
+                      ],
+                    )
+                  else
+                    // Menu Items
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: truckData['item_names_list']?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8),
+                          padding: const EdgeInsets.all(0),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            border: Border.all(
+                                color: Colors.grey.shade300, width: 1),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.grey.withOpacity(0.1),
+                                spreadRadius: 3,
+                                blurRadius: 5,
+                                offset: const Offset(0, 3),
+                              ),
+                            ],
+                          ),
+                          child: ListTile(
+                            title: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  children: [
+                                    IconButton(
+                                      iconSize: 23,
+                                      icon: const Icon(Icons.edit),
+                                      onPressed: () {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => EditItem(
+                                              truckId: widget.ownerID,
+                                              itemName:
+                                                  truckData['item_names_list']
+                                                      [index],
+                                              itemPrice:
+                                                  truckData['item_prices_list']
+                                                      [index],
+                                              itemImage:
+                                                  truckData['item_images_list']
+                                                      [index],
+                                              itemIndex: index,
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      iconSize: 20,
+                                      icon: const Icon(Iconsax.trash4),
+                                      color: const Color.fromARGB(255, 0, 0, 0),
+                                      onPressed: () {
+                                        _showDeleteConfirmationDialog(
+                                            index, truckData);
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: [
+                                      Text(
+                                        truckData['item_names_list'][index],
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                        textAlign: TextAlign.right,
+                                      ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.end,
+                                        children: [
+                                          Image.asset(
+                                            'assets/images/Riyal.png',
+                                            width: 16,
+                                            height: 16,
+                                          ),
+                                          Text(
+                                            "${truckData['item_prices_list'][index]} ",
+                                            textAlign: TextAlign.right,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 15),
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(10),
+                                  child: Image.network(
+                                    truckData['item_images_list'][index],
+                                    width: 90,
+                                    height: 90,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                ];
                 return SingleChildScrollView(
                   padding:
                       const EdgeInsets.symmetric(horizontal: 23, vertical: 15),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  AddItem(truckId: widget.ownerID),
-                            ),
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: kBannerColor,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(15),
-                          ),
-                        ),
-                        child: const Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(Icons.add_circle_outline, color: Colors.white),
-                            SizedBox(width: 8),
-                            Text(
-                              "إضافة صنف",
-                              style: TextStyle(color: Colors.white),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Menu Items
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: truckData['item_names_list']?.length ?? 0,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(vertical: 8),
-                            padding: const EdgeInsets.all(0),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              border: Border.all(
-                                  color: Colors.grey.shade300, width: 1),
-                              borderRadius: BorderRadius.circular(10),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.grey.withOpacity(0.1),
-                                  spreadRadius: 3,
-                                  blurRadius: 5,
-                                  offset: const Offset(0, 3),
-                                ),
-                              ],
-                            ),
-                            child: ListTile(
-                              title: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    children: [
-                                      IconButton(
-                                        iconSize: 23,
-                                        icon: const Icon(Icons.edit),
-                                        onPressed: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) => EditItem(
-                                                truckId: widget.ownerID,
-                                                itemName:
-                                                    truckData['item_names_list']
-                                                        [index],
-                                                itemPrice: truckData[
-                                                    'item_prices_list'][index],
-                                                itemImage: truckData[
-                                                    'item_images_list'][index],
-                                                itemIndex: index,
-                                              ),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      IconButton(
-                                        iconSize: 20,
-                                        icon: const Icon(Iconsax.trash4),
-                                        color:
-                                            const Color.fromARGB(255, 0, 0, 0),
-                                        onPressed: () {
-                                          _showDeleteConfirmationDialog(
-                                              index, truckData);
-                                        },
-                                      ),
-                                    ],
-                                  ),
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.end,
-                                      children: [
-                                        Text(
-                                          truckData['item_names_list'][index],
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                          textAlign: TextAlign.right,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.end,
-                                          children: [
-                                            const Text('ريال',
-                                                style: TextStyle(
-                                                    color: Colors.grey)),
-                                            Text(
-                                              "${truckData['item_prices_list'][index]} ",
-                                              textAlign: TextAlign.right,
-                                              style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const SizedBox(width: 15),
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      truckData['item_images_list'][index],
-                                      width: 90,
-                                      height: 90,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
+                    children: children,
                   ),
                 );
               },
@@ -365,7 +394,6 @@ class _MenuUpdateState extends State<MenuUpdate> {
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.white,
-                        fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),

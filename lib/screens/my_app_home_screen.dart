@@ -8,10 +8,11 @@ import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/food_truck_profile_display.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/view_all_items.dart';
+import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/banner.dart';
 import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import '../user_auth/firebase_auth_services.dart';
+ 
 import 'package:flutter/gestures.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;

@@ -5,6 +5,9 @@ import 'package:http/http.dart' as http;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
+import 'package:url_launcher/url_launcher.dart'; // Add this import
 
 class NavigationStep {
   final String instruction;
@@ -58,6 +61,22 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
     _getUserLocation();
   }
 
+  // Add this new method to launch Google Maps with navigation
+  Future<void> _launchGoogleMapsNavigation() async {
+    if (_userLocation == null || _destinationLocation == null) return;
+
+    final url =
+        'https://www.google.com/maps/dir/?api=1&origin=${_userLocation!.latitude},${_userLocation!.longitude}&destination=${_destinationLocation!.latitude},${_destinationLocation!.longitude}&travelmode=driving';
+
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not launch Google Maps')),
+      );
+    }
+  }
+
   Future<void> _getUserLocation() async {
     Position position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high);
@@ -92,14 +111,14 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
         Marker(
           markerId: const MarkerId('start'),
           position: _userLocation!,
-          infoWindow: const InfoWindow(title: 'Your Location'),
+          infoWindow: const InfoWindow(title: 'موقعك'),
         ),
       );
       _markers.add(
         Marker(
           markerId: const MarkerId('end'),
           position: _destinationLocation!,
-          infoWindow: InfoWindow(title: widget.destination),
+          infoWindow: InfoWindow(title: "موقع العربة"),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
         ),
       );
@@ -410,22 +429,64 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Google Map'),
+        backgroundColor: kbackgroundColor,
+        automaticallyImplyLeading: false,
+        elevation: 0,
+        actions: [
+          const Spacer(),
+          const Text(
+            "موقع العربة",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(width: 87),
+          MyIconButton(
+              icon: Icons.arrow_forward_ios,
+              pressed: () {
+                Navigator.pop(context);
+              }),
+          const SizedBox(width: 15),
+        ],
       ),
       body: _userLocation == null
           ? const Center(child: CircularProgressIndicator())
-          : GoogleMap(
-              initialCameraPosition: CameraPosition(
-                target: _userLocation!,
-                zoom: 14.0,
-              ),
-              myLocationEnabled: true,
-              myLocationButtonEnabled: true,
-              onMapCreated: (controller) {
-                _mapController = controller;
-              },
-              markers: _markers,
-              polylines: _polylines,
+          : Stack(
+              children: [
+                GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: _userLocation!,
+                    zoom: 14.0,
+                  ),
+                  myLocationEnabled: true,
+                  myLocationButtonEnabled: true,
+                  onMapCreated: (controller) {
+                    _mapController = controller;
+                  },
+                  markers: _markers,
+                  polylines: _polylines,
+                ),
+                Positioned(
+                  bottom: 12,
+                  left: 10,
+                  right: 150,
+                  child: ElevatedButton(
+                    onPressed: _launchGoogleMapsNavigation,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: kBannerColor,
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: const Text(
+                      'الاتجاهات',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
     );
   }

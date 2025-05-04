@@ -41,7 +41,6 @@ class _AddItemState extends State<AddItem> {
       });
 
       try {
-  
         String fileName =
             'images/${widget.truckId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
         Reference storageRef = FirebaseStorage.instance.ref().child(fileName);
@@ -49,7 +48,6 @@ class _AddItemState extends State<AddItem> {
         TaskSnapshot snapshot = await uploadTask;
         String imageUrl = await snapshot.ref.getDownloadURL();
 
-        
         CollectionReference trucks =
             FirebaseFirestore.instance.collection('Food_Truck');
         DocumentSnapshot truckSnapshot = await trucks.doc(widget.truckId).get();
@@ -251,7 +249,7 @@ class _AddItemState extends State<AddItem> {
                     ],
                   ),
                 ),
-              ), 
+              ),
             ),
           ),
         ],

@@ -1,249 +1,249 @@
 /**********************************************(AllTrucks)*********************************************************/
 /* Style for table */
 table {
-    width: 100%;
-    table-layout: auto;
-    border-collapse: collapse;
-    border-radius: 10px;
-    overflow: hidden;
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  border-radius: 10px;
+  overflow: hidden;
 }
 
 /* Row background color */
 tr:nth-child(odd),
 tr:nth-child(even) {
-    background-color: #faf1f4;
-    /* Slightly darker for even rows */
+  background-color: #faf1f4;
+  /* Slightly darker for even rows */
 }
 
 /* Other styles for table rows and cells */
 th,
 td {
-    padding: 10px;
-    text-align: right;
-    border-bottom: 1px solid #ddd;
-    word-wrap: break-word;
-    white-space: normal;
+  padding: 10px;
+  text-align: right;
+  border-bottom: 1px solid #ddd;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 th {
-    background-color: #7A557A;
-    color: #faf3f0;
-    font-weight: bold;
-    letter-spacing: 1px;
+  background-color: #7a557a;
+  color: #faf3f0;
+  padding: 12px 15px;
+  text-align: right;
+  font-weight: 500;
 }
 
 td {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-
 tr:hover {
-    background-color: rgba(154, 119, 154, 0.1);
-    cursor: pointer;
+  background-color: rgba(154, 119, 154, 0.1);
+  cursor: pointer;
 }
 
 .content {
-    overflow-x: auto;
-    padding: 25px;
-    background-color: #ffffff;
-    color: #5B3E5B;
-    box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
+  overflow-x: auto;
+  padding: 25px;
+  background-color: #ffffff;
+  color: #5b3e5b;
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
 }
 
 /**********---------- Style of Fetched Data ----------**********/
 /* Style for trucks */
 .active-row,
 .inactive-row {
-    background-color: #ffffff;
-    font-weight: bold;
+  background-color: #ffffff;
+  font-weight: bold;
 }
 
 /*----------Accept and Decline button for UpdateLocationRequests----------*/
 /* Accept button styling */
 .accept-btn {
-    background-color: transparent;  /* No background color */
-    color: #048404;                 /* Green color for the icon */
-    border: none;                   /* Remove the border */
-    font-size: 16px;                /* Size of the icon */
-    padding: 0;                     /* No padding */
-    cursor: pointer;               /* Pointer cursor on hover */
-    display: inline-flex;           /* Display icon inline */
-    align-items: center;            /* Align icon vertically */
+  background-color: transparent; /* No background color */
+  color: #048404; /* Green color for the icon */
+  border: none; /* Remove the border */
+  font-size: 16px; /* Size of the icon */
+  padding: 0; /* No padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: inline-flex; /* Display icon inline */
+  align-items: center; /* Align icon vertically */
 }
 
 .accept-btn:hover {
-    color: #45a049;                 /* Darker green when hovering */
+  color: #45a049; /* Darker green when hovering */
 }
 
 /* Reject button styling */
 .reject-btn {
-    background-color: transparent;  /* No background color */
-    color: #fc0707;                 /* Red color for the icon */
-    border: none;                   /* Remove the border */
-    font-size: 16px;                /* Size of the icon */
-    padding: 0;                     /* No padding */
-    cursor: pointer;               /* Pointer cursor on hover */
-    display: inline-flex;           /* Display icon inline */
-    align-items: center;            /* Align icon vertically */
+  background-color: transparent; /* No background color */
+  color: #fc0707; /* Red color for the icon */
+  border: none; /* Remove the border */
+  font-size: 16px; /* Size of the icon */
+  padding: 0; /* No padding */
+  cursor: pointer; /* Pointer cursor on hover */
+  display: inline-flex; /* Display icon inline */
+  align-items: center; /* Align icon vertically */
 }
 
 .reject-btn:hover {
-    color: #e53e3e;                 /* Darker red when hovering */
+  color: #e53e3e; /* Darker red when hovering */
 }
 
 /*------------------------------------------------------------------------*/
 /* Hover effect for active and inactive rows */
 .active-row:hover {
-    background-color: #f3dada;
-    /* Lighter green when hovered */
+  background-color: #f3dada;
+  /* Lighter green when hovered */
 }
 
 .inactive-row:hover {
-    background-color: #f3dada;
-    /* Lighter red when hovered */
+  background-color: #f3dada;
+  /* Lighter red when hovered */
 }
 
 /**********---------- Style of Pagination ----------**********/
 /* Pagination Container */
 #pagination-controls {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px;
-    margin-top: 20px;
-    font-family: 'Zain', sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  margin-top: 20px;
+  font-family: "Zain", sans-serif;
 }
 
 /* Pagination Links */
 #pagination-controls .pagination-link {
-    color: #ac8eac;
-    font-size: 18px;
-    font-weight: 500;
-    cursor: pointer;
-    text-decoration: none;
-    transition: color 0.3s ease;
+  color: #ac8eac;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.3s ease;
 }
 
 /* Hover Effect */
 #pagination-controls .pagination-link:hover {
-    color: #0056b3;
-    text-decoration: underline;
+  color: #0056b3;
+  text-decoration: underline;
 }
 
 /* Active Page Styling */
 #pagination-controls .active-page {
-    color: #5B3E5B;
-    font-weight: bold;
-    text-decoration: underline;
+  color: #5b3e5b;
+  font-weight: bold;
+  text-decoration: underline;
 }
 
 /* Disabled State */
 #pagination-controls .disabled {
-    color: #ac8eac;
-    cursor: not-allowed;
-    text-decoration: none;
+  color: #ac8eac;
+  cursor: not-allowed;
+  text-decoration: none;
 }
 
 /********************---Search and Filering---********************/
 .Searchandfilter {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
 }
 
 /********************---Search---********************/
 #search-bar {
-    padding: 5px;
-    font-size: 16px;
-    width: 250px;
-    border-radius: 10px;
-    border: 2px solid #5B3E5B; /* Change #yourColor to your desired border color */
+  padding: 5px;
+  font-size: 16px;
+  width: 250px;
+  border-radius: 10px;
+  border: 2px solid #5b3e5b; /* Change #yourColor to your desired border color */
 }
 
 /********************---Filtering---********************/
 .filter-container {
-    position: relative;
-    display: inline-block;
+  position: relative;
+  display: inline-block;
 }
 
 .filter-icon {
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 24px; /* Adjust icon size */
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 24px; /* Adjust icon size */
 }
 
 .dropdown-content {
-    display: none; /* Initially hidden */
-    position: absolute; /* Position relative to parent */
-    background-color: #f9f9f9;
-    width: 150px; /* Set desired width */
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 2; /* Ensure primary dropdown has a lower z-index */
-    border-radius: 8px; /* Rounded corners */
-    transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
+  display: none; /* Initially hidden */
+  position: absolute; /* Position relative to parent */
+  background-color: #f9f9f9;
+  width: 150px; /* Set desired width */
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 2; /* Ensure primary dropdown has a lower z-index */
+  border-radius: 8px; /* Rounded corners */
+  transition: opacity 0.3s ease, visibility 0.3s ease; /* Smooth transitions */
 }
 
 .dropdown-content a {
-    color: #5B3E5B; /* Color of links */
-    padding: 8px 12px; /* Reduced padding for compactness */
-    text-decoration: none;
-    display: block;
-    border-bottom: 1px solid #ddd; /* Separation between options */
+  color: #5b3e5b; /* Color of links */
+  padding: 8px 12px; /* Reduced padding for compactness */
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #ddd; /* Separation between options */
 }
 
 .dropdown-content a:last-child {
-    border-bottom: none; /* Remove border from last item */
+  border-bottom: none; /* Remove border from last item */
 }
 
 .dropdown-content a:hover {
-    background-color: #bbb; /* Hover background color */
+  background-color: #bbb; /* Hover background color */
 }
 
 .filter-icon img {
-    width: 30px; 
-    height: 30px; 
+  width: 30px;
+  height: 30px;
 }
 
 .dropdown-header {
-    font-weight: bold;
-    padding: 8px 12px; /* Reduced padding */
-    background-color: #f0f0f0; /* Example background */
-    text-align: center; /* Center the text */
-    font-size: 14px; /* Adjust font size */
+  font-weight: bold;
+  padding: 8px 12px; /* Reduced padding */
+  background-color: #f0f0f0; /* Example background */
+  text-align: center; /* Center the text */
+  font-size: 14px; /* Adjust font size */
 }
 
 /* Positioning for secondary lists to appear on the left */
 #status-list {
-    left: -160px; /* Adjust accordingly to position to the left of the parent */
-    top: 0; /* Align to the top of the parent */
+  left: -160px; /* Adjust accordingly to position to the left of the parent */
+  top: 0; /* Align to the top of the parent */
 }
 
 #category-list {
-    left: -160px; /* Adjust accordingly */
-    top: 0; /* Align to the top */
+  left: -160px; /* Adjust accordingly */
+  top: 0; /* Align to the top */
 }
 
 #ratings-list {
-    left: -160px; /* Adjust accordingly */
-    top: 0; /* Align to the top */
+  left: -160px; /* Adjust accordingly */
+  top: 0; /* Align to the top */
 }
 
 #complaints-list {
-    left: -160px; /* Adjust accordingly */
-    top: 0; /* Align to the top */
+  left: -160px; /* Adjust accordingly */
+  top: 0; /* Align to the top */
 }
 
 #no-matches-message {
-    display: none; /* Initially hidden */
-    color: #7A557A; /* Text color */
-    text-align: center; /* Centered text */
-    font-size: 20px; /* Adjust font size to your preference */
-    margin: 10px 0; /* Space above and below the message */
+  display: none; /* Initially hidden */
+  color: #7a557a; /* Text color */
+  text-align: center; /* Centered text */
+  font-size: 20px; /* Adjust font size to your preference */
+  margin: 10px 0; /* Space above and below the message */
 }

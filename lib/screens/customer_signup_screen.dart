@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/user_type_selection_screen.dart';
 import 'package:tracki/screens/welcome_screen.dart';
+import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import 'login_screen.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'app_main_screen.dart';
-import '../user_auth/firebase_auth_services.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -24,6 +25,41 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final FirebaseAuthService _authService = FirebaseAuthService();
   bool agreePersonalData = true;
 
+ String? emailErrorText;
+  String? passwordErrorText;
+  String? usernameErrorText;
+
+   bool validateAllFields() {
+    setState(() {
+      if (usernameController.text.isEmpty) {
+        usernameErrorText = 'الرجاء إدخال اسم المستخدم';
+      } else {
+        usernameErrorText = null;
+      }
+
+      if (emailController.text.isEmpty) {
+        emailErrorText = 'الرجاء إدخال البريد الإلكتروني';
+      } else if (!RegExp(r'^[\w\.-]+@(?:gmail\.com|hotmail\.com|yahoo\.com|outlook\.com)$')
+    .hasMatch(emailController.text)) {
+ emailErrorText = '.الرجاء إدخال بريد إلكتروني صالح';
+}else {
+        emailErrorText = null;
+      }
+
+      if (passwordController.text.isEmpty) {
+        passwordErrorText = 'الرجاء إدخال الرمز السري';
+      } else if (passwordController.text.length < 8) {
+        passwordErrorText = 'يجب أن لا يقل الرمز السري عن 8 خانات';
+      } else if (!RegExp(r'^(?=.*\d)(?=.*[a-zA-Z]).{8,}$').hasMatch(passwordController.text)) {
+        passwordErrorText = 'يجب أن يحتوي الرمز السري على أحرف وأرقام';
+      } else {
+        passwordErrorText = null;
+      }
+    });
+
+    return usernameErrorText == null && emailErrorText == null && passwordErrorText == null;
+  }
+  
   @override
   void dispose() {
     emailController.dispose();
@@ -37,9 +73,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(0xFF674188),
+          backgroundColor: kBannerColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF674188),
+            backgroundColor: kBannerColor,
             automaticallyImplyLeading: false,
             elevation: 0,
             actions: [
@@ -85,104 +121,114 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             style: TextStyle(
                               fontSize: 27.0,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF674188),
+                              color: kBannerColor,
                             ),
                             textAlign: TextAlign.right,
                           ),
                           const SizedBox(height: 20.0),
 
-                          TextFormField(
-                            controller: usernameController,
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'الرجاء إدخال اسم المستخدم';
+                           TextFormField(
+                          controller: usernameController,
+                          textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.right,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value.isEmpty) {
+                                usernameErrorText = 'الرجاء إدخال اسم المستخدم';
+                              } else {
+                                usernameErrorText = null;
                               }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              label: const Text('اسم المستخدم',
-                                  textAlign: TextAlign.right),
-                              hintText: 'ادخل اسم المستخدم',
-                              hintStyle: const TextStyle(color: Colors.black26),
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              alignLabelWithHint: true,
+                            });
+                          },
+                          decoration: InputDecoration(
+                            label: const Text('اسم المستخدم', textAlign: TextAlign.right),
+                            hintText: 'ادخل اسم المستخدم',
+                            errorText: usernameErrorText,
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignLabelWithHint: true,
                           ),
+                        ),
                           const SizedBox(height: 25.0),
 // Email
-                          TextFormField(
-                            controller: emailController,
-                            textDirection: TextDirection.rtl,
-                            textAlign: TextAlign.right,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'الرجاء إدخال البريد الإلكتروني';
+                           TextFormField(
+                          controller: emailController,
+                          textDirection: TextDirection.rtl,
+                          textAlign: TextAlign.right,
+                          onChanged: (value) {
+                            setState(() {
+                              if (value.isEmpty) {
+                                emailErrorText = 'الرجاء إدخال البريد الإلكتروني';
+                              } else if (!RegExp(r'^[\w\.-]+@(?:gmail\.com|hotmail\.com|yahoo\.com|outlook\.com)$')
+    .hasMatch(emailController.text)) {
+ emailErrorText = '.الرجاء إدخال بريد إلكتروني صالح';
+} else {
+                                emailErrorText = null;
                               }
-                              return null;
-                            },
-                            decoration: InputDecoration(
-                              labelText: 'البريد الإلكتروني',
-                              hintText: 'ادخل البريد الإلكتروني',
-                              hintStyle: const TextStyle(color: Colors.black26),
-                              labelStyle: const TextStyle(
-                                color: Colors.black54,
-                              ),
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              contentPadding:
-                                  const EdgeInsets.fromLTRB(10, 15, 10, 15),
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'البريد الإلكتروني',
+                            hintText: 'ادخل البريد الإلكتروني',
+                            errorText: emailErrorText,
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            labelStyle: const TextStyle(
+                              color: Colors.black54,
                             ),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            contentPadding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                           ),
+                        ),
                           const SizedBox(height: 25.0), // Password
-                          TextFormField(
-                            controller: passwordController,
-                            textDirection: TextDirection.rtl,
-                            obscureText: true,
-                            obscuringCharacter: '*',
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'الرجاء إدخال الرمز السري';
+                         TextFormField(
+                          controller: passwordController,
+                          textDirection: TextDirection.rtl,
+                          obscureText: true,
+                          obscuringCharacter: '*',
+                          onChanged: (value) {
+                            setState(() {
+                              if (value.isEmpty) {
+                                passwordErrorText = 'الرجاء إدخال الرمز السري';
+                              } else if (value.length < 8) {
+                                passwordErrorText = 'يجب أن لا يقل الرمز السري عن 8 خانات';
+                              } else if (!RegExp(r'^(?=.*\d)(?=.*[a-zA-Z]).{8,}$').hasMatch(value)) {
+                                passwordErrorText = 'يجب أن يحتوي الرمز السري على أحرف وأرقام';
+                              } else {
+                                passwordErrorText = null;
                               }
-                              return null;
-                            },
-                            textAlign: TextAlign.right,
-                            decoration: InputDecoration(
-                              labelText: 'الرمز السري',
-                              hintText: 'ادخل الرمز السري',
-                              hintStyle: const TextStyle(color: Colors.black26),
-                              border: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    const BorderSide(color: Colors.black12),
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              contentPadding:
-                                  const EdgeInsets.fromLTRB(10, 15, 10, 15),
+                            });
+                          },
+                          textAlign: TextAlign.right,
+                          decoration: InputDecoration(
+                            labelText: 'الرمز السري',
+                            hintText: 'ادخل الرمز السري',
+                            errorText: passwordErrorText,
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            border: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            contentPadding: const EdgeInsets.fromLTRB(10, 15, 10, 15),
                           ),
+                        ),
                           const SizedBox(height: 25.0),
                           Row(
                             textDirection: TextDirection.rtl,
@@ -194,8 +240,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     agreePersonalData = value!;
                                   });
                                 },
-                                activeColor:
-                                    const Color.fromARGB(255, 105, 99, 197),
+                                activeColor: kBannerColor,
                               ),
                               const Text(
                                 'أوافق على  السماح بمعالجة البيانات الشخصية',
@@ -209,8 +254,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             width: double.infinity,
                             child: ElevatedButton(
                               onPressed: () async {
-                                if (_formSignupKey.currentState!.validate() &&
-                                    agreePersonalData) {
+                               if (_formSignupKey.currentState!.validate() &&
+                                  agreePersonalData &&
+                                  validateAllFields()) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('جاري معالجة البيانات'),
+                                  ),
+                                );
                                   String email = emailController.text.trim();
                                   String password =
                                       passwordController.text.trim();
@@ -261,6 +312,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: kBannerColor,
+                                 elevation: 5.0,//added shadow
                               ),
                               child: const Text(
                                 'انشاء حساب جديد',
@@ -292,7 +344,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     'تسجيل الدخول',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 139, 65, 174),
+                                      color: Color.fromARGB(255, 76, 51, 92),
                                     ),
                                   ),
                                 ),

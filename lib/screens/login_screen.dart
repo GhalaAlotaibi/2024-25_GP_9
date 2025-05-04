@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'package:tracki/screens/app_main_screen.dart';
@@ -12,11 +11,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracki/screens/statusPending.dart';
 import 'package:tracki/screens/statusRejected.dart';
 import 'package:tracki/screens/forget_password_screen.dart';
+
 class LogInScreen extends StatefulWidget {
   const LogInScreen({super.key});
   @override
   State<LogInScreen> createState() => _LogInScreenState();
 }
+
 class _LogInScreenState extends State<LogInScreen> {
   final _formLogInKey = GlobalKey<FormState>();
   bool rememberPassword = true;
@@ -30,6 +31,7 @@ class _LogInScreenState extends State<LogInScreen> {
     passwordController.dispose();
     super.dispose();
   }
+
   Future<void> signIn() async {
     if (_formLogInKey.currentState!.validate() && !isLoading) {
       setState(() {
@@ -52,62 +54,63 @@ class _LogInScreenState extends State<LogInScreen> {
             .get();
         if (ownerDoc.exists) {
           // Owner *****************************************
-FirebaseFirestore.instance
-    .collection('Food_Truck')
-    .where('ownerID', isEqualTo: userID)
-    .get()
-    .then((querySnapshot) {
-  if (querySnapshot.docs.isNotEmpty) {
-    var foodTruckDoc = querySnapshot.docs.first;
-    String statusId = foodTruckDoc['statusId'];
-    if (statusId != null && statusId.isNotEmpty) {
-      FirebaseFirestore.instance
-          .collection('Request')
-          .doc(statusId)
-          .get()
-          .then((requestDoc) {
-        if (requestDoc.exists) {
-          String status = requestDoc['status'];
-       if (status == 'accepted' || status == 'suspended') {
-  Navigator.pushReplacement(
-    context,
-    MaterialPageRoute(
-      builder: (context) => OwnerMainScreen(
-        ownerID: userID,
-        isSuspended: status == 'suspended', // Pass the suspension flag
-      ),
-    ),
-  );
-} else if (status == 'pending') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StatusPending(),
-              ),
-            );
-          } else if (status == 'rejected') {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => StatusRejected(ownerID: userID),
-              ),
-            );
-          }
-        } else {
-          print('No Request document found for the given statusId.');
-        }
-      }).catchError((error) {
-        print('Error querying Request collection: $error');
-      });
-    } else {
-      print('statusId is null or empty in the Food_Truck document.');
-    }
-  } else {
-    print('No Food_Truck document found for the given ownerID.');
-  }
-}).catchError((error) {
-  print('Error querying Food_Truck collection: $error');
-});
+          FirebaseFirestore.instance
+              .collection('Food_Truck')
+              .where('ownerID', isEqualTo: userID)
+              .get()
+              .then((querySnapshot) {
+            if (querySnapshot.docs.isNotEmpty) {
+              var foodTruckDoc = querySnapshot.docs.first;
+              String statusId = foodTruckDoc['statusId'];
+              if (statusId != null && statusId.isNotEmpty) {
+                FirebaseFirestore.instance
+                    .collection('Request')
+                    .doc(statusId)
+                    .get()
+                    .then((requestDoc) {
+                  if (requestDoc.exists) {
+                    String status = requestDoc['status'];
+                    if (status == 'accepted' || status == 'suspended') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => OwnerMainScreen(
+                            ownerID: userID,
+                            isSuspended: status ==
+                                'suspended', // Pass the suspension flag
+                          ),
+                        ),
+                      );
+                    } else if (status == 'pending') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StatusPending(),
+                        ),
+                      );
+                    } else if (status == 'rejected') {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => StatusRejected(ownerID: userID),
+                        ),
+                      );
+                    }
+                  } else {
+                    print('No Request document found for the given statusId.');
+                  }
+                }).catchError((error) {
+                  print('Error querying Request collection: $error');
+                });
+              } else {
+                print('statusId is null or empty in the Food_Truck document.');
+              }
+            } else {
+              print('No Food_Truck document found for the given ownerID.');
+            }
+          }).catchError((error) {
+            print('Error querying Food_Truck collection: $error');
+          });
         } else {
           // Customer ***************************************************
           DocumentSnapshot customerDoc = await FirebaseFirestore.instance
@@ -132,14 +135,15 @@ FirebaseFirestore.instance
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-        backgroundColor: const Color(0xFF674188),
+        backgroundColor: kBannerColor,
         appBar: AppBar(
-          backgroundColor: const Color(0xFF674188),
+          backgroundColor: kBannerColor,
           automaticallyImplyLeading: false,
           elevation: 0,
           actions: [
@@ -184,7 +188,7 @@ FirebaseFirestore.instance
                           style: TextStyle(
                             fontSize: 30.0,
                             fontWeight: FontWeight.w600,
-                            color: Color(0xFF674188),
+                            color: kBannerColor,
                           ),
                           textAlign: TextAlign.right,
                         ),
@@ -347,6 +351,7 @@ FirebaseFirestore.instance
       ),
     );
   }
+
   bool isErrorMessage(String message) {
     const List<String> errorMessages = [
       'يرجى إدخال بريد إلكتروني صالح',

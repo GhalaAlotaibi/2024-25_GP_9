@@ -1,15 +1,115 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracki - التقييمات</title>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style>
+    h2 {
+      color: #7a557a;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tracki - التقييمات</title>
-  <link rel="stylesheet" href="Styles/Style.css" />
-  <link rel="stylesheet" href="Styles/AllTrucks.css" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet" />
-</head>
+    .table-container {
+      overflow-x: auto;
+    }
+
+    #reviews-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    #reviews-table th {
+      background-color: #7a557a;
+      color: #faf3f0;
+      padding: 12px 15px;
+      text-align: right;
+      font-weight: 500;
+    }
+
+    #reviews-table td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: right;
+    }
+
+    #reviews-table tr:nth-child(even) {
+      background-color: #faf1f4;
+    }
+
+    #reviews-table tr:hover {
+      background-color: #f5e5ef;
+    }
+
+    .star-rating {
+      color: #ffd700;
+      font-size: 1.1em;
+      white-space: nowrap;
+    }
+
+    .empty-star {
+      color: #ddd;
+    }
+
+    .review-comment {
+      max-width: 300px;
+      white-space: normal;
+      word-wrap: break-word;
+    }
+
+    .customer-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .customer-name {
+      font-weight: 500;
+      color: #333;
+    }
+
+    .customer-email {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 3px;
+    }
+
+    .timestamp {
+      color: #666;
+      font-size: 0.9em;
+      white-space: nowrap;
+    }
+
+    .truck-name {
+      font-weight: 500;
+      color: #7a557a;
+    }
+
+    @media (max-width: 768px) {
+      #reviews-table {
+        display: block;
+      }
+
+      #reviews-table th,
+      #reviews-table td {
+        padding: 8px 10px;
+        font-size: 0.9em;
+      }
+    }
+  </style>
 
 <body>
   <div class="main-container">
@@ -51,38 +151,41 @@
       </div>
     </section>
 
-    <div class="content">
-      <h2>التقييمات</h2>
-      <br />
-      <div class="table-container">
-        <table id="reviews-table">
-          <thead>
-            <tr>
-              <th>اسم العميل</th>
-              <th>البريد الإلكتروني</th>
-              <th>اسم العربة</th>
-              <th>التقييم</th>
-              <th>التعليق</th>
-              <th>الوقت</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Reviews will be added dynamically here -->
-          </tbody>
-        </table>
-        <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
-      </div>
+      <div class="content">
+        <h2>التقييمات</h2>
+        <br />
+        <div class="table-container">
+          <table id="reviews-table">
+            <thead>
+              <tr>
+                <th>اسم العميل</th>
+                <th>البريد الإلكتروني</th>
+                <th>اسم العربة</th>
+                <th>التقييم</th>
+                <th>التعليق</th>
+                <th>الوقت</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Reviews will be added dynamically here -->
+            </tbody>
+          </table>
+          <div
+            id="pagination-controls"
+            style="text-align: center; margin-top: 20px"
+          ></div>
+        </div>
 
-      <div class="loading" id="loading-message">
-        <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
-        <p>الرجاء الإنتظار...</p>
+        <div class="loading" id="loading-message">
+          <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
+          <p>الرجاء الإنتظار...</p>
+        </div>
       </div>
     </div>
-  </div>
 
-  <div class="footer">
-    <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
-  </div>
+    <div class="footer">
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
@@ -102,18 +205,18 @@
       orderBy
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-      authDomain: "trucki-database.firebaseapp.com",
-      projectId: "trucki-database",
-      storageBucket: "trucki-database.appspot.com",
-      messagingSenderId: "283818817351",
-      appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
-    };
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
     onAuthStateChanged(auth, (user) => {
       const statusElement = document.getElementById("status");

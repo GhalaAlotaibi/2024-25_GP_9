@@ -7,17 +7,19 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:tracki/Utils/constants.dart';
+
 class GoogleMapFlutter extends StatefulWidget {
   final double latitude;
   final double longitude;
   final String currentOwnerID;
-//owner update-location uKIvK7ytL9Mjl6zGf5AIDV6f1fq2
-  const GoogleMapFlutter(
-      {Key? key,
-      required this.latitude,
-      required this.longitude,
-      required this.currentOwnerID})
-      : super(key: key);
+
+  const GoogleMapFlutter({
+    Key? key,
+    required this.latitude,
+    required this.longitude,
+    required this.currentOwnerID,
+  }) : super(key: key);
 
   @override
   State<GoogleMapFlutter> createState() => _GoogleMapFlutterState();
@@ -65,63 +67,120 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             return AlertDialog(
-              title: Text("تحديث موقع العربة"),
-              content: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text("يرجى تحميل ملف رخصة تغيير الموقع"),
-                  SizedBox(height: 10),
-                  ElevatedButton.icon(
-                    onPressed: _pickAndUploadLicenseFile,
-                    icon: Icon(Icons.upload_file),
-                    label: Text(_licenseFile == null
-                        ? 'تحميل ملف الرخصة'
-                        : 'تم تحميل الملف'),
+              backgroundColor: Colors.grey[200], // Gray background
+              contentPadding: const EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
+              ),
+              title: Center(
+                child: Text(
+                  "تحديث موقع العربة",
+                  style: TextStyle(
+                    color: Colors.black, // Black title
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                  SizedBox(height: 10),
-                  Container(
-                    height: 300,
-                    width: double.infinity,
-                    child: GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: _newLocation,
-                        zoom: 14,
+                ),
+              ),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9, // Wider dialog
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text("يرجى تحميل ملف رخصة تغيير الموقع"),
+                    SizedBox(height: 15),
+                    ElevatedButton.icon(
+                      onPressed: _pickAndUploadLicenseFile,
+                      icon: Icon(Icons.upload_file, color: Colors.white),
+                      label: Text(
+                        _licenseFile == null
+                            ? 'تحميل ملف الرخصة'
+                            : 'تم تحميل الملف',
+                        style: TextStyle(color: Colors.white),
                       ),
-                      onMapCreated: (GoogleMapController controller) {
-                        _mapController = controller;
-                      },
-                      onTap: (LatLng tappedPoint) {
-                        setDialogState(() {
-                          _newLocation =
-                              tappedPoint; // Move marker to tap location
-                        });
-                      },
-                      markers: {
-                        Marker(
-                          markerId: MarkerId('updated_location'),
-                          position: _newLocation,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBannerColor, // Blue button
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
                         ),
-                      },
+                      ),
                     ),
-                  ),
-                ],
+                    SizedBox(height: 15),
+                    Container(
+                      height: 300,
+                      width: double.infinity,
+                      child: GoogleMap(
+                        initialCameraPosition: CameraPosition(
+                          target: _newLocation,
+                          zoom: 14,
+                        ),
+                        onMapCreated: (GoogleMapController controller) {
+                          _mapController = controller;
+                        },
+                        onTap: (LatLng tappedPoint) {
+                          setDialogState(() {
+                            _newLocation = tappedPoint;
+                          });
+                        },
+                        markers: {
+                          Marker(
+                            markerId: MarkerId('updated_location'),
+                            position: _newLocation,
+                          ),
+                        },
+                      ),
+                    ),
+                  ],
+                ),
               ),
               actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: Text("إلغاء"),
-                ),
-                TextButton(
-                  onPressed: () {
-                    setState(() {
-                      _selectedLocation = _newLocation; // Save the new location
-                    });
-                    Navigator.pop(context);
-                    _submitLocationUpdateRequest();
-                  },
-                  child: Text("حفظ الموقع"),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    // Cancel Button
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text(
+                        "إلغاء",
+                        style: TextStyle(color: kBannerColor),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white, // White button
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          side: BorderSide(color: kBannerColor), // Blue border
+                        ),
+                      ),
+                    ),
+                    // Save Button
+                    ElevatedButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedLocation = _newLocation;
+                        });
+                        Navigator.pop(context);
+                        _submitLocationUpdateRequest();
+                      },
+                      child: Text(
+                        "إرسال طلب التحديث",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBannerColor, // Blue button
+                        padding:
+                            EdgeInsets.symmetric(vertical: 12, horizontal: 25),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ],
             );
@@ -178,7 +237,7 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
 
       // Save the correct ownerID in Location_Update
       await FirebaseFirestore.instance.collection('Location_Update').add({
-        'ownerID': ownerID, // ✅ Now storing the actual ownerID
+        'ownerID': ownerID,
         'latitude': _selectedLocation.latitude,
         'longitude': _selectedLocation.longitude,
         'locationUpdateFile': _licenseFileUrl,
@@ -189,7 +248,7 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
 //ADD TO HISTORY
       await FirebaseFirestore.instance.collection('History').add({
         'docType': 'Location Update Request',
-        'Details':'طلب تحديث موقع عربة $truckName_h برقم المعرف $truckId_h',
+        'Details': 'طلب تحديث موقع عربة $truckName_h برقم المعرف $truckId_h',
         'timestamp': FieldValue.serverTimestamp(),
       });
       ScaffoldMessenger.of(context).showSnackBar(
@@ -203,7 +262,6 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
     }
   }
 
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Stack(
@@ -224,11 +282,23 @@ class _GoogleMapFlutterState extends State<GoogleMapFlutter> {
             },
           ),
           Positioned(
-            bottom: 20,
-            left: MediaQuery.of(context).size.width / 2 - 75,
+            bottom: 30,
+            left: MediaQuery.of(context).size.width / 2 - 100,
             child: ElevatedButton(
               onPressed: _showUpdateLocationDialog,
-              child: Text("تحديث موقع العربة"),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                child: Text(
+                  "تحديث موقع العربة",
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: kBannerColor, // Blue button
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
             ),
           ),
         ],

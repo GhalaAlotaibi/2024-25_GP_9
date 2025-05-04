@@ -6,8 +6,9 @@ import 'package:tracki/screens/favourites_page.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/update_email.dart';
 import 'package:tracki/screens/update_password.dart';
+import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import '../user_auth/firebase_auth_services.dart';
+ 
 
 class CustomerSettings extends StatefulWidget {
   final String customerID;
@@ -287,9 +288,9 @@ class _CustomerSettingsState extends State<CustomerSettings> {
         // Add the deletion event to the History collection
         await FirebaseFirestore.instance.collection('History').add({
           'docType': 'Customer Deletion',
-          'Details':'حذف حساب عميل $customerName برقم المعرّف ${widget.customerID}',
-          'timestamp': FieldValue
-              .serverTimestamp(), 
+          'Details':
+              'حذف حساب عميل $customerName برقم المعرّف ${widget.customerID}',
+          'timestamp': FieldValue.serverTimestamp(),
         });
 
         // Navigate to the login screen after deletion
@@ -320,7 +321,7 @@ class _CustomerSettingsState extends State<CustomerSettings> {
           children: [
             const SizedBox(width: 113),
             const Text(
-              "       الإعدادات",
+              "إعدادات الحساب",
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,

@@ -6,7 +6,7 @@ import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/update_email.dart';
 import 'package:tracki/screens/update_password.dart';
 import 'package:tracki/screens/update_phone.dart';
-import 'package:tracki/widgets/my_icon_button.dart';
+
 import '../user_auth/firebase_auth_services.dart';
 
 class OwnerSettings extends StatefulWidget {
@@ -412,7 +412,7 @@ class _OwnerSettingsState extends State<OwnerSettings> {
                             ),
                             SizedBox(width: 10),
                             Text(
-                              'تحديث الإيميل',
+                              'تحديث البريد الإلكتروني',
                               style: TextStyle(
                                 fontSize: 16,
                                 color: Colors.black,
