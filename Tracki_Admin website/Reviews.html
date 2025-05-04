@@ -24,9 +24,10 @@
         <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
         <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
         <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
-        <li><a href="Reviews.html" style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
-        <i class="fas fa-star"></i> التقييمات</a></li>
-        <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>        
+        <li><a href="Reviews.html"
+            style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
+            <i class="fas fa-star"></i> التقييمات</a></li>
+        <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
       </ul>
     </div>
 
@@ -35,7 +36,17 @@
         <p id="status">مرحبًا!</p>
       </div>
       <div class="right-actions">
-        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <!--*************************************************************************************************************-->
+        <div class="notification-wrapper">
+          <div id="notification-trigger" class="notification-trigger">
+            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+            <span id="notification-badge" class="notification-badge hidden"></span>
+          </div>
+          <div id="notification-popup" class="notification-popup hidden">
+            <span id="notification-message"></span>
+            <button id="notification-confirm" class="notification-confirm">عرض</button>
+          </div>
+        </div>
         <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
       </div>
     </section>
@@ -87,7 +98,8 @@
       doc,
       getDoc,
       query,
-      orderBy,
+      where,
+      orderBy
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -108,71 +120,222 @@
       if (user) {
         statusElement.innerText = `مرحبًا ${user.email.split("@")[0]} !`; // Use backticks for interpolation
         fetchReviews();
+        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
       } else {
         statusElement.innerText = "لم يتم تسجيل الدخول";
         window.location.href = "WelcomePage.html";
       }
     });
 
-    async function fetchReviews() {
-      document.getElementById("loading-message").style.display = "flex"; // Show loading message
-      try {
-        const reviewsQuery = query(
-          collection(db, "Review"),
-          orderBy("timestamp", "desc")
-        );
-        const querySnapshot = await getDocs(reviewsQuery);
-        const reviewsTableBody = document.querySelector(
-          "#reviews-table tbody"
-        );
-        reviewsTableBody.innerHTML = "";
+    //Pagination
+    let currentPage = 1;
+    const rowsPerPage = 10;
+    let allReviews = [];
 
-        for (const docSnapshot of querySnapshot.docs) {
+    //Fetching reviews NEW ----------------------------------------------------------------------------------FASTER &Pagination
+    async function fetchReviews() {
+      document.getElementById("loading-message").style.display = "flex";
+
+      try {
+        // Get all necessary data in parallel
+        const [reviewsSnapshot, customersSnapshot, trucksSnapshot] = await Promise.all([
+          getDocs(query(collection(db, "Review"), orderBy("timestamp", "desc"))),
+          getDocs(collection(db, "Customer")),
+          getDocs(collection(db, "Food_Truck"))
+        ]);
+
+        // Create lookup maps for O(1) access
+        const customersMap = {};
+        customersSnapshot.forEach(doc => {
+          customersMap[doc.id] = doc.data();
+        });
+
+        const trucksMap = {};
+        trucksSnapshot.forEach(doc => {
+          trucksMap[doc.id] = doc.data();
+        });
+
+        // Process all reviews
+        allReviews = [];
+        reviewsSnapshot.docs.forEach(docSnapshot => {
           const data = docSnapshot.data();
-          const customerDoc = await getDoc(
-            doc(db, "Customer", data.customerId)
-          );
-          const truckDoc = await getDoc(
-            doc(db, "Food_Truck", data.foodTruckId)
-          );
-          const customerName = customerDoc.exists()
-            ? customerDoc.data().Name
-            : "غير محدد";
-          const customerEmail = customerDoc.exists()
-            ? customerDoc.data().email
-            : "غير محدد";
-          const foodTruckName = truckDoc.exists()
-            ? truckDoc.data().name
-            : "غير محدد";
+          const customer = customersMap[data.customerId] || {
+            Name: "غير محدد",
+            email: "غير محدد"
+          };
+
+          const truck = trucksMap[data.foodTruckId] || {
+            name: "غير محدد"
+          };
+
           const timestamp = new Date(data.timestamp);
           const formattedTimestamp = timestamp.toLocaleString();
 
           const row = document.createElement("tr");
           row.innerHTML = `
-                <td>${customerName}</td>
-                <td>${customerEmail}</td>
-                <td>${foodTruckName}</td>
-                <td>${convertRatingToStars(data.rating)}</td>
-                <td>${data.comment}</td>
-                <td>${formattedTimestamp}</td>
-            `;
-          reviewsTableBody.appendChild(row);
-        }
+        <td>${customer.Name}</td>
+        <td>${customer.email}</td>
+        <td>${truck.name}</td>
+        <td>${convertRatingToStars(data.rating)}</td>
+        <td>${data.comment || "لا يوجد تعليق"}</td>
+        <td>${formattedTimestamp}</td>
+      `;
+          allReviews.push(row);
+        });
 
-        document.getElementById("loading-message").style.display = "none"; // Hide loading message
-        document.querySelector(".content").style.display = "block"; // Show content after loading
+        displayPage(currentPage);
+        document.getElementById("loading-message").style.display = "none";
+
       } catch (error) {
         console.error("Error fetching reviews:", error);
-        document.getElementById("loading-message").style.display = "none"; // Hide loading message on error
+        document.getElementById("loading-message").innerHTML = `
+      <p style="color: red;">حدث خطأ أثناء تحميل التقييمات. يرجى المحاولة لاحقًا</p>
+    `;
       }
     }
 
+
+    //Pagination functions ------------------------------------------------------
+    // Add these functions right before the convertRatingToStars function
+    function displayPage(page) {
+      const reviewsTableBody = document.querySelector("#reviews-table tbody");
+      reviewsTableBody.innerHTML = "";
+
+      const start = (page - 1) * rowsPerPage;
+      const end = start + rowsPerPage;
+      const rowsToDisplay = allReviews.slice(start, end);
+
+      rowsToDisplay.forEach(row => reviewsTableBody.appendChild(row));
+      updatePaginationControls();
+    }
+
+    function updatePaginationControls() {
+      const paginationContainer = document.getElementById("pagination-controls");
+      paginationContainer.innerHTML = "";
+
+      const totalPages = Math.ceil(allReviews.length / rowsPerPage);
+
+      const prevLink = document.createElement("span");
+      prevLink.textContent = "<";
+      prevLink.classList.add("pagination-link");
+      if (currentPage === 1) {
+        prevLink.classList.add("disabled");
+      } else {
+        prevLink.addEventListener("click", () => {
+          currentPage--;
+          displayPage(currentPage);
+        });
+      }
+      paginationContainer.appendChild(prevLink);
+
+      for (let i = 1; i <= totalPages; i++) {
+        const pageLink = document.createElement("span");
+        pageLink.textContent = i;
+        pageLink.classList.add("pagination-link");
+        if (i === currentPage) {
+          pageLink.classList.add("active-page");
+        }
+        pageLink.addEventListener("click", () => {
+          currentPage = i;
+          displayPage(currentPage);
+        });
+        paginationContainer.appendChild(pageLink);
+      }
+
+      const nextLink = document.createElement("span");
+      nextLink.textContent = ">";
+      nextLink.classList.add("pagination-link");
+      if (currentPage === totalPages) {
+        nextLink.classList.add("disabled");
+      } else {
+        nextLink.addEventListener("click", () => {
+          currentPage++;
+          displayPage(currentPage);
+        });
+      }
+      paginationContainer.appendChild(nextLink);
+    }
 
     function convertRatingToStars(rating) {
       const fullStar = '<span style="color: #FFD700;">★</span>';
       const emptyStar = "<span>☆</span>";
       return fullStar.repeat(rating) + emptyStar.repeat(5 - rating);
     }
+
+    // Logout functionality
+    const logoutIcon = document.getElementById("logout-icon");
+    logoutIcon.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        alert("تم تسجيل الخروج بنجاح!");
+        window.location.href = "WelcomePage.html";
+      } catch (error) {
+        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+      }
+    });
+
+    // Notification Functions<!--*************************************************************************************************************-->
+    async function checkPendingTrucks() {
+      try {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const requestStatusMap = {};
+        requestsSnapshot.forEach(doc => {
+          requestStatusMap[doc.id] = doc.data().status;
+        });
+
+        let pendingCount = 0;
+        trucksSnapshot.forEach(doc => {
+          const statusId = doc.data().statusId;
+          if (statusId && requestStatusMap[statusId] === "pending") {
+            pendingCount++;
+          }
+        });
+
+        const badge = document.getElementById("notification-badge");
+        const icon = document.getElementById("notification-icon");
+
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove("hidden");
+          badge.classList.add("has-notifications");
+          icon.style.color = "#7A557A"; // Change icon color
+        } else {
+          badge.classList.add("hidden");
+          badge.classList.remove("has-notifications");
+          icon.style.color = ""; // Reset icon color
+        }
+      } catch (error) {
+        console.error("Error checking pending trucks:", error);
+      }
+    }
+
+    // Add click handler for notification icon
+    // Notification click handler
+    document.getElementById("notification-trigger").addEventListener("click", function (e) {
+      e.stopPropagation();
+      const badge = document.getElementById("notification-badge");
+      const popup = document.getElementById("notification-popup");
+      const message = document.getElementById("notification-message");
+
+      if (!badge.classList.contains("hidden")) {
+        const count = badge.textContent;
+        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+        popup.classList.toggle("hidden");
+      }
+    });
+
+    // Confirm button handler
+    document.getElementById("notification-confirm").addEventListener("click", function () {
+      window.location.href = "WaitingTrucks.html";
+    });
+
+    // Close when clicking elsewhere
+    document.addEventListener("click", function () {
+      document.getElementById("notification-popup").classList.add("hidden");
+    });
   </script>
 </body>
 

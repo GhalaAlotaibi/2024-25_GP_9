@@ -41,7 +41,17 @@
         <p id="status">مرحبًا!</p>
       </div>
       <div class="right-actions">
-        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <!--*************************************************************************************************************-->
+        <div class="notification-wrapper">
+          <div id="notification-trigger" class="notification-trigger">
+            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+            <span id="notification-badge" class="notification-badge hidden"></span>
+          </div>
+          <div id="notification-popup" class="notification-popup hidden">
+            <span id="notification-message"></span>
+            <button id="notification-confirm" class="notification-confirm">عرض</button>
+          </div>
+        </div>
         <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
       </div>
     </section>
@@ -77,12 +87,6 @@
           <h3> أكثر العربات رواجًا</h3>
           <canvas id="mostclickedTrucks"></canvas>
         </div>
-        <!--
-          <div class="analytics-section3">
-            <h3>إجمالي تصنيف العربات</h3>
-            <canvas id="registeredCategoriesChart"></canvas>
-          </div>
-          -->
       </div>
 
       <div class="analytics-section-group2">
@@ -142,6 +146,8 @@
         statusElement.innerText = `مرحبًا ${username} !`;
         // Fetch data and create the chart
         fetchFoodTruckData();
+        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
       } else {
         statusElement.innerText = "لم يتم تسجيل الدخول";
         window.location.href = "WelcomePage.html";
@@ -309,203 +315,108 @@
 
     //analytics-section3
     async function fetchMostClickedTrucks() {
-  const querySnapshot = await getDocs(
-    query(
-      collection(db, "Food_Truck"),
-      orderBy("TruckCounter", "desc"),
-      limit(5)
-    )
-  );
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "Food_Truck"),
+          orderBy("TruckCounter", "desc"),
+          limit(5)
+        )
+      );
 
-  const truckData = querySnapshot.docs.map(doc => ({
-    name: doc.data().name || "بدون اسم",
-    clicks: doc.data().TruckCounter || 0
-  }));
+      const truckData = querySnapshot.docs.map(doc => ({
+        name: doc.data().name || "بدون اسم",
+        clicks: doc.data().TruckCounter || 0
+      }));
 
-  createMostClickedPieChart(truckData);
-}
+      createMostClickedPieChart(truckData);
+    }
 
-function createMostClickedPieChart(truckData) {
-  const ctx = document.getElementById("mostclickedTrucks").getContext("2d");
-  
-  if (window.mostClickedChart) {
-    window.mostClickedChart.destroy();
-  }
+    function createMostClickedPieChart(truckData) {
+      const ctx = document.getElementById("mostclickedTrucks").getContext("2d");
 
-  // Your exact color palette (repeated if more than 5 trucks)
-  const backgroundColors = [
-    "#E2BFD9", // Light purple
-    "#C8A1E0", // Medium purple
-    "#674188", // Dark purple
-    "#D1A7C8", // Existing color
-    "#7A557A"  // Your main purple
-  ];
-
-  window.mostClickedChart = new Chart(ctx, {
-    type: "pie",
-    data: {
-      labels: truckData.map(t => t.name),
-      datasets: [{
-        label: "عدد النقرات",
-        data: truckData.map(t => t.clicks),
-        backgroundColor: backgroundColors,
-        borderColor: "#FFF",
-        borderWidth: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      radius: '95%', // Uses nearly full container
-      plugins: {
-        legend: {
-          position: 'left',
-          rtl: true,
-          labels: {
-            font: {
-              family: "Zain",
-              size: 14,
-              color: "#7A557A"
-            },
-            padding: 25,
-            usePointStyle: true,
-            pointStyle: 'circle'
-          }
-        },
-        tooltip: {
-          rtl: true,
-          titleFont: {
-            family: "Zain",
-            size: 16
-          },
-          bodyFont: {
-            family: "Zain",
-            size: 14
-          },
-          callbacks: {
-            label: function(context) {
-              const total = context.dataset.data.reduce((a, b) => a + b, 0);
-              const percentage = Math.round((context.raw / total) * 100);
-              return `${context.label}: ${context.raw.toLocaleString('ar-EG')} (${percentage}%)`;
-            }
-          }
-        },
-        datalabels: {
-          color: "#FFF",
-          font: {
-            family: "Zain",
-            weight: "bold",
-            size: 14
-          },
-          formatter: (value, context) => {
-            const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
-            const percentage = Math.round((value / total) * 100);
-            return percentage >= 5 ? `${percentage}%` : ''; // Hide very small percentages
-          }
-        }
+      if (window.mostClickedChart) {
+        window.mostClickedChart.destroy();
       }
-    },
-    plugins: [ChartDataLabels]
-  });
-}
 
-    // Call the function when the page loads
-    fetchMostClickedTrucks();
+      // Your exact color palette (repeated if more than 5 trucks)
+      const backgroundColors = [
+        "#E2BFD9", // Light purple
+        "#C8A1E0", // Medium purple
+        "#674188", // Dark purple
+        "#D1A7C8", // Existing color
+        "#7A557A"  // Your main purple
+      ];
 
-    /* analytics-section3
-    async function fetchCategoryTruckCount() {
-      const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
-      const categoriesSnapshot = await getDocs(
-        collection(db, "Food-Category")
-      );
-
-      const categoryMap = {};
-      categoriesSnapshot.forEach((doc) => {
-        categoryMap[doc.id] = doc.data().name;
-      });
-
-      const truckCountMap = {};
-      trucksSnapshot.forEach((doc) => {
-        const categoryId = doc.data().categoryId;
-        if (categoryId) {
-          if (truckCountMap[categoryId]) {
-            truckCountMap[categoryId] += 1;
-          } else {
-            truckCountMap[categoryId] = 1;
-          }
-        }
-      });
-
-      const labels = Object.keys(truckCountMap).map(
-        (id) => categoryMap[id] || id
-      );
-      const counts = Object.values(truckCountMap);
-
-      // Create the Pie Chart in the registeredCategoriesChart
-      const ctx = document
-        .getElementById("registeredCategoriesChart")
-        .getContext("2d");
-      const registeredCategoriesChart = new Chart(ctx, {
+      window.mostClickedChart = new Chart(ctx, {
         type: "pie",
         data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "عدد العربات حسب الفئة",
-              data: counts,
-              backgroundColor: [
-                "#f2e5ea", // Color 1
-                "#D1A7C8", // Mauve
-                "#FFABAB", // Light Pink
-                "#e7f2e5", // Color 2
-                "#a2a9a0", // Color 3
-                "#f2eae5", // Color 4
-                "#F7EFE5", // Light Beige
-                "#FFABAB", // Light Pink
-                "#C8A1E0", // Lavender
-                "#674188", // Dark Purple
-                "#F1C6B0", // Soft Peach
-                "#D1A7C8", // Mauve
-                "#4B2E6D", // Deep Purple
-                "#a9a4a0", // Color 5
-                "#A87BCE", // Medium Lavender
-              ],
-              hoverOffset: 4,
-            },
-          ],
+          labels: truckData.map(t => t.name),
+          datasets: [{
+            label: "عدد النقرات",
+            data: truckData.map(t => t.clicks),
+            backgroundColor: backgroundColors,
+            borderColor: "#FFF",
+            borderWidth: 2
+          }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          radius: '95%', // Uses nearly full container
           plugins: {
             legend: {
-              display: false,
+              position: 'left',
+              rtl: true,
+              labels: {
+                font: {
+                  family: "Zain",
+                  size: 14,
+                  color: "#7A557A"
+                },
+                padding: 25,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              }
+            },
+            tooltip: {
+              rtl: true,
+              titleFont: {
+                family: "Zain",
+                size: 16
+              },
+              bodyFont: {
+                family: "Zain",
+                size: 14
+              },
+              callbacks: {
+                label: function (context) {
+                  const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                  const percentage = Math.round((context.raw / total) * 100);
+                  return `${context.label}: ${context.raw.toLocaleString('ar-EG')} (${percentage}%)`;
+                }
+              }
             },
             datalabels: {
-              color: "#7A557A",
+              color: "#FFF",
               font: {
                 family: "Zain",
-                size: 14,
                 weight: "bold",
+                size: 14
               },
-              formatter: function (value, context) {
-                const total = context.chart.data.datasets[0].data.reduce(
-                  (acc, val) => acc + val,
-                  0
-                );
+              formatter: (value, context) => {
+                const total = context.chart.data.datasets[0].data.reduce((a, b) => a + b, 0);
                 const percentage = Math.round((value / total) * 100);
-                const label = context.chart.data.labels[context.dataIndex];
-                return `${label}: ${percentage}%`;
-              },
-            },
-          },
+                return percentage >= 5 ? `${percentage}%` : ''; // Hide very small percentages
+              }
+            }
+          }
         },
-        plugins: [ChartDataLabels],
+        plugins: [ChartDataLabels]
       });
     }
-    // Call the function
-    fetchCategoryTruckCount();
-    */
+
+    // Call the function when the page loads
+    fetchMostClickedTrucks();
 
     //analytics-section4
     async function fetchTruckStatusData() {
@@ -519,6 +430,7 @@ function createMostClickedPieChart(truckData) {
         pending: "قيد الانتظار", // Example translation
         accepted: "مقبولة",
         rejected: "مرفوضة",
+        suspended: "معلقة",
       };
 
       // Build a map of status IDs to status names
@@ -616,7 +528,6 @@ function createMostClickedPieChart(truckData) {
 
       createLineChart(ratingsData);
     }
-
     function createLineChart(data) {
       const ctx = document.getElementById("s5").getContext("2d");
       const ratingsByMonth = {};
@@ -677,6 +588,11 @@ function createMostClickedPieChart(truckData) {
                   color: "#7A557A",
                 },
               },
+              ticks: {
+                font: {
+                  family: "Zain", // Apply to X-axis ticks
+                },
+              },
             },
             y: {
               title: {
@@ -689,13 +605,22 @@ function createMostClickedPieChart(truckData) {
                   color: "#7A557A",
                 },
               },
+              ticks: {
+                font: {
+                  family: "Zain", // Apply to Y-axis ticks
+                },
+              },
               min: 0,
               max: 5,
             },
           },
           plugins: {
             legend: {
-              display: true,
+              labels: {
+                font: {
+                  family: "Zain", // Apply to legend labels (e.g., "متوسط التقييمات")
+                },
+              },
             },
             title: {
               display: true,
@@ -706,12 +631,82 @@ function createMostClickedPieChart(truckData) {
                 weight: "bold",
               },
             },
+            tooltip: {
+              bodyFont: {
+                family: "Zain", // Apply to tooltip text
+              },
+              titleFont: {
+                family: "Zain", // Apply to tooltip title
+              },
+            },
           },
         },
       });
     }
 
     fetchLineChartData();
+
+    // Notification Functions<!--*************************************************************************************************************-->
+    async function checkPendingTrucks() {
+      try {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const requestStatusMap = {};
+        requestsSnapshot.forEach(doc => {
+          requestStatusMap[doc.id] = doc.data().status;
+        });
+
+        let pendingCount = 0;
+        trucksSnapshot.forEach(doc => {
+          const statusId = doc.data().statusId;
+          if (statusId && requestStatusMap[statusId] === "pending") {
+            pendingCount++;
+          }
+        });
+
+        const badge = document.getElementById("notification-badge");
+        const icon = document.getElementById("notification-icon");
+
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove("hidden");
+          badge.classList.add("has-notifications");
+          icon.style.color = "#7A557A"; // Change icon color
+        } else {
+          badge.classList.add("hidden");
+          badge.classList.remove("has-notifications");
+          icon.style.color = ""; // Reset icon color
+        }
+      } catch (error) {
+        console.error("Error checking pending trucks:", error);
+      }
+    }
+
+    // Add click handler for notification icon
+    // Notification click handler
+    document.getElementById("notification-trigger").addEventListener("click", function (e) {
+      e.stopPropagation();
+      const badge = document.getElementById("notification-badge");
+      const popup = document.getElementById("notification-popup");
+      const message = document.getElementById("notification-message");
+
+      if (!badge.classList.contains("hidden")) {
+        const count = badge.textContent;
+        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+        popup.classList.toggle("hidden");
+      }
+    });
+
+    // Confirm button handler
+    document.getElementById("notification-confirm").addEventListener("click", function () {
+      window.location.href = "WaitingTrucks.html";
+    });
+
+    // Close when clicking elsewhere
+    document.addEventListener("click", function () {
+      document.getElementById("notification-popup").classList.add("hidden");
+    });
   </script>
 </body>
 

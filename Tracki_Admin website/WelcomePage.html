@@ -1,12 +1,28 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>تسجيل الدخول - تراكي</title>
-    <link rel="stylesheet" href="Styles/WelcomePage.css"> 
+    <link rel="stylesheet" href="Styles/WelcomePage.css">
     <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+    <style>
+        .btn {
+            font-family: 'Zain', sans-serif;
+        }
+
+        input::placeholder {
+            font-family: 'Zain', sans-serif;
+            opacity: 0.7;
+        }
+
+        input {
+            font-family: 'Zain', sans-serif;
+        }
+    </style>
 </head>
+
 <body>
     <header class="logo-container">
         <img src="images/TrackiLogo.png" alt="تراكي" class="logo">
@@ -19,7 +35,7 @@
 
         <div class="login-container">
             <h1>تسجيل الدخول</h1>
-            <form id="login-form"> 
+            <form id="login-form">
                 <div class="input-group">
                     <label for="email">البريد الإلكتروني</label>
                     <input type="email" id="email" name="email" placeholder="أدخل بريدك الإلكتروني" required>
@@ -58,7 +74,7 @@
         const db = getFirestore(app);
 
         // Login function
-        document.getElementById('login-form').addEventListener('submit', async function(e) {
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -83,7 +99,7 @@
         });
 
         // Forgot Password function
-        document.getElementById('forgot-password-link').addEventListener('click', async function(e) {
+        document.getElementById('forgot-password-link').addEventListener('click', async function (e) {
             e.preventDefault();
             const email = document.getElementById('email').value;
 
@@ -100,4 +116,5 @@
         });
     </script>
 </body>
+
 </html>

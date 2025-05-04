@@ -1,5 +1,6 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,37 +10,40 @@
     <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
     <style>
         /* Ensure the body and html take full height */
-html, body {
-    height: 100%;
-    margin: 0;
-}
+        html,
+        body {
+            height: 100%;
+            margin: 0;
+        }
 
-/* Main content styling */
-.content {
-    text-align: center;
-}
+        /* Main content styling */
+        .content {
+            text-align: center;
+        }
 
-/* Center breadcrumb and other elements */
-.breadcrumb {
-    text-align: center;
-    margin: 15px 0;
-    padding: 10px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #7A557A;
-    background-color: #faf3f0;
-    border-radius: 8px;
-    display: inline-block;
-}
+        /* Center breadcrumb and other elements */
+        .breadcrumb {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #7A557A;
+            background-color: #faf3f0;
+            border-radius: 8px;
+            display: inline-block;
+        }
 
-.location-text, .map-link {
-    display: block;
-    margin-top: 10px;
-    text-align: center;
-    font-size: 18px;
-}
+        .location-text,
+        .map-link {
+            display: block;
+            margin-top: 10px;
+            text-align: center;
+            font-size: 18px;
+        }
     </style>
 </head>
+
 <body>
     <!-- Header -->
 
@@ -51,37 +55,49 @@ html, body {
                 <img src="images/TrackiLogo.png" alt="Logo">
                 <h1>Tracki</h1>
             </div>
-        
-      <!-- Navigation Links -->
-      <ul style="list-style: none; padding: 0; margin: 20px 0">
-        <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-        <li><a href="WaitingTrucks.html" style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
-          <i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
-        <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-        <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
-        <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
-        <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-        <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-        
-      </ul>
-        </div>  
-        
+
+            <!-- Navigation Links -->
+            <ul style="list-style: none; padding: 0; margin: 20px 0">
+                <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
+                <li><a href="WaitingTrucks.html"
+                        style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
+                        <i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
+                <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
+                <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a>
+                </li>
+                <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
+                <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
+                <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+
+            </ul>
+        </div>
+
         <section class="status-section">
             <div class="left-actions">
                 <p id="status">مرحبًا!</p>
             </div>
             <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                <!--*************************************************************************************************************-->
+                <div class="notification-wrapper">
+                    <div id="notification-trigger" class="notification-trigger">
+                        <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                        <span id="notification-badge" class="notification-badge hidden"></span>
+                    </div>
+                    <div id="notification-popup" class="notification-popup hidden">
+                        <span id="notification-message"></span>
+                        <button id="notification-confirm" class="notification-confirm">عرض</button>
+                    </div>
+                </div>
                 <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
             </div>
         </section>
 
         <!-- Main Content -->
         <div class="content">
-                <!-- Breadcrumb Section -->
-                <div class="breadcrumb">
-                    <span>قيد الإنتظار</span> >  <span>موقع عربة</span> <span id="truck-name">جاري تحميل اسم العربة...</span>
-                </div>
+            <!-- Breadcrumb Section -->
+            <div class="breadcrumb">
+                <span>قيد الإنتظار</span> > <span>موقع عربة</span> <span id="truck-name">جاري تحميل اسم العربة...</span>
+            </div>
             <p id="location-text" class="location-text">جاري تحميل الموقع...</p>
             <a id="google-map-link" class="map-link" href="#" target="_blank">عرض على الخريطة</a>
         </div>
@@ -98,7 +114,7 @@ html, body {
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
         import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
-    
+
         // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
@@ -108,31 +124,31 @@ html, body {
             messagingSenderId: "283818817351",
             appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
         };
-    
+
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-    
+
         // Get location from the URL
         const params = new URLSearchParams(window.location.search);
         const foodTruckLocation = params.get('location');  // Get the location from the URL
-    
+
         // Function to display truck's name and location
         async function displayFoodTruckDetails() {
             const truckNameElement = document.getElementById('truck-name');  // Assuming you have a container for the truck name
             const locationText = document.getElementById('location-text');
             const googleMapLink = document.getElementById('google-map-link');
-    
+
             if (foodTruckLocation) {
                 try {
                     // Query Firestore for the truck with the matching location
                     const querySnapshot = await getDocs(collection(db, "Food_Truck"));
                     let truckFound = false;
-    
+
                     querySnapshot.forEach((doc) => {
                         const truckData = doc.data();
-                        
+
                         // Check if the location matches
                         if (truckData.location === foodTruckLocation) {
                             truckNameElement.textContent = truckData.name;  // Set the truck's name
@@ -141,7 +157,7 @@ html, body {
                             truckFound = true;
                         }
                     });
-    
+
                     if (!truckFound) {
                         truckNameElement.textContent = "لم يتم العثور على العربة لهذا الموقع.";  // No truck found for this location
                         locationText.textContent = "الموقع غير متوفر.";
@@ -159,7 +175,7 @@ html, body {
                 googleMapLink.style.display = 'none';
             }
         }
-    
+
         // Check authentication status on page load
         onAuthStateChanged(auth, (user) => {
             const statusElement = document.getElementById('status');
@@ -167,20 +183,85 @@ html, body {
                 const username = user.email.split('@')[0];
                 statusElement.innerText = `مرحبًا ${username}!`;
                 displayFoodTruckDetails();  // Call the function to display the truck's name and location
+                checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+                setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
             } else {
                 statusElement.innerText = "لم يتم تسجيل الدخول";
                 window.location.href = "login.html";
             }
         });
-    
+
         // Log Out
-        document.getElementById('logout-button').addEventListener('click', () => {
+        document.getElementById('logout-icon').addEventListener('click', () => {
             signOut(auth).then(() => {
-                window.location.href = "login.html";
+                window.location.href = "WelcomePage.html";
             }).catch((error) => {
                 console.error("Error during logout: ", error);
             });
         });
-    </script>    
+
+        // Notification Functions<!--*************************************************************************************************************-->
+        async function checkPendingTrucks() {
+            try {
+                const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+                const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+                const requestStatusMap = {};
+                requestsSnapshot.forEach(doc => {
+                    requestStatusMap[doc.id] = doc.data().status;
+                });
+
+                let pendingCount = 0;
+                trucksSnapshot.forEach(doc => {
+                    const statusId = doc.data().statusId;
+                    if (statusId && requestStatusMap[statusId] === "pending") {
+                        pendingCount++;
+                    }
+                });
+
+                const badge = document.getElementById("notification-badge");
+                const trigger = document.getElementById("notification-trigger"); // تم التغيير هنا
+
+                if (pendingCount > 0) {
+                    badge.textContent = pendingCount;
+                    badge.classList.remove("hidden");
+                    badge.classList.add("has-notifications");
+                    trigger.style.color = "#7A557A"; // تم التغيير هنا
+                } else {
+                    badge.classList.add("hidden");
+                    badge.classList.remove("has-notifications");
+                    trigger.style.color = ""; // تم التغيير هنا
+                }
+            } catch (error) {
+                console.error("Error checking pending trucks:", error);
+            }
+        }
+
+        // Add click handler for notification icon
+        // Notification click handler
+        document.getElementById("notification-trigger").addEventListener("click", function (e) {
+            e.stopPropagation();
+            const badge = document.getElementById("notification-badge");
+            const popup = document.getElementById("notification-popup");
+            const message = document.getElementById("notification-message");
+
+            if (!badge.classList.contains("hidden")) {
+                const count = badge.textContent;
+                message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+                popup.classList.toggle("hidden");
+            }
+        });
+
+        // Confirm button handler
+        document.getElementById("notification-confirm").addEventListener("click", function () {
+            window.location.href = "WaitingTrucks.html";
+        });
+
+        // Close when clicking elsewhere
+        document.addEventListener("click", function () {
+            document.getElementById("notification-popup").classList.add("hidden");
+        });
+    </script>
 </body>
+
 </html>

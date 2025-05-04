@@ -29,8 +29,9 @@
         <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
         <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
         <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
-        <li><a href="History.html"style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
-        <i class="fas fa-history"></i> سجل العمليات</a></li>
+        <li><a href="History.html"
+            style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;">
+            <i class="fas fa-history"></i> سجل العمليات</a></li>
         <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
         <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
 
@@ -42,7 +43,17 @@
         <p id="status">مرحبًا!</p>
       </div>
       <div class="right-actions">
-        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <!--*************************************************************************************************************-->
+        <div class="notification-wrapper">
+          <div id="notification-trigger" class="notification-trigger">
+            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+            <span id="notification-badge" class="notification-badge hidden"></span>
+          </div>
+          <div id="notification-popup" class="notification-popup hidden">
+            <span id="notification-message"></span>
+            <button id="notification-confirm" class="notification-confirm">عرض</button>
+          </div>
+        </div>
         <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
       </div>
     </section>
@@ -63,6 +74,12 @@
           <!-- Data will be dynamically added here -->
         </tbody>
       </table>
+
+      <!-- loading div -->
+      <div class="loading" id="loading-message">
+        <img src="images/WaitingTruck2.png" alt="Loading Food Truck" loading="lazy" />
+        <p>الرجاء الإنتظار...</p>
+      </div>
 
       <!-- Pagination Controls -->
       <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
@@ -102,6 +119,8 @@
       if (user) {
         const username = user.email.split("@")[0];
         statusElement.innerText = `مرحبًا ${username} !`;
+        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
       } else {
         statusElement.innerText = "لم يتم تسجيل الدخول";
         window.location.href = "WelcomePage.html";
@@ -118,6 +137,10 @@
     // Fetch History Data
     async function fetchHistoryData() {
       const historyTableBody = document.querySelector("#history-table tbody");
+
+      // Show loading animation
+      document.getElementById("loading-message").style.display = "flex";
+      historyTableBody.innerHTML = ""; // Clear table while loading
 
       try {
         // Reference to the "History" collection
@@ -151,16 +174,16 @@
             case "Customer Registration":
               docType = "تسجيل عميل";
               break;
-              case "Truck Acceptance":
+            case "Truck Acceptance":
               docType = "قبول عربة";
               break;
-              case "Truck Rejection":
+            case "Truck Rejection":
               docType = "رفض عربة";
               break;
-              case "Location Change Acceptance":
+            case "Location Change Acceptance":
               docType = "قبول تحديث موقع عربة";
               break;
-              case "Location Change Rejection":
+            case "Location Change Rejection":
               docType = "رفض تحديث موقع عربة";
               break;
             default:
@@ -196,6 +219,9 @@
         // Display the current page
         displayPage(currentPage);
         updatePaginationControls();
+
+        // Hide loading animation when done
+        document.getElementById("loading-message").style.display = "none";
       } catch (error) {
         console.error("Error fetching history data:", error);
       }
@@ -286,6 +312,68 @@
       } catch (error) {
         alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
       }
+    });
+
+    // Notification Functions<!--*************************************************************************************************************-->
+    async function checkPendingTrucks() {
+      try {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const requestStatusMap = {};
+        requestsSnapshot.forEach(doc => {
+          requestStatusMap[doc.id] = doc.data().status;
+        });
+
+        let pendingCount = 0;
+        trucksSnapshot.forEach(doc => {
+          const statusId = doc.data().statusId;
+          if (statusId && requestStatusMap[statusId] === "pending") {
+            pendingCount++;
+          }
+        });
+
+        const badge = document.getElementById("notification-badge");
+        const icon = document.getElementById("notification-icon");
+
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove("hidden");
+          badge.classList.add("has-notifications");
+          icon.style.color = "#7A557A"; // Change icon color
+        } else {
+          badge.classList.add("hidden");
+          badge.classList.remove("has-notifications");
+          icon.style.color = ""; // Reset icon color
+        }
+      } catch (error) {
+        console.error("Error checking pending trucks:", error);
+      }
+    }
+
+    // Add click handler for notification icon
+    // Notification click handler
+    document.getElementById("notification-trigger").addEventListener("click", function (e) {
+      e.stopPropagation();
+      const badge = document.getElementById("notification-badge");
+      const popup = document.getElementById("notification-popup");
+      const message = document.getElementById("notification-message");
+
+      if (!badge.classList.contains("hidden")) {
+        const count = badge.textContent;
+        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+        popup.classList.toggle("hidden");
+      }
+    });
+
+    // Confirm button handler
+    document.getElementById("notification-confirm").addEventListener("click", function () {
+      window.location.href = "WaitingTrucks.html";
+    });
+
+    // Close when clicking elsewhere
+    document.addEventListener("click", function () {
+      document.getElementById("notification-popup").classList.add("hidden");
     });
   </script>
 </body>

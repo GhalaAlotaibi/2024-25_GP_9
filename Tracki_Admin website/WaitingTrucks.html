@@ -40,7 +40,17 @@
         <p id="status">مرحبًا!</p>
       </div>
       <div class="right-actions">
-        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+        <!--*************************************************************************************************************-->
+        <div class="notification-wrapper">
+          <div id="notification-trigger" class="notification-trigger">
+            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+            <span id="notification-badge" class="notification-badge hidden"></span>
+          </div>
+          <div id="notification-popup" class="notification-popup hidden">
+            <span id="notification-message"></span>
+            <button id="notification-confirm" class="notification-confirm">عرض</button>
+          </div>
+        </div>
         <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
       </div>
     </section>
@@ -100,6 +110,8 @@
       getDoc,
       updateDoc,
       addDoc,
+      query, 
+      where  
     } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -121,6 +133,8 @@
         const username = user.email.split("@")[0];
         statusElement.innerText = `مرحبًا ${username} !`;
         fetchFoodTrucks(); // Fetch the trucks
+        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
       } else {
         statusElement.innerText = "لم يتم تسجيل الدخول";
         window.location.href = "WelcomePage.html";
@@ -142,122 +156,82 @@
     const rowsPerPage = 6;
     let allRows = [];
 
-    //Fetching food trucks
+    //Fetching food trucks NEW ----------------------------------------------------------------------------------FASTER
     async function fetchFoodTrucks() {
       try {
-        const querySnapshot = await getDocs(collection(db, "Food_Truck"));
+        // First get all pending requests in one query
+        const pendingRequestsQuery = query(
+          collection(db, "Request"),
+          where("status", "==", "pending")
+        );
+        const requestsSnapshot = await getDocs(pendingRequestsQuery);
 
-        if (querySnapshot.empty) {
-          const foodTrucksTableBody = document.querySelector(
-            "#food-trucks-table tbody"
-          );
-          foodTrucksTableBody.innerHTML = "";
-          const noDataRow = document.createElement("tr");
-          noDataRow.innerHTML = `<td colspan="8" style="text-align: center;">لا توجد بيانات</td>`;
-          foodTrucksTableBody.appendChild(noDataRow);
-          return;
-        }
+        // Get all needed data in parallel
+        const [trucksSnapshot, ownersSnapshot, categoriesSnapshot] = await Promise.all([
+          getDocs(collection(db, "Food_Truck")),
+          getDocs(collection(db, "Truck_Owner")),
+          getDocs(collection(db, "Food-Category"))
+        ]);
 
+        // Create lookup maps for faster access
+        const ownersMap = {};
+        ownersSnapshot.forEach(doc => {
+          ownersMap[doc.id] = doc.data();
+        });
+
+        const categoriesMap = {};
+        categoriesSnapshot.forEach(doc => {
+          categoriesMap[doc.id] = doc.data();
+        });
+
+        const pendingRequestIds = requestsSnapshot.docs.map(doc => doc.id);
+
+        // Process only trucks with pending requests
         allRows = [];
-        for (const docSnapshot of querySnapshot.docs) {
+        trucksSnapshot.forEach(docSnapshot => {
           const data = docSnapshot.data();
-          const truckId = docSnapshot.id;
 
-          const ownerID = data.ownerID;
-          const ownerDocRef = doc(db, "Truck_Owner", ownerID);
-          const ownerDoc = await getDoc(ownerDocRef);
+          // Only process if this truck has a pending request
+          if (pendingRequestIds.includes(data.statusId)) {
+            const ownerData = ownersMap[data.ownerID] || {
+              Name: "غير محدد",
+              Email: "غير محدد",
+              PhoneNum: "غير محدد"
+            };
 
-          const ownerName = ownerDoc.exists()
-            ? ownerDoc.data().Name
-            : "غير محدد";
-          const ownerEmail = ownerDoc.exists()
-            ? ownerDoc.data().Email
-            : "غير محدد";
-          const ownerPhone = ownerDoc.exists()
-            ? ownerDoc.data().PhoneNum
-            : "غير محدد";
+            const categoryData = categoriesMap[data.categoryId] || { name: "غير محددة" };
 
-          const statusId = data.statusId;
-          let statusText = "غير محددة";
+            const acceptIcon = `<i class="fas fa-check-circle" style="color: green; cursor: pointer;" onclick="acceptFoodTruck('${docSnapshot.id}')"></i>`;
+            const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="DeclineFoodTruck('${docSnapshot.id}')"></i>`;
 
-          if (statusId) {
-            const requestDocRef = doc(db, "Request", statusId);
-            const requestDoc = await getDoc(requestDocRef);
-
-            if (requestDoc.exists()) {
-              const requestData = requestDoc.data();
-              // Filter to only include trucks with 'pending' status
-              if (requestData.status === "pending") {
-                statusText = "قيد الإنتظار"; // This row will be included
-              } else {
-                continue; // Skip this row if not pending
-              }
-            }
-          } else {
-            continue; // Skip if no statusId
+            const row = document.createElement("tr");
+            row.innerHTML = `
+          <td>${data.name}</td>
+          <td><img src="${data.businessLogo}" alt="Logo" style="width: 100px; height: 100px;" loading="lazy"></td>
+          <td><img src="${data.truckImage}" alt="Truck Image" style="width: 100px; height: 100px;" loading="lazy"></td>
+          <td>${data.licenseNo}</td>
+          <td>${data.licensePDF ? `<a href="${data.licensePDF}" target="_blank">عرض الرخصة</a>` : "لا يوجد ملف"}</td>
+          <td>
+            <div class="owner-details">
+              <p><strong>الاسم:</strong> ${ownerData.Name}</p>
+              <p><strong>البريد الإلكتروني:</strong> ${ownerData.Email}</p>
+              <p><strong>رقم الهاتف:</strong> ${ownerData.PhoneNum}</p>
+            </div>
+          </td>
+          <td>${categoryData.name}</td>
+          <td><a href="TruckLoc.html?location=${encodeURIComponent(data.location)}">عرض</a></td>
+          <td>قيد الإنتظار</td>
+          <td>${acceptIcon} ${declineIcon}</td>
+        `;
+            allRows.push(row);
           }
+        });
 
-          const categoryId = data.categoryId;
-          let categoryText = "غير محددة";
-
-          if (categoryId) {
-            const categoryDocRef = doc(db, "Food-Category", categoryId);
-            const categoryDoc = await getDoc(categoryDocRef);
-
-            if (categoryDoc.exists()) {
-              const categoryData = categoryDoc.data();
-              categoryText = categoryData.name;
-            }
-          }
-
-          // Icons for accept and decline
-          const acceptIcon = `<i class="fas fa-check-circle" style="color: green; cursor: pointer;" onclick="acceptFoodTruck('${docSnapshot.id}')"></i>`;
-          const declineIcon = `<i class="fas fa-times-circle" style="color: red; cursor: pointer;" onclick="DeclineFoodTruck('${docSnapshot.id}')"></i>`;
-
-          const licensePDFUrl = data.licensePDF; // Get the license PDF URL
-          const row = document.createElement("tr");
-
-          row.classList.add("inactive-row"); // Default class for now
-          row.innerHTML = `
-                <td>${data.name}</td>
-                <td><img src="${data.businessLogo
-            }" alt="Logo" style="width: 100px; height: 100px;" loading="lazy"></td>
-                <td><img src="${data.truckImage
-            }" alt="Truck Image" style="width: 100px; height: 100px;" loading="lazy"></td>
-                <td>${data.licenseNo}</td>
-                <td>
-                    ${licensePDFUrl
-              ? `<a href="${licensePDFUrl}" target="_blank">عرض الرخصة</a>`
-              : "لا يوجد ملف"
-            }
-                </td>
-                <td>
-                    <div class="owner-details">
-                        <p><strong>الاسم:</strong> ${ownerName}</p>
-                        <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
-                        <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
-                    </div>
-                </td>
-                <td>${categoryText}</td>
-                <td><a href="TruckLoc.html?location=${encodeURIComponent(
-              data.location
-            )}">عرض</a></td>
-                <td>${statusText}</td>
-                <td>${acceptIcon} ${declineIcon}</td>
-            `;
-
-          allRows.push(row); // Add row to the list
-        }
-
-        // After successful fetching, hide loading message and show content
         document.getElementById("loading-message").style.display = "none";
-        document.querySelector(".content").style.display = "block";
-
         displayPage(currentPage);
       } catch (error) {
         console.error("Error fetching food trucks:", error);
-        document.getElementById("loading-message").innerText =
-          "حدث خطأ أثناء تحميل البيانات.";
+        document.getElementById("loading-message").innerText = "حدث خطأ أثناء تحميل البيانات.";
       }
     }
     //Ends fetching food trucks
@@ -294,6 +268,7 @@
             });
 
             alert("تم قبول العربة.");
+            window.location.reload();
           } else {
             console.log(`:لايوجد طلب تحت هذا المعرف ${statusId}`);
           }
@@ -338,6 +313,7 @@
                 timestamp: new Date(),
               });
               alert("تم رفض العربة.");
+              window.location.reload();
             } else {
               print(`:لا يوجد طلب تحت هذا المعرف ${statusId}`);
             }
@@ -416,6 +392,69 @@
       }
       paginationContainer.appendChild(nextLink);
     }
+
+
+    // Notification Functions<!--*************************************************************************************************************-->
+    async function checkPendingTrucks() {
+      try {
+        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+        const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+        const requestStatusMap = {};
+        requestsSnapshot.forEach(doc => {
+          requestStatusMap[doc.id] = doc.data().status;
+        });
+
+        let pendingCount = 0;
+        trucksSnapshot.forEach(doc => {
+          const statusId = doc.data().statusId;
+          if (statusId && requestStatusMap[statusId] === "pending") {
+            pendingCount++;
+          }
+        });
+
+        const badge = document.getElementById("notification-badge");
+        const icon = document.getElementById("notification-icon");
+
+        if (pendingCount > 0) {
+          badge.textContent = pendingCount;
+          badge.classList.remove("hidden");
+          badge.classList.add("has-notifications");
+          icon.style.color = "#7A557A"; // Change icon color
+        } else {
+          badge.classList.add("hidden");
+          badge.classList.remove("has-notifications");
+          icon.style.color = ""; // Reset icon color
+        }
+      } catch (error) {
+        console.error("Error checking pending trucks:", error);
+      }
+    }
+
+    // Add click handler for notification icon
+    // Notification click handler
+    document.getElementById("notification-trigger").addEventListener("click", function (e) {
+      e.stopPropagation();
+      const badge = document.getElementById("notification-badge");
+      const popup = document.getElementById("notification-popup");
+      const message = document.getElementById("notification-message");
+
+      if (!badge.classList.contains("hidden")) {
+        const count = badge.textContent;
+        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+        popup.classList.toggle("hidden");
+      }
+    });
+
+    // Confirm button handler
+    document.getElementById("notification-confirm").addEventListener("click", function () {
+      window.location.href = "WaitingTrucks.html";
+    });
+
+    // Close when clicking elsewhere
+    document.addEventListener("click", function () {
+      document.getElementById("notification-popup").classList.add("hidden");
+    });
 
     // Attach function to the global scope
     window.acceptFoodTruck = acceptFoodTruck;

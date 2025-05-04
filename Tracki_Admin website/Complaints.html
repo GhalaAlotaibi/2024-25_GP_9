@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,161 +14,273 @@
         .resolve-btn {
             width: 100px;
             padding: 10px;
-            background-color: #d6b6f2; /* Light purple */
+            background-color: #d6b6f2;
+            /* Light purple */
             color: #fff;
             border: none;
             border-radius: 5px;
-            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Shadow */
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            /* Shadow */
             cursor: pointer;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
+
         .resolve-btn:hover {
-            background-color: #c093e0; /* Slightly darker purple on hover */
-            transform: scale(1.05); /* Slight hover effect */
+            background-color: #c093e0;
+            /* Slightly darker purple on hover */
+            transform: scale(1.05);
+            /* Slight hover effect */
         }
+
         .resolve-btn:active {
-            transform: scale(1); /* Reset scale when active */
+            transform: scale(1);
+            /* Reset scale when active */
         }
+
         .filter-container {
-        margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    #status-filter {
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-/*remove later */
-    .suspend-btn {
-    width: 100px;
-    padding: 10px;
-    background-color: #f2b6b6; /* Light red */
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2); /* Shadow */
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.suspend-btn:hover {
-    background-color: #e09393; /* Slightly darker red on hover */
-    transform: scale(1.05); /* Slight hover effect */
-}
-.suspend-btn:active {
-    transform: scale(1); /* Reset scale when active */
-}
-/* Adjust table cell layout */
-/* General table styling */
-/* Table Header */
-th {
-    background-color: #7A557A;
-    color: #faf3f0;
-    font-weight: bold;
-    letter-spacing: 1px;
-    padding: 10px;
-    text-align: center; /* Center-align headers */
-    font-size: 16px; /* Adjust font size for better readability */
-    border-bottom: 2px solid #ddd; /* Border for distinction */
-}
-/* Table Cells */
-td {
-    padding: 10px;
-    text-align: center; /* Center-align all table cells */
-    font-size: 14px; /* Slightly smaller than headers */
-    border-bottom: 1px solid #ddd; /* Row separator */
-    vertical-align: middle; /* Ensure content is vertically centered */
-}
-/* Table Rows */
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-tr:nth-child(odd),
-tr:nth-child(even) {
-    background-color: #faf1f4;
-}
-th, td {
-    padding: 10px;
-    text-align: right;
-    border-bottom: 1px solid #ddd;
-    word-wrap: break-word;
-    white-space: normal;
-}
-/* Buttons in the Action Column */
-td button {
-    margin: 0 5px; /* Add horizontal space between buttons */
-    padding: 8px 12px; /* Adjust padding for consistent button size */
-    font-size: 14px; /* Match button font size with cell text */
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1); /* Add subtle shadow */
-}
-/* 'حل' Button */
-.resolve-btn {
-    background-color: #d6b6f2; /* Light purple */
-    color: white;
-}
-.resolve-btn:hover {
-    background-color: #c093e0; /* Darker purple on hover */
-}
-/* 'تعليق' Button */
-.suspend-btn {
-    background-color: #f2b6b6; /* Light red */
-    color: white;
-}
-.suspend-btn:hover {
-    background-color: #e09393; /* Darker red on hover */
-}
-.comment-box {
-    width: 100%;
-    height: 50px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 5px;
-    font-size: 14px;
-    resize: none;
-}
-.comment-box:focus {
-    border-color: #7A557A; /* Match your theme's purple color */
-    outline: none;
-}
-.save-btn, .edit-btn {
-    width: 80px;
-    padding: 5px;
-    background-color: #d6b6f2; /* Light purple */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 5px;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-.save-btn:hover, .edit-btn:hover {
-    background-color: #c093e0; /* Darker purple */
-    transform: scale(1.05);
-}
+        #status-filter {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
 
-#loading-spinner {
-    display: table-row; /* Table rows require this display style */
-    text-align: center;
-}
+        /*remove later */
+        .suspend-btn {
+            width: 100px;
+            padding: 10px;
+            background-color: #f2b6b6;
+            /* Light red */
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+            /* Shadow */
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
 
-.spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #ccc;
-    border-top: 5px solid #7A557A; /* Match theme color */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin: auto;
-    display: inline-block; /* Ensure spinner is visible */
-}
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
+        .suspend-btn:hover {
+            background-color: #e09393;
+            /* Slightly darker red on hover */
+            transform: scale(1.05);
+            /* Slight hover effect */
+        }
+
+        .suspend-btn:active {
+            transform: scale(1);
+            /* Reset scale when active */
+        }
+
+        /* Adjust table cell layout */
+        /* General table styling */
+        /* Table Header */
+        th {
+            background-color: #7A557A;
+            color: #faf3f0;
+            font-weight: bold;
+            letter-spacing: 1px;
+            padding: 10px;
+            text-align: center;
+            /* Center-align headers */
+            font-size: 16px;
+            /* Adjust font size for better readability */
+            border-bottom: 2px solid #ddd;
+            /* Border for distinction */
+        }
+
+        /* Table Cells */
+        td {
+            padding: 10px;
+            text-align: center;
+            /* Center-align all table cells */
+            font-size: 14px;
+            /* Slightly smaller than headers */
+            border-bottom: 1px solid #ddd;
+            /* Row separator */
+            vertical-align: middle;
+            /* Ensure content is vertically centered */
+        }
+
+        /* Table Rows */
+
+        tr:nth-child(odd),
+        tr:nth-child(even) {
+            background-color: #faf1f4;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            text-align: right;
+            border-bottom: 1px solid #ddd;
+            word-wrap: break-word;
+            white-space: normal;
+        }
+
+        /* Buttons in the Action Column */
+        td button {
+            margin: 0 5px;
+            /* Add horizontal space between buttons */
+            padding: 8px 12px;
+            /* Adjust padding for consistent button size */
+            font-size: 14px;
+            /* Match button font size with cell text */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+            /* Add subtle shadow */
+        }
+
+        /* 'حل' Button */
+        .resolve-btn {
+            background-color: #d6b6f2;
+            /* Light purple */
+            color: white;
+        }
+
+        .resolve-btn:hover {
+            background-color: #c093e0;
+            /* Darker purple on hover */
+        }
+
+        /* 'تعليق' Button */
+        .suspend-btn {
+            background-color: #f2b6b6;
+            /* Light red */
+            color: white;
+        }
+
+        .suspend-btn:hover {
+            background-color: #e09393;
+            /* Darker red on hover */
+        }
+
+        .comment-box {
+            width: 100%;
+            height: 50px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 5px;
+            font-size: 14px;
+            resize: none;
+        }
+
+        .comment-box:focus {
+            border-color: #7A557A;
+            /* Match your theme's purple color */
+            outline: none;
+        }
+
+        .save-btn,
+        .edit-btn {
+            width: 80px;
+            padding: 5px;
+            background-color: #d6b6f2;
+            /* Light purple */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .save-btn:hover,
+        .edit-btn:hover {
+            background-color: #c093e0;
+            /* Darker purple */
+            transform: scale(1.05);
+        }
+
+        #loading-spinner {
+            display: table-row;
+            /* Table rows require this display style */
+            text-align: center;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #ccc;
+            border-top: 5px solid #7A557A;
+            /* Match theme color */
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: auto;
+            display: inline-block;
+            /* Ensure spinner is visible */
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* FAke loading message (for consistency) */
+        .main-container {
+            position: relative;
+        }
+
+        /* Loading overlay styles */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffffff;
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-top: 5%;
+        }
+
+        .loading-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .loading-overlay img {
+            width: 60px;
+            animation: moveTruck 2s linear infinite;
+        }
+
+        .loading-overlay p {
+            margin-top: 10px;
+            font-size: 20px;
+            color: #674188;
+        }
+
+        @keyframes moveTruck {
+            0% {
+                transform: translateX(-100px);
+            }
+
+            50% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(100px);
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- Header -->
     <div class="main-container">
@@ -178,25 +291,38 @@ td button {
                 <img src="images/TrackiLogo.png" alt="Logo">
                 <h1>Tracki</h1>
             </div>
-        
+
             <!-- Navigation Links -->
             <ul style="list-style: none; padding: 0; margin: 20px 0;">
                 <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
                 <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
                 <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-                <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
+                <li><a href="LocationUpdateRequests.html"><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a>
+                </li>
                 <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات </a></li>
                 <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-                <li><a href="Complaints.html" style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
+                <li><a href="Complaints.html"
+                        style="background-color: #7A557A; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
+                            class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
             </ul>
-        </div>  
-        
+        </div>
+
         <section class="status-section">
             <div class="left-actions">
                 <p id="status">مرحبًا!</p>
             </div>
             <div class="right-actions">
-                <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                <!--*************************************************************************************************************-->
+                <div class="notification-wrapper">
+                    <div id="notification-trigger" class="notification-trigger">
+                        <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
+                        <span id="notification-badge" class="notification-badge hidden"></span>
+                    </div>
+                    <div id="notification-popup" class="notification-popup hidden">
+                        <span id="notification-message"></span>
+                        <button id="notification-confirm" class="notification-confirm">عرض</button>
+                    </div>
+                </div>
                 <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
             </div>
         </section>
@@ -211,9 +337,9 @@ td button {
                     <option value="resolved">تم الحل</option>
                 </select>
             </div>
-   
-    
-            
+
+
+
             <div class="table-container">
                 <table id="complaints-table">
                     <thead>
@@ -224,7 +350,8 @@ td button {
                             <th>الوقت</th>
                             <th>الحالة</th>
                             <th>حل الشكوى</th>
-                            <th>تعليق/ تفعيل</th>                            <th>التعليقات</th>
+                            <th>تعليق/ تفعيل</th>
+                            <th>التعليقات</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -237,8 +364,25 @@ td button {
                     </tbody>
                 </table>
             </div>
+            <!-- Fake loading message (For consistency)-->
+            <div id="fake-loading" class="loading-overlay" style="display: none;">
+                <div class="loading-content">
+                    <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
+                    <p>الرجاء الإنتظار...</p>
+                </div>
+            </div>
+            <script>
+                // Show fake loading for 2 seconds when page loads
+                document.addEventListener('DOMContentLoaded', function () {
+                    const fakeLoading = document.getElementById('fake-loading');
+                    fakeLoading.style.display = 'block';
+
+                    setTimeout(function () {
+                        fakeLoading.style.display = 'none';
+                    }, 3000); // 2 seconds
+                });
+            </script>
         </div>
-    
     </div>
     <!-- Footer -->
     <div class="footer">
@@ -266,139 +410,141 @@ td button {
         const db = getFirestore(app);
         // Check authentication status on page load
         onAuthStateChanged(auth, (user) => {
-    const statusElement = document.getElementById('status');
-    if (user) {
-        const username = user.email.split('@')[0];
-        statusElement.innerText = `مرحبًا ${username} !`;
-        loadComplaints(); // Trigger complaints loading here
-    } else {
-        statusElement.innerText = "لم يتم تسجيل الدخول";
-        window.location.href = "WelcomePage.html";
-    }
-});
-
-const comments = {}; // To store comments temporarily
-// Save comment to database
-function saveComment(complaintId) {
-    const commentTextarea = document.getElementById(`comment-${complaintId}`);
-    const saveButton = document.getElementById(`save-${complaintId}`);
-    const editButton = document.getElementById(`edit-${complaintId}`);
-    const comment = commentTextarea.value;
-    // Save comment to Firestore
-    const complaintRef = doc(db, "Complaint", complaintId);
-    updateDoc(complaintRef, { adminComment: comment })
-        .then(() => {
-            console.log(`Comment for complaint ${complaintId} saved successfully.`);
-            alert("تم حفظ التعليق بنجاح!");
-            // Disable textarea and adjust button states
-            commentTextarea.disabled = true;
-            saveButton.disabled = true;
-            editButton.disabled = false;
-        })
-        .catch((error) => {
-            console.error("Error saving comment:", error);
-            alert("حدث خطأ أثناء حفظ التعليق.");
+            const statusElement = document.getElementById('status');
+            if (user) {
+                const username = user.email.split('@')[0];
+                statusElement.innerText = `مرحبًا ${username} !`;
+                loadComplaints(); // Trigger complaints loading here
+                checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
+                setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
+            } else {
+                statusElement.innerText = "لم يتم تسجيل الدخول";
+                window.location.href = "WelcomePage.html";
+            }
         });
-}
-// Enable editing for the comment
-function enableEdit(complaintId) {
-    const commentTextarea = document.getElementById(`comment-${complaintId}`);
-    const saveButton = document.getElementById(`save-${complaintId}`);
-    const editButton = document.getElementById(`edit-${complaintId}`);
-    // Enable the textarea and adjust button states
-    commentTextarea.disabled = false;
-    saveButton.disabled = false;
-    editButton.disabled = true;
-}
 
-function formatTimestamp(timestamp) {
-    if (timestamp && timestamp.seconds) {
-        const date = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
-        return date.toLocaleString('ar-SA', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
-        }); // Adjust formatting as needed
-    }
-    return "غير محدد"; // Default value if no timestamp is available
-}
-        // Load complaints using AJAX
-   async function loadComplaints(filter = "all") {
-    const complaintsTableBody = document.querySelector('#complaints-table tbody');
-    // Add this line
-    const loadingSpinner = document.getElementById('loading-spinner');
-
-    console.log(loadingSpinner); // Ensure the spinner element is correctly referenced
-
-
-    complaintsTableBody.innerHTML = ''; // Clear the table
-
-    complaintsTableBody.appendChild(loadingSpinner);
-    loadingSpinner.style.display = 'table-row'; // Correct display style for a table row
-// Or adjust depending on parent structure
-
-    console.log('Spinner displayed');
-    
-    try {
-        console.log('Spinner visibility:', window.getComputedStyle(loadingSpinner).display);
-        // Fetch all complaints from the "Complaint" collection
-        const complaintsSnapshot = await getDocs(collection(db, "Complaint"));
-        const complaints = complaintsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        if (complaints.length === 0) {
-            const noDataRow = document.createElement('tr');
-            noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
-            complaintsTableBody.appendChild(noDataRow);
-            return;
+        const comments = {}; // To store comments temporarily
+        // Save comment to database
+        function saveComment(complaintId) {
+            const commentTextarea = document.getElementById(`comment-${complaintId}`);
+            const saveButton = document.getElementById(`save-${complaintId}`);
+            const editButton = document.getElementById(`edit-${complaintId}`);
+            const comment = commentTextarea.value;
+            // Save comment to Firestore
+            const complaintRef = doc(db, "Complaint", complaintId);
+            updateDoc(complaintRef, { adminComment: comment })
+                .then(() => {
+                    console.log(`Comment for complaint ${complaintId} saved successfully.`);
+                    alert("تم حفظ التعليق بنجاح!");
+                    // Disable textarea and adjust button states
+                    commentTextarea.disabled = true;
+                    saveButton.disabled = true;
+                    editButton.disabled = false;
+                })
+                .catch((error) => {
+                    console.error("Error saving comment:", error);
+                    alert("حدث خطأ أثناء حفظ التعليق.");
+                });
         }
-        // Fetch all requests from the "Request" collection
-        const requestSnapshot = await getDocs(collection(db, "Request"));
-        const requests = requestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        // Process complaints with matched requests
-        const processedComplaints = await Promise.all(
-            complaints.map(async (complaint) => {
-                const foodTruckDoc = await getDoc(doc(db, "Food_Truck", complaint.foodTruckId));
-                const foodTruckName = foodTruckDoc.exists() ? foodTruckDoc.data().name : "غير محدد";
-                let ownerPhone = "غير محدد";
-                let requestStatus = "accepted"; // Default status
-                let requestId = null;
-                // Find matching request based on foodTruckId
-                const matchingRequest = requests.find(request => request.foodTruckId === complaint.foodTruckId);
-                if (matchingRequest) {
-                    requestStatus = matchingRequest.status;
-                    requestId = matchingRequest.id;
+        // Enable editing for the comment
+        function enableEdit(complaintId) {
+            const commentTextarea = document.getElementById(`comment-${complaintId}`);
+            const saveButton = document.getElementById(`save-${complaintId}`);
+            const editButton = document.getElementById(`edit-${complaintId}`);
+            // Enable the textarea and adjust button states
+            commentTextarea.disabled = false;
+            saveButton.disabled = false;
+            editButton.disabled = true;
+        }
+
+        function formatTimestamp(timestamp) {
+            if (timestamp && timestamp.seconds) {
+                const date = new Date(timestamp.seconds * 1000); // Convert seconds to milliseconds
+                return date.toLocaleString('ar-SA', {
+                    weekday: 'long',
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                }); // Adjust formatting as needed
+            }
+            return "غير محدد"; // Default value if no timestamp is available
+        }
+        // Load complaints using AJAX
+        async function loadComplaints(filter = "all") {
+            const complaintsTableBody = document.querySelector('#complaints-table tbody');
+            // Add this line
+            const loadingSpinner = document.getElementById('loading-spinner');
+
+            console.log(loadingSpinner); // Ensure the spinner element is correctly referenced
+
+
+            complaintsTableBody.innerHTML = ''; // Clear the table
+
+            complaintsTableBody.appendChild(loadingSpinner);
+            loadingSpinner.style.display = 'table-row'; // Correct display style for a table row
+            // Or adjust depending on parent structure
+
+            console.log('Spinner displayed');
+
+            try {
+                console.log('Spinner visibility:', window.getComputedStyle(loadingSpinner).display);
+                // Fetch all complaints from the "Complaint" collection
+                const complaintsSnapshot = await getDocs(collection(db, "Complaint"));
+                const complaints = complaintsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                if (complaints.length === 0) {
+                    const noDataRow = document.createElement('tr');
+                    noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
+                    complaintsTableBody.appendChild(noDataRow);
+                    return;
                 }
-                if (foodTruckDoc.exists() && foodTruckDoc.data().ownerID) {
-                    const ownerDoc = await getDoc(doc(db, "Truck_Owner", foodTruckDoc.data().ownerID));
-                    ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
-                }
-                return {
-                    ...complaint,
-                    foodTruckName,
-                    ownerPhone,
-                    requestStatus,
-                    requestId,
-                };
-            })
-        );
-        console.log("Processed Complaints:", processedComplaints); // Log for debugging
-        // Apply the filter
-        const filteredComplaints = processedComplaints.filter(complaint => {
-            return filter === "all" || complaint.status === filter;
-        });
-        // Render filtered complaints
-        if (filteredComplaints.length === 0) {
-            const noDataRow = document.createElement('tr');
-            noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
-            complaintsTableBody.appendChild(noDataRow);
-        } else {
-            filteredComplaints.forEach((complaint) => {
-                const row = document.createElement('tr');
-                row.setAttribute("data-id", complaint.id);
-                row.innerHTML = `
+                // Fetch all requests from the "Request" collection
+                const requestSnapshot = await getDocs(collection(db, "Request"));
+                const requests = requestSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                // Process complaints with matched requests
+                const processedComplaints = await Promise.all(
+                    complaints.map(async (complaint) => {
+                        const foodTruckDoc = await getDoc(doc(db, "Food_Truck", complaint.foodTruckId));
+                        const foodTruckName = foodTruckDoc.exists() ? foodTruckDoc.data().name : "غير محدد";
+                        let ownerPhone = "غير محدد";
+                        let requestStatus = "accepted"; // Default status
+                        let requestId = null;
+                        // Find matching request based on foodTruckId
+                        const matchingRequest = requests.find(request => request.foodTruckId === complaint.foodTruckId);
+                        if (matchingRequest) {
+                            requestStatus = matchingRequest.status;
+                            requestId = matchingRequest.id;
+                        }
+                        if (foodTruckDoc.exists() && foodTruckDoc.data().ownerID) {
+                            const ownerDoc = await getDoc(doc(db, "Truck_Owner", foodTruckDoc.data().ownerID));
+                            ownerPhone = ownerDoc.exists() ? ownerDoc.data().PhoneNum : "غير محدد";
+                        }
+                        return {
+                            ...complaint,
+                            foodTruckName,
+                            ownerPhone,
+                            requestStatus,
+                            requestId,
+                        };
+                    })
+                );
+                console.log("Processed Complaints:", processedComplaints); // Log for debugging
+                // Apply the filter
+                const filteredComplaints = processedComplaints.filter(complaint => {
+                    return filter === "all" || complaint.status === filter;
+                });
+                // Render filtered complaints
+                if (filteredComplaints.length === 0) {
+                    const noDataRow = document.createElement('tr');
+                    noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد شكاوي</td>`;
+                    complaintsTableBody.appendChild(noDataRow);
+                } else {
+                    filteredComplaints.forEach((complaint) => {
+                        const row = document.createElement('tr');
+                        row.setAttribute("data-id", complaint.id);
+                        row.innerHTML = `
                     <td>${complaint.foodTruckName || "غير محدد"}</td>
                     <td>${complaint.ownerPhone || "غير محدد"}</td>
                     <td>${complaint.description || "غير محدد"}</td>
@@ -435,123 +581,123 @@ function formatTimestamp(timestamp) {
         onclick="enableEdit('${complaint.id}')">تعديل</button>
 </td>
             `;
-                // Attach event listeners for تعليق and إعادة تفعيل buttons
-                const suspendButton = row.querySelector('.suspend-btn');
-                if (suspendButton) {
-                    if (complaint.requestStatus === "suspended") {
-                        suspendButton.onclick = () => reactivateTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
-                    } else {
-                        suspendButton.onclick = () => suspendTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
-                    }
+                        // Attach event listeners for تعليق and إعادة تفعيل buttons
+                        const suspendButton = row.querySelector('.suspend-btn');
+                        if (suspendButton) {
+                            if (complaint.requestStatus === "suspended") {
+                                suspendButton.onclick = () => reactivateTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
+                            } else {
+                                suspendButton.onclick = () => suspendTruck(complaint.requestId, complaint.foodTruckId, suspendButton);
+                            }
+                        }
+                        complaintsTableBody.appendChild(row);
+                    });
                 }
-                complaintsTableBody.appendChild(row);
-            });
+            } catch (error) {
+                console.error("Error loading complaints:", error);
+                const errorRow = document.createElement('tr');
+                errorRow.innerHTML = `<td colspan="6" style="text-align: center; color: red;">خطأ في استرداد البيانات</td>`;
+                complaintsTableBody.appendChild(errorRow);
+            } finally {
+                // Hide the loading spinner
+                loadingSpinner.style.display = 'none'; // Hide spinner
+                console.log('Spinner hidden');
+            }
         }
-    } catch (error) {
-        console.error("Error loading complaints:", error);
-        const errorRow = document.createElement('tr');
-        errorRow.innerHTML = `<td colspan="6" style="text-align: center; color: red;">خطأ في استرداد البيانات</td>`;
-        complaintsTableBody.appendChild(errorRow);
-    } finally {
-        // Hide the loading spinner
-        loadingSpinner.style.display = 'none'; // Hide spinner
-        console.log('Spinner hidden');
-    }
-}
 
 
 
 
 
-// Expose the function to the global scope
-window.filterComplaints = function () {
-    const statusFilter = document.getElementById("status-filter").value;
-    console.log("Selected filter:", statusFilter); // Debug log
-    loadComplaints(statusFilter); // Call `loadComplaints` with the selected filter
-};
+        // Expose the function to the global scope
+        window.filterComplaints = function () {
+            const statusFilter = document.getElementById("status-filter").value;
+            console.log("Selected filter:", statusFilter); // Debug log
+            loadComplaints(statusFilter); // Call `loadComplaints` with the selected filter
+        };
 
-        
+
         // Resolve complaint
         async function resolveComplaint(complaintId) {
-    console.log("Resolving complaint with ID:", complaintId); // Debugging log
-    const isConfirmed = window.confirm("هل تريد وضع هذه الشكوى كـ'تم الحل'؟");
-    if (isConfirmed) {
-        try {
-            const complaintRef = doc(db, "Complaint", complaintId);
-            await updateDoc(complaintRef, {
-                status: "resolved"  // Update status
-            });
-            alert("تم تحديث حالة الشكوى إلى 'تم الحل'.");
-            // Update the UI dynamically for this row
-            const row = document.querySelector(`[data-id="${complaintId}"]`);
-            if (row) {
-                row.querySelector("td:nth-child(5)").textContent = "تم الحل"; // Update the "الحالة" column
-                // Update الإجراء - حل column
-                row.querySelector("td:nth-child(6)").innerHTML = `<span class="status-text">تم الحل</span>`;
+            console.log("Resolving complaint with ID:", complaintId); // Debugging log
+            const isConfirmed = window.confirm("هل تريد وضع هذه الشكوى كـ'تم الحل'؟");
+            if (isConfirmed) {
+                try {
+                    const complaintRef = doc(db, "Complaint", complaintId);
+                    await updateDoc(complaintRef, {
+                        status: "resolved"  // Update status
+                    });
+                    alert("تم تحديث حالة الشكوى إلى 'تم الحل'.");
+                    // Update the UI dynamically for this row
+                    const row = document.querySelector(`[data-id="${complaintId}"]`);
+                    if (row) {
+                        row.querySelector("td:nth-child(5)").textContent = "تم الحل"; // Update the "الحالة" column
+                        // Update الإجراء - حل column
+                        row.querySelector("td:nth-child(6)").innerHTML = `<span class="status-text">تم الحل</span>`;
 
-                // Update الإجراء - تعليق column
-                row.querySelector("td:nth-child(7)").innerHTML = `<span class="status-text">تم الحل</span>`;
+                        // Update الإجراء - تعليق column
+                        row.querySelector("td:nth-child(7)").innerHTML = `<span class="status-text">تم الحل</span>`;
+                    }
+                    console.log(`Complaint with ID ${complaintId} updated to 'resolved'.`);
+                } catch (error) {
+                    console.error("Error resolving complaint:", error);
+                    alert("حدث خطأ أثناء تحديث حالة الشكوى.");
+                }
             }
-            console.log(`Complaint with ID ${complaintId} updated to 'resolved'.`);
-        } catch (error) {
-            console.error("Error resolving complaint:", error);
-            alert("حدث خطأ أثناء تحديث حالة الشكوى.");
         }
-    }
-}
 
-// Expose the function to the global scope
-window.resolveComplaint = resolveComplaint;
-//remove later
-async function suspendTruck(statusId, foodTruckId, button) {
-    console.log("Suspending truck with:", { statusId, foodTruckId }); // Debug log
-    if (!statusId || !foodTruckId) {
-        alert("تعذر العثور على معرف العربة أو الحالة.");
-        return;
-    }
-    const confirmSuspend = window.confirm("هل تريد تعليق العربة؟");
-    if (!confirmSuspend) return;
-    try {
-        // Update Firestore document
-        const requestRef = doc(db, "Request", statusId);
-        await updateDoc(requestRef, { status: "suspended" });
-        console.log(`Truck with ID ${foodTruckId} suspended.`);
-        // Update button to "إعادة تفعيل"
-        button.textContent = "إعادة تفعيل";
-        button.onclick = () => reactivateTruck(statusId, foodTruckId, button);
-        alert("تم تعليق العربة بنجاح.");
-    } catch (error) {
-        console.error("Error suspending truck:", error);
-        alert("حدث خطأ أثناء تعليق العربة.");
-    }
-}
-async function reactivateTruck(statusId, foodTruckId, button) {
-    console.log("Reactivating truck with:", { statusId, foodTruckId }); // Debug log
-    if (!statusId || !foodTruckId) {
-        alert("تعذر العثور على معرف العربة أو الحالة.");
-        return;
-    }
-    const confirmReactivate = window.confirm("هل تريد إعادة تفعيل العربة؟");
-    if (!confirmReactivate) return;
-    try {
-        // Update Firestore document
-        const requestRef = doc(db, "Request", statusId);
-        await updateDoc(requestRef, { status: "accepted" });
-        console.log(`Truck with ID ${foodTruckId} reactivated.`);
-        // Update button to "تعليق"
-        button.textContent = "تعليق";
-        button.onclick = () => suspendTruck(statusId, foodTruckId, button);
-        alert("تم إعادة تفعيل العربة بنجاح.");
-    } catch (error) {
-        console.error("Error reactivating truck:", error);
-        alert("حدث خطأ أثناء إعادة تفعيل العربة.");
-    }
-}
+        // Expose the function to the global scope
+        window.resolveComplaint = resolveComplaint;
+        //remove later
+        async function suspendTruck(statusId, foodTruckId, button) {
+            console.log("Suspending truck with:", { statusId, foodTruckId }); // Debug log
+            if (!statusId || !foodTruckId) {
+                alert("تعذر العثور على معرف العربة أو الحالة.");
+                return;
+            }
+            const confirmSuspend = window.confirm("هل تريد تعليق العربة؟");
+            if (!confirmSuspend) return;
+            try {
+                // Update Firestore document
+                const requestRef = doc(db, "Request", statusId);
+                await updateDoc(requestRef, { status: "suspended" });
+                console.log(`Truck with ID ${foodTruckId} suspended.`);
+                // Update button to "إعادة تفعيل"
+                button.textContent = "إعادة تفعيل";
+                button.onclick = () => reactivateTruck(statusId, foodTruckId, button);
+                alert("تم تعليق العربة بنجاح.");
+            } catch (error) {
+                console.error("Error suspending truck:", error);
+                alert("حدث خطأ أثناء تعليق العربة.");
+            }
+        }
+        async function reactivateTruck(statusId, foodTruckId, button) {
+            console.log("Reactivating truck with:", { statusId, foodTruckId }); // Debug log
+            if (!statusId || !foodTruckId) {
+                alert("تعذر العثور على معرف العربة أو الحالة.");
+                return;
+            }
+            const confirmReactivate = window.confirm("هل تريد إعادة تفعيل العربة؟");
+            if (!confirmReactivate) return;
+            try {
+                // Update Firestore document
+                const requestRef = doc(db, "Request", statusId);
+                await updateDoc(requestRef, { status: "accepted" });
+                console.log(`Truck with ID ${foodTruckId} reactivated.`);
+                // Update button to "تعليق"
+                button.textContent = "تعليق";
+                button.onclick = () => suspendTruck(statusId, foodTruckId, button);
+                alert("تم إعادة تفعيل العربة بنجاح.");
+            } catch (error) {
+                console.error("Error reactivating truck:", error);
+                alert("حدث خطأ أثناء إعادة تفعيل العربة.");
+            }
+        }
 
 
 
-    // Expose suspendTruck to the global scope
-    window.suspendTruck = suspendTruck;
+        // Expose suspendTruck to the global scope
+        window.suspendTruck = suspendTruck;
 
         // Logout functionality
         const logoutIcon = document.getElementById('logout-icon');
@@ -566,6 +712,69 @@ async function reactivateTruck(statusId, foodTruckId, button) {
         });
         window.enableEdit = enableEdit;
         window.saveComment = saveComment;
+
+
+        // Notification Functions<!--*************************************************************************************************************-->
+        async function checkPendingTrucks() {
+            try {
+                const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
+                const requestsSnapshot = await getDocs(collection(db, "Request"));
+
+                const requestStatusMap = {};
+                requestsSnapshot.forEach(doc => {
+                    requestStatusMap[doc.id] = doc.data().status;
+                });
+
+                let pendingCount = 0;
+                trucksSnapshot.forEach(doc => {
+                    const statusId = doc.data().statusId;
+                    if (statusId && requestStatusMap[statusId] === "pending") {
+                        pendingCount++;
+                    }
+                });
+
+                const badge = document.getElementById("notification-badge");
+                const icon = document.getElementById("notification-icon");
+
+                if (pendingCount > 0) {
+                    badge.textContent = pendingCount;
+                    badge.classList.remove("hidden");
+                    badge.classList.add("has-notifications");
+                    icon.style.color = "#7A557A"; // Change icon color
+                } else {
+                    badge.classList.add("hidden");
+                    badge.classList.remove("has-notifications");
+                    icon.style.color = ""; // Reset icon color
+                }
+            } catch (error) {
+                console.error("Error checking pending trucks:", error);
+            }
+        }
+
+        // Add click handler for notification icon
+        // Notification click handler
+        document.getElementById("notification-trigger").addEventListener("click", function (e) {
+            e.stopPropagation();
+            const badge = document.getElementById("notification-badge");
+            const popup = document.getElementById("notification-popup");
+            const message = document.getElementById("notification-message");
+
+            if (!badge.classList.contains("hidden")) {
+                const count = badge.textContent;
+                message.textContent = `لديك ${count} عربات قيد الانتظار!`;
+                popup.classList.toggle("hidden");
+            }
+        });
+
+        // Confirm button handler
+        document.getElementById("notification-confirm").addEventListener("click", function () {
+            window.location.href = "WaitingTrucks.html";
+        });
+
+        // Close when clicking elsewhere
+        document.addEventListener("click", function () {
+            document.getElementById("notification-popup").classList.add("hidden");
+        });
     </script>
 
 </html>
