@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
-import '../user_auth/firebase_auth_services.dart';
+ 
 import 'package:lottie/lottie.dart';
+import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/AfterSendPasswordScreen.dart';

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
 import 'screens/welcome_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+        // Apply the font family globally
+        fontFamily:
+            GoogleFonts.tajawal().fontFamily,  
+        textTheme: GoogleFonts.tajawalTextTheme(
+          Theme.of(context).textTheme,
+        ),
+     
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: kBannerColor, // Use your constant color
+          primary: kBannerColor,
+          secondary: Colors.white,
+        ),
+        // Apply the font to various text styles
+        textButtonTheme: TextButtonThemeData(
+          style: TextButton.styleFrom(
+            textStyle: GoogleFonts.tajawal(),
+          ),
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            textStyle: GoogleFonts.tajawal(),
+          ),
+        ),
+      ),
       home: const WelcomeScreen(),
     );
   }

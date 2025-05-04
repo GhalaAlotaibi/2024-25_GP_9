@@ -43,3 +43,4 @@ app.*.map.json
 /android/app/release
 Recommender/cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json
 Recommender/cred/*.json
+cooking_chatbot/solu.py

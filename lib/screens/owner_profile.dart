@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/menu_update.dart';
 import 'package:tracki/screens/owner_home_screen.dart';
 import 'package:tracki/screens/owner_main_screen.dart';
 import 'package:tracki/screens/truck_details_update.dart';
+  
 import 'package:tracki/widgets/my_icon_button.dart';
 
-// truck profile
 class OwnerProfile extends StatefulWidget {
   final String ownerID;
 
@@ -96,17 +97,20 @@ class _OwnerProfileState extends State<OwnerProfile> {
             return SingleChildScrollView(
               child: Column(
                 children: [
-                  const SizedBox(height: 10),
                   Container(
-                    decoration: BoxDecoration(
-                      image: const DecorationImage(
-                        image: AssetImage('assets/images/background.png'),
-                        fit: BoxFit.cover,
-                      ),
-                      borderRadius: BorderRadius.circular(25),
-                    ),
                     width: 400,
                     height: 320,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(25),
+                      gradient: const LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          Color.fromARGB(255, 75, 48, 92), // Purple
+                          kBannerColor, // Blue
+                        ],
+                      ),
+                    ),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
@@ -310,86 +314,137 @@ class _OwnerProfileState extends State<OwnerProfile> {
                   const SizedBox(height: 20),
 
                   // Menu List
-                  ListView.builder(
-                    physics: const NeverScrollableScrollPhysics(),
-                    shrinkWrap: true,
-                    itemCount: itemNamesList.length,
-                    itemBuilder: (context, index) {
-                      final imageUrl = itemImagesList.isNotEmpty
-                          ? itemImagesList[index]
-                          : 'https://via.placeholder.com/50';
-                      final itemName = itemNamesList[index];
-                      final itemPrice = itemPricesList[index];
-
-                      return Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: 5.0, horizontal: 15.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: const Color.fromARGB(255, 255, 255, 255),
-                            borderRadius: BorderRadius.circular(13),
-                            boxShadow: [
-                              BoxShadow(
-                                color: const Color.fromARGB(110, 225, 217, 231),
-                                blurRadius: 5,
-                                spreadRadius: 0.2,
-                                offset: const Offset(0, 1),
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.all(10),
-                          child: Row(
-                            textDirection: TextDirection.rtl,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(12),
-                                child: FadeInImage.assetNetwork(
-                                  placeholder:
-                                      'assets/images/placeholder-image.jpg',
-                                  image: imageUrl,
-                                  height: 80,
-                                  width: 80,
-                                  fit: BoxFit.cover,
-                                  imageErrorBuilder:
-                                      (context, error, stackTrace) {
-                                    return Image.asset(
-                                      'assets/images/placeholder-image.jpg',
-                                      height: 80,
-                                      width: 80,
-                                      fit: BoxFit.cover,
-                                    );
-                                  },
+                  if (itemNamesList.isEmpty)
+                    Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Image.asset(
+                          'assets/images/emptyState.png',
+                          width: 230, // Adjust width as needed
+                          height: 230, // Adjust height as needed
+                          fit: BoxFit.contain,
+                        ),
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => MenuUpdate(
+                                  ownerID: widget.ownerID,
                                 ),
                               ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerRight,
-                                  child: Text(
-                                    itemName,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.black,
+                            );
+                          },
+                          child: const Text('أضف أصناف'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kBannerColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 30, vertical: 12),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    )
+                  else
+                    ListView.builder(
+                      physics: const NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: itemNamesList.length,
+                      itemBuilder: (context, index) {
+                        final imageUrl = itemImagesList.isNotEmpty
+                            ? itemImagesList[index]
+                            : 'https://via.placeholder.com/50';
+                        final itemName = itemNamesList[index];
+                        final itemPrice = itemPricesList[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 5.0, horizontal: 15.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 255, 255, 255),
+                              borderRadius: BorderRadius.circular(13),
+                              boxShadow: [
+                                BoxShadow(
+                                  color:
+                                      const Color.fromARGB(110, 225, 217, 231),
+                                  blurRadius: 5,
+                                  spreadRadius: 0.2,
+                                  offset: const Offset(0, 1),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Row(
+                              textDirection: TextDirection.rtl,
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: FadeInImage.assetNetwork(
+                                    placeholder:
+                                        'assets/images/placeholder-image.jpg',
+                                    image: imageUrl,
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.cover,
+                                    imageErrorBuilder:
+                                        (context, error, stackTrace) {
+                                      return Image.asset(
+                                        'assets/images/placeholder-image.jpg',
+                                        height: 80,
+                                        width: 80,
+                                        fit: BoxFit.cover,
+                                      );
+                                    },
+                                  ),
+                                ),
+                                const SizedBox(width: 10),
+                                Expanded(
+                                  child: Align(
+                                    alignment: Alignment.centerRight,
+                                    child: Text(
+                                      itemName,
+                                      style: const TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.black,
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-                              Text(
-                                '$itemPrice :السعر',
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black,
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Image.asset(
+                                      'assets/images/Riyal.png',
+                                      width: 16, // Adjust size as needed
+                                      height: 16, // Adjust size as needed
+                                    ),
+                                    SizedBox(
+                                      width: 3,
+                                    ),
+                                    Text(
+                                      '$itemPrice ',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-                        ),
-                      );
-                    },
-                  ),
-                  SizedBox(height: 60),
+                        );
+                      },
+                    ),
+                  const SizedBox(height: 60),
                 ],
               ),
             );
@@ -398,19 +453,6 @@ class _OwnerProfileState extends State<OwnerProfile> {
       ),
     );
   }
-
-  // Future<Map<String, dynamic>> getOwnerFoodTruckData(String docId) async {
-  //   final snapshot = await FirebaseFirestore.instance
-  //       .collection('Food_Truck')
-  //       .doc(docId)
-  //       .get();
-
-  //   if (snapshot.exists) {
-  //     return snapshot.data() as Map<String, dynamic>;
-  //   } else {
-  //     return {};
-  //   }
-  // }
 
   Future<void> _loadCategoryName() async {
     try {

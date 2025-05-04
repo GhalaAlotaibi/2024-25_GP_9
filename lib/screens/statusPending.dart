@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:tracki/Utils/constants.dart';
 
 class StatusPending extends StatelessWidget {
-
   void _goHome(BuildContext context) {
-    Navigator.popUntil(context, ModalRoute.withName('/')); // Pop to the root page
+    Navigator.popUntil(
+        context, ModalRoute.withName('/')); // Pop to the root page
   }
 
   @override
@@ -17,9 +18,9 @@ class StatusPending extends StatelessWidget {
           children: [
             const SizedBox(height: 20),
             Icon(
-              Icons.timelapse, 
+              Icons.timelapse,
               size: 80,
-              color: Color(0xFF674188),
+              color: kBannerColor,
             ),
             const SizedBox(height: 20),
             Container(
@@ -33,7 +34,7 @@ class StatusPending extends StatelessWidget {
                         text: 'طلبك قيد الانتظار',
                         style: TextStyle(
                           fontSize: 30,
-                          color: Color(0xFF674188),
+                          color: kBannerColor,
                         ),
                       ),
                     ],
@@ -48,7 +49,7 @@ class StatusPending extends StatelessWidget {
                 'عودة إلى الصفحة الرئيسية',
                 style: TextStyle(
                   fontSize: 18,
-                  color: Color(0xFF674188),
+                  color: kBannerColor,
                 ),
               ),
             ),

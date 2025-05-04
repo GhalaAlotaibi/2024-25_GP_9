@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -8,7 +7,6 @@ import 'package:tracki/Utils/constants.dart';
 import 'Create_Truck_2.dart';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
- 
 
 class CreateTruck1 extends StatefulWidget {
   final String ownerId;
@@ -16,6 +14,7 @@ class CreateTruck1 extends StatefulWidget {
   @override
   _CreateTruck1State createState() => _CreateTruck1State();
 }
+
 class _CreateTruck1State extends State<CreateTruck1> {
   final _formKey = GlobalKey<FormState>();
   AutovalidateMode _autoValidateMode = AutovalidateMode.disabled;
@@ -38,11 +37,10 @@ class _CreateTruck1State extends State<CreateTruck1> {
   bool isLogoMissing = false;
   bool isImageMissing = false;
   bool isLicenseMissing = false;
-  String? licenseNoErrorText;//new for real time validation
-  bool isPdfInvalid = false;         // For PDF extension error
-bool isLogoExtensionInvalid = false;
-bool isTruckImageExtensionInvalid = false;
-
+  String? licenseNoErrorText; //new for real time validation
+  bool isPdfInvalid = false; // For PDF extension error
+  bool isLogoExtensionInvalid = false;
+  bool isTruckImageExtensionInvalid = false;
 
   @override
   void initState() {
@@ -50,6 +48,7 @@ bool isTruckImageExtensionInvalid = false;
     timeList.addAll(generateTimeList());
     fetchCategories();
   }
+
 //elevated
   Future<void> fetchCategories() async {
     try {
@@ -68,26 +67,27 @@ bool isTruckImageExtensionInvalid = false;
       print('Error fetching categories: $e');
     }
   }
+
   // method to pick and upload image
   Future<void> _pickAndUploadImage({required bool isBusinessLogo}) async {
     final pickedFile =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       File imageFile = File(pickedFile.path);
-        bool isValid = imageFile.path.toLowerCase().endsWith('.jpg') ||
-                   imageFile.path.toLowerCase().endsWith('.jpeg') ||
-                   imageFile.path.toLowerCase().endsWith('.png') ||
-                   imageFile.path.toLowerCase().endsWith('.webp');
-     if (!isValid) {
-      setState(() {
-        if (isBusinessLogo) {
-          isLogoExtensionInvalid = true;
-        } else {
-          isTruckImageExtensionInvalid = true;
-        }
-      });
-      return;
-    }
+      bool isValid = imageFile.path.toLowerCase().endsWith('.jpg') ||
+          imageFile.path.toLowerCase().endsWith('.jpeg') ||
+          imageFile.path.toLowerCase().endsWith('.png') ||
+          imageFile.path.toLowerCase().endsWith('.webp');
+      if (!isValid) {
+        setState(() {
+          if (isBusinessLogo) {
+            isLogoExtensionInvalid = true;
+          } else {
+            isTruckImageExtensionInvalid = true;
+          }
+        });
+        return;
+      }
 
       try {
         final storageRef = FirebaseStorage.instance
@@ -96,23 +96,24 @@ bool isTruckImageExtensionInvalid = false;
         await storageRef.putFile(imageFile);
         final imageUrl = await storageRef.getDownloadURL();
         setState(() {
-        if (isBusinessLogo) {
-          businessLogo = imageFile;
-          businessLogoUrl = imageUrl;
-          isLogoExtensionInvalid = false;
+          if (isBusinessLogo) {
+            businessLogo = imageFile;
+            businessLogoUrl = imageUrl;
+            isLogoExtensionInvalid = false;
             isLogoMissing = false;
-        } else {
-          truckImage = imageFile;
-          truckImageUrl = imageUrl;
-          isTruckImageExtensionInvalid = false;
-           isImageMissing = false;
-        }
-      });
+          } else {
+            truckImage = imageFile;
+            truckImageUrl = imageUrl;
+            isTruckImageExtensionInvalid = false;
+            isImageMissing = false;
+          }
+        });
       } catch (e) {
         print('Error uploading image: $e');
       }
     }
   }
+
   List<String> generateTimeList() {
     List<String> timeList = [];
     for (int hour = 0; hour < 24; hour++) {
@@ -121,20 +122,21 @@ bool isTruckImageExtensionInvalid = false;
     }
     return timeList;
   }
+
   Future<void> _pickAndUploadFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
       File file = File(result.files.single.path!);
-        //  Check if the selected file is a PDF
-    if (!file.path.toLowerCase().endsWith('.pdf')) {
-      setState(() {
-        isPdfInvalid = true;
-         isLicenseMissing = false; //  add this to suppress the second message
-          licenseFile = null;       // Explicitly set to null
-    licenseFileUrl = null;    // Clear previous URL if any
-      });
-      return;
-    }
+      //  Check if the selected file is a PDF
+      if (!file.path.toLowerCase().endsWith('.pdf')) {
+        setState(() {
+          isPdfInvalid = true;
+          isLicenseMissing = false; //  add this to suppress the second message
+          licenseFile = null; // Explicitly set to null
+          licenseFileUrl = null; // Clear previous URL if any
+        });
+        return;
+      }
       try {
         final storageRef = FirebaseStorage.instance
             .ref()
@@ -144,7 +146,7 @@ bool isTruckImageExtensionInvalid = false;
         setState(() {
           licenseFile = file;
           licenseFileUrl = fileUrl;
-          isLicenseMissing = false; //  fix here new 
+          isLicenseMissing = false; //  fix here new
           isPdfInvalid = false; // clear PDF error
         });
       } catch (e) {
@@ -152,12 +154,13 @@ bool isTruckImageExtensionInvalid = false;
       }
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: kBannerColor,
       appBar: AppBar(
-        backgroundColor: Color(0xFF674188),
+        backgroundColor: kBannerColor,
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
@@ -190,7 +193,7 @@ bool isTruckImageExtensionInvalid = false;
               child: SingleChildScrollView(
                 child: Form(
                   key: _formKey,
-                   autovalidateMode: _autoValidateMode,
+                  autovalidateMode: _autoValidateMode,
                   child: Column(
                     children: [
                       const Text(
@@ -252,16 +255,16 @@ bool isTruckImageExtensionInvalid = false;
                         child: TextFormField(
                           textAlign: TextAlign.right,
                           keyboardType: TextInputType.text,
-                           autovalidateMode: AutovalidateMode.onUserInteraction, 
-                            onChanged: (value) {
-      truckName = value;
-    },
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'الرجاء إدخال اسم العربة';
-      }
-      return null;
-    },
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          onChanged: (value) {
+                            truckName = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الرجاء إدخال اسم العربة';
+                            }
+                            return null;
+                          },
                           decoration: InputDecoration(
                             label: const Text('اسم العربة',
                                 textAlign: TextAlign.center),
@@ -282,56 +285,61 @@ bool isTruckImageExtensionInvalid = false;
                         ),
                       ),
                       const SizedBox(height: 25.0),
-Directionality(
-  textDirection: TextDirection.rtl,
-  child: TextFormField(
-    controller: _licenseNoController,
-     autovalidateMode: AutovalidateMode.onUserInteraction, 
-        onChanged: (value) {
-      licenseNo = value;
-    },
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'الرجاء إدخال رقم الرخصة';
-        }
-    if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
-      return 'الرقم يجب أن يحتوي على أرقام فقط';
-    }
-      return null;
-    },
-    textAlign: TextAlign.right,
-    keyboardType: TextInputType.text,
-    decoration: InputDecoration(
-      label: const Text('رقم الرخصة', textAlign: TextAlign.center),
-      hintText: 'ادخل رقم الرخصة',
-      hintStyle: const TextStyle(color: Colors.black26),
-      // errorText: licenseNoErrorText, //  Show real-time error
-      border: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      alignLabelWithHint: true,
-      suffixIcon: IconButton(
-        icon: const Icon(Icons.info_outline, color: Colors.grey),
-        onPressed: () {
-          // Show a Snackbar as an alternative to the Tooltip
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text(
-                  'الرجاء إدخال رقم الرخصة الصادرة للعربة المتنقلة من الجهة المختصة'),
-              duration: Duration(seconds: 2),
-            ),
-          );
-        },
-        tooltip: 'الرجاء إدخال رقم الرخصة الصادرة للعربة المتنقلة من الجهة المختصة',
-      ),
-    ),
-  ),
-),
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          controller: _licenseNoController,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          onChanged: (value) {
+                            licenseNo = value;
+                          },
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الرجاء إدخال رقم الرخصة';
+                            }
+                            if (!RegExp(r'^[0-9]+$').hasMatch(value)) {
+                              return 'الرقم يجب أن يحتوي على أرقام فقط';
+                            }
+                            return null;
+                          },
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.text,
+                          decoration: InputDecoration(
+                            label: const Text('رقم الرخصة',
+                                textAlign: TextAlign.center),
+                            hintText: 'ادخل رقم الرخصة',
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            // errorText: licenseNoErrorText, //  Show real-time error
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            alignLabelWithHint: true,
+                            suffixIcon: IconButton(
+                              icon: const Icon(Icons.info_outline,
+                                  color: Colors.grey),
+                              onPressed: () {
+                                // Show a Snackbar as an alternative to the Tooltip
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                        'الرجاء إدخال رقم الرخصة الصادرة للعربة المتنقلة من الجهة المختصة'),
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              },
+                              tooltip:
+                                  'الرجاء إدخال رقم الرخصة الصادرة للعربة المتنقلة من الجهة المختصة',
+                            ),
+                          ),
+                        ),
+                      ),
 
                       const SizedBox(height: 20.0),
                       Directionality(
@@ -342,7 +350,6 @@ Directionality(
                           label: Text(licenseFile == null
                               ? 'تحميل ملف رخصة عربة متنقلة '
                               : 'تم تحميل الملف'),
-                              
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.grey[200],
                             foregroundColor: const Color.fromARGB(255, 0, 0, 0),
@@ -350,13 +357,13 @@ Directionality(
                         ),
                       ),
                       if (isPdfInvalid) // ✅ Fix: add condition like this in list
-  const Padding(
-    padding: EdgeInsets.only(top: 5),
-    child: Text(
-      'يجب أن يكون الملف بصيغة PDF',
-      style: TextStyle(color: Colors.red, fontSize: 12),
-    ),
-  ),
+                        const Padding(
+                          padding: EdgeInsets.only(top: 5),
+                          child: Text(
+                            'يجب أن يكون الملف بصيغة PDF',
+                            style: TextStyle(color: Colors.red, fontSize: 12),
+                          ),
+                        ),
                       if (isLicenseMissing)
                         const Padding(
                           padding: EdgeInsets.only(top: 5),
@@ -371,7 +378,7 @@ Directionality(
                         textDirection: TextDirection.rtl,
                         child: DropdownButtonFormField<String>(
                           value: selectedCategory,
-                           autovalidateMode: AutovalidateMode.onUserInteraction,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: (value) {
                             if (value == null) {
                               return 'الرجاء اختيار تصنيف العربة';
@@ -392,12 +399,11 @@ Directionality(
                               borderRadius: BorderRadius.circular(10),
                             ),
                           ),
-                       onChanged: (String? newValue) {
-  setState(() {
-    selectedCategory = newValue;
-  });
- 
-},
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCategory = newValue;
+                            });
+                          },
                           items: categories.map((category) {
                             return DropdownMenuItem<String>(
                               value: category['id'],
@@ -440,23 +446,24 @@ Directionality(
                               ),
                               const SizedBox(height: 5),
                               const Text("صورة الشعار"),
-                             if (isLogoExtensionInvalid)
-  const Padding(
-    padding: EdgeInsets.only(top: 5),
-    child: Text(
-      'صيغة الصورة غير مدعومة (JPG, PNG, WEBP)',
-      style: TextStyle(color: Colors.red, fontSize: 12),
-    ),
-  ), 
-  if (isLogoMissing)
-  const Padding(
-    padding: EdgeInsets.only(top: 5),
-    child: Text(
-      'الرجاء إدخال صورة الشعار',
-      style: TextStyle(color: Colors.red, fontSize: 12),
-    ),
-  ),
-
+                              if (isLogoExtensionInvalid)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    'صيغة الصورة غير مدعومة (JPG, PNG, WEBP)',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 12),
+                                  ),
+                                ),
+                              if (isLogoMissing)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    'الرجاء إدخال صورة الشعار',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 12),
+                                  ),
+                                ),
                             ],
                           ),
                           Column(
@@ -489,76 +496,80 @@ Directionality(
                               const SizedBox(height: 5),
                               const Text("صورة العربة"),
                               if (isTruckImageExtensionInvalid)
-  const Padding(
-    padding: EdgeInsets.only(top: 5),
-    child: Text(
-      'صيغة الصورة غير مدعومة (JPG, PNG, WEBP)',
-      style: TextStyle(color: Colors.red, fontSize: 12),
-    ),
-  ),
-  if (isImageMissing)
-  const Padding(
-    padding: EdgeInsets.only(top: 5),
-    child: Text(
-      'الرجاء إدخال صورة العربة',
-      style: TextStyle(color: Colors.red, fontSize: 12),
-    ),
-  ),
-
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    'صيغة الصورة غير مدعومة (JPG, PNG, WEBP)',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 12),
+                                  ),
+                                ),
+                              if (isImageMissing)
+                                const Padding(
+                                  padding: EdgeInsets.only(top: 5),
+                                  child: Text(
+                                    'الرجاء إدخال صورة العربة',
+                                    style: TextStyle(
+                                        color: Colors.red, fontSize: 12),
+                                  ),
+                                ),
                             ],
                           ),
                         ],
                       ),
                       const SizedBox(height: 25.0),
- Directionality(
-  textDirection: TextDirection.rtl,
-  child: TextFormField(
-    maxLength: 140,
-    textAlign: TextAlign.right,
-    keyboardType: TextInputType.multiline,
-    maxLines: null,
-     autovalidateMode: AutovalidateMode.onUserInteraction,
-     onChanged: (value) {
-      description = value;
-    },
-    decoration: InputDecoration(
-      labelText: 'وصف للعربة',
-      hintText: 'ادخل وصفًا للعربة',
-      hintStyle: const TextStyle(color: Colors.black26),
-      border: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderSide: const BorderSide(color: Colors.black12),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      suffixIcon: Tooltip(
-        message: 'قدم وصفًا موجزًا للعربة، يشمل نوع الطعام أو الخدمة المقدمة',
-        child: IconButton(
-          icon: const Icon(Icons.info_outline, color: Colors.grey),
-          onPressed: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text('قدم وصفًا موجزًا للعربة، يشمل نوع الطعام أو الخدمة المقدمة'),
-                duration: Duration(seconds: 2),
-              ),
-            );
-          },
-        ),
-      ),
-    ),
-    validator: (value) {
-      if (value == null || value.isEmpty) {
-        return 'الرجاء إدخال وصف للعربة';
-      }
-      description = value;
-      return null;
-    },
-  ),
-),
-
-
+                      Directionality(
+                        textDirection: TextDirection.rtl,
+                        child: TextFormField(
+                          maxLength: 140,
+                          textAlign: TextAlign.right,
+                          keyboardType: TextInputType.multiline,
+                          maxLines: null,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          onChanged: (value) {
+                            description = value;
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'وصف للعربة',
+                            hintText: 'ادخل وصفًا للعربة',
+                            hintStyle: const TextStyle(color: Colors.black26),
+                            border: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  const BorderSide(color: Colors.black12),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            suffixIcon: Tooltip(
+                              message:
+                                  'قدم وصفًا موجزًا للعربة، يشمل نوع الطعام أو الخدمة المقدمة',
+                              child: IconButton(
+                                icon: const Icon(Icons.info_outline,
+                                    color: Colors.grey),
+                                onPressed: () {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text(
+                                          'قدم وصفًا موجزًا للعربة، يشمل نوع الطعام أو الخدمة المقدمة'),
+                                      duration: Duration(seconds: 2),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'الرجاء إدخال وصف للعربة';
+                            }
+                            description = value;
+                            return null;
+                          },
+                        ),
+                      ),
 
                       const SizedBox(height: 25.0),
 //operating hrs
@@ -590,7 +601,8 @@ Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: DropdownButtonFormField<String>(
                                       value: closingTime,
-                                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                       validator: (value) {
                                         if (value == null) {
                                           return 'الرجاء الإختيار';
@@ -615,12 +627,11 @@ Directionality(
                                             const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 10),
                                       ),
-                                     onChanged: (String? newValue) {
-  setState(() {
-    closingTime = newValue;
-  });
-
-},
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          closingTime = newValue;
+                                        });
+                                      },
                                       items: timeList.map((String time) {
                                         return DropdownMenuItem<String>(
                                           value: time,
@@ -638,7 +649,8 @@ Directionality(
                                     textDirection: TextDirection.rtl,
                                     child: DropdownButtonFormField<String>(
                                       value: openingTime,
-                                       autovalidateMode: AutovalidateMode.onUserInteraction,
+                                      autovalidateMode:
+                                          AutovalidateMode.onUserInteraction,
                                       validator: (value) {
                                         if (value == null) {
                                           return 'الرجاء الإختيار';
@@ -663,12 +675,11 @@ Directionality(
                                             const EdgeInsets.symmetric(
                                                 horizontal: 10, vertical: 10),
                                       ),
-                                    onChanged: (String? newValue) {
-  setState(() {
-    openingTime = newValue;
-  });
-
-},
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          openingTime = newValue;
+                                        });
+                                      },
                                       items: timeList.map((String time) {
                                         return DropdownMenuItem<String>(
                                           value: time,
@@ -697,14 +708,15 @@ Directionality(
                             setState(() {
                               isLogoMissing = businessLogo == null;
                               isImageMissing = truckImage == null;
-                            isLicenseMissing = licenseFile == null && !isPdfInvalid;
+                              isLicenseMissing =
+                                  licenseFile == null && !isPdfInvalid;
                               if (!isLogoMissing &&
                                   !isImageMissing &&
                                   !isLicenseMissing &&
                                   !isPdfInvalid && // add this
                                   !isLogoExtensionInvalid && // and this
-                                 !isTruckImageExtensionInvalid && // and this
-                                  _formKey.currentState!.validate() ) {
+                                  !isTruckImageExtensionInvalid && // and this
+                                  _formKey.currentState!.validate()) {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
@@ -729,12 +741,12 @@ Directionality(
                                 );
                               } else {
                                 setState(() {
-  _autoValidateMode = AutovalidateMode.always;
-});
+                                  _autoValidateMode = AutovalidateMode.always;
+                                });
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
                                     content: Text(
-                                      'الرجاء التأكد من إدخال البيانات كاملة وأنها صحيحة'),
+                                        'الرجاء التأكد من إدخال البيانات كاملة وأنها صحيحة'),
                                   ),
                                 );
                               }

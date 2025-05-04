@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/login_screen.dart';
 import 'package:tracki/screens/user_type_selection_screen.dart';
 import 'package:tracki/screens/welcome_screen.dart';
+import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
-import 'login_screen.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'app_main_screen.dart';
-import '../user_auth/firebase_auth_services.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -37,9 +38,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
-          backgroundColor: const Color(0xFF674188),
+          backgroundColor: kBannerColor,
           appBar: AppBar(
-            backgroundColor: const Color(0xFF674188),
+            backgroundColor: kBannerColor,
             automaticallyImplyLeading: false,
             elevation: 0,
             actions: [
@@ -85,7 +86,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             style: TextStyle(
                               fontSize: 27.0,
                               fontWeight: FontWeight.w600,
-                              color: Color(0xFF674188),
+                              color: kBannerColor,
                             ),
                             textAlign: TextAlign.right,
                           ),
@@ -194,8 +195,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     agreePersonalData = value!;
                                   });
                                 },
-                                activeColor:
-                                    const Color.fromARGB(255, 105, 99, 197),
+                                activeColor: kBannerColor,
                               ),
                               const Text(
                                 'أوافق على  السماح بمعالجة البيانات الشخصية',
@@ -292,7 +292,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     'تسجيل الدخول',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      color: Color.fromARGB(255, 139, 65, 174),
+                                      color: Color.fromARGB(255, 76, 51, 92),
                                     ),
                                   ),
                                 ),

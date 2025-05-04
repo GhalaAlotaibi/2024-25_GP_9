@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/widgets/my_icon_button.dart';
 
 class ChatbotUI extends StatefulWidget {
   @override
@@ -76,122 +78,254 @@ class _ChatbotUIState extends State<ChatbotUI> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // backgroundColor: Colors.grey[100],
+      backgroundColor: kbackgroundColor,
       appBar: AppBar(
+        backgroundColor: kbackgroundColor,
         elevation: 0,
-        actions: [
-          IconButton(
-            icon: Icon(Icons.info_outline,
-                color: const Color.fromARGB(255, 56, 47, 47)),
+        leading: Padding(
+          padding: EdgeInsets.only(left: 8),
+          child: IconButton(
+            icon: Icon(Icons.info_outline, color: Colors.black),
             onPressed: () => _showInfoDialog(context),
           ),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              padding: EdgeInsets.all(8),
-              reverse: false,
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                return _buildMessage(_messages[index]);
-              },
-            ),
-          ),
-          _buildInputArea(),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildMessage(ChatMessage message) {
-    return Align(
-      alignment: message.isUser ? Alignment.centerRight : Alignment.centerLeft,
-      child: Container(
-        margin: EdgeInsets.symmetric(vertical: 4),
-        padding: EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: message.isUser
-              ? Color(0xFFE0E0E0)
-              : (message.isError
-                  ? Colors.red[100]
-                  : Color.fromARGB(255, 203, 176, 227)),
-          borderRadius: BorderRadius.circular(12),
         ),
-        child: message.isUser
-            ? Text(
-                message.text,
-                style: TextStyle(
-                  color: message.isUser ? Colors.black : Colors.white,
-                  fontSize: 16,
-                ),
-                textDirection: TextDirection.rtl, // For Arabic support
-              )
-            : Align(
-                alignment: Alignment.centerRight, // محاذاة النص لليمين
-                child: MarkdownBody(
-                  data: message.text, // يعرض النص باستخدام Markdown
-                  selectable: true,
-                  styleSheet: MarkdownStyleSheet(
-                    p: TextStyle(color: Colors.white, fontSize: 16),
-                  ),
-                ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildInputArea() {
-    return Padding(
-      padding: EdgeInsets.all(8),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              textDirection: TextDirection.rtl, // Arabic direction
-              textAlign: TextAlign.right, // ✅ Align text and hint to the right
-              decoration: InputDecoration(
-                hintText: '...اكتب رسالتك هنا',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                contentPadding: EdgeInsets.symmetric(horizontal: 16),
-              ),
-              onSubmitted: (_) => _sendMessage(),
-            ),
+        actions: [
+          MyIconButton(
+            icon: Icons.arrow_forward_ios,
+            pressed: () {
+              Navigator.pop(context);
+            },
           ),
-          SizedBox(width: 8),
-          _isLoading
-              ? CircularProgressIndicator()
-              : IconButton(
-                  icon: Icon(Icons.send, color: Color(0xFF674188)),
-                  onPressed: _sendMessage,
+        ],
+        title: Text(
+          'مساعد الطبخ الذكي',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Stack(
+        children: [
+          Column(
+            children: [
+              Expanded(
+                child: ListView.builder(
+                  padding: EdgeInsets.all(8),
+                  reverse: false,
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) {
+                    return _buildMessage(_messages[index]);
+                  },
                 ),
+              ),
+              _buildInputArea(),
+            ],
+          ),
         ],
       ),
     );
   }
 
   void _showInfoDialog(BuildContext context) {
+    final RenderBox appBarBox = context.findRenderObject() as RenderBox;
+    final position = appBarBox.localToGlobal(Offset.zero);
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(
-          "عن الشات بوت",
-          textDirection: TextDirection.rtl,
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        content: Text(
-          "هذا شات بوت يساعدك تطبخ! 🍳\n\nاسأله عن أي وصفة وهو بيرد عليك بالمكونات وطريقة التحضير خطوة بخطوة.",
-          textDirection: TextDirection.rtl,
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: [
-          TextButton(
-            child: Text("تم", textDirection: TextDirection.rtl),
-            onPressed: () => Navigator.pop(context),
+      builder: (context) => Stack(
+        children: [
+          Positioned(
+            top: position.dy + kToolbarHeight + 8, // Below app bar
+            left: 16, // Left margin
+            child: Material(
+              color: Colors.transparent,
+              child: Directionality(
+                textDirection: TextDirection.rtl,
+                child: Container(
+                  width: MediaQuery.of(context).size.width * 0.8,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 10,
+                        offset: Offset(0, 4),
+                      )
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          "عن مساعد الطبخ",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                          ),
+                        ),
+                      ),
+                      Divider(height: 1),
+                      Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "هذا شات بوت يساعدك تطبخ! 🍳",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(height: 10),
+                            Text(
+                              "اسأله عن أي وصفة وهو بيرد عليك بالمكونات وطريقة التحضير خطوة بخطوة.",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Divider(height: 1),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text("تم"),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMessage(ChatMessage message) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+      child: Row(
+        mainAxisAlignment:
+            message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment:
+            CrossAxisAlignment.end, // Align avatars with message bottom
+        children: message.isUser
+            ? [
+                // User message layout (right side)
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: kBannerColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18),
+                        topRight: Radius.circular(18),
+                        bottomLeft: Radius.circular(18),
+                        bottomRight: Radius.circular(0),
+                      ),
+                    ),
+                    child: Text(
+                      message.text,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 16,
+                      ),
+                      textDirection: TextDirection.rtl,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 8),
+              ]
+            : [
+                // Bot message layout (left side)
+                CircleAvatar(
+                  radius: 21,
+                  backgroundImage: AssetImage('assets/images/chatbotChef.png'),
+                ),
+                SizedBox(width: 8),
+                Flexible(
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      vertical: 12,
+                      horizontal: 16,
+                    ),
+                    decoration: BoxDecoration(
+                      color: message.isError ? Colors.red[100] : Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(18),
+                        topRight: Radius.circular(18),
+                        bottomLeft: Radius.circular(0),
+                        bottomRight: Radius.circular(18),
+                      ),
+                    ),
+                    child: MarkdownBody(
+                      data: message.text,
+                      selectable: true,
+                      styleSheet: MarkdownStyleSheet(
+                        p: TextStyle(color: Colors.black87, fontSize: 16),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+      ),
+    );
+  }
+
+  Widget _buildInputArea() {
+    return Container(
+      padding: EdgeInsets.all(8),
+      color: kbackgroundColor,
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 255, 255, 255),
+                borderRadius: BorderRadius.circular(24),
+              ),
+              child: Row(
+                children: [
+                  SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _controller,
+                      textDirection: TextDirection.rtl,
+                      textAlign: TextAlign.right,
+                      decoration: InputDecoration(
+                        hintText: '...اكتب رسالتك هنا',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16),
+                      ),
+                      onSubmitted: (_) => _sendMessage(),
+                    ),
+                  ),
+                  _isLoading
+                      ? Padding(
+                          padding: EdgeInsets.all(8),
+                          child: SizedBox(
+                            width: 20,
+                            height: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          ),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.send, color: Color(0xFF674188)),
+                          onPressed: _sendMessage,
+                        ),
+                ],
+              ),
+            ),
           ),
         ],
       ),

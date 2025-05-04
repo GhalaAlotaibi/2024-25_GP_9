@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tracki/Utils/constants.dart';
-import 'package:tracki/screens/Truck_Profile.dart';
 import 'package:tracki/screens/StatusRejected.dart';
-import 'package:tracki/screens/owner_home_screen.dart'; // dont know
+
 import 'login_screen.dart';
 import 'owner_main_screen.dart';
 
