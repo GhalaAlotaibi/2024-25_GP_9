@@ -41,17 +41,7 @@
         <p id="status">مرحبًا!</p>
       </div>
       <div class="right-actions">
-        <!--*************************************************************************************************************-->
-        <div class="notification-wrapper">
-          <div id="notification-trigger" class="notification-trigger">
-            <i class="fas fa-bell notification-icon" title="الإشعارات"></i>
-            <span id="notification-badge" class="notification-badge hidden"></span>
-          </div>
-          <div id="notification-popup" class="notification-popup hidden">
-            <span id="notification-message"></span>
-            <button id="notification-confirm" class="notification-confirm">عرض</button>
-          </div>
-        </div>
+        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
         <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
       </div>
     </section>
@@ -66,8 +56,8 @@
             <tr>
               <th>العربة</th>
               <th>المالك</th>
-              <th>الموقع القديم</th>
-              <th>الموقع الجديد</th>
+              <th>موقع قديم على الخريطة</th>
+              <th>موقع جديد على الخريطة</th>
               <th>ملف التحديث</th>
               <th>الحالة</th>
               <th>قبول/رفض</th>
@@ -80,11 +70,10 @@
 
         <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
       </div>
-      <!-- In your HTML (replace the commented loading div with this) -->
-      <div class="loading" id="loading-message">
-        <img src="images/WaitingTruck2.png" alt="Loading Food Truck" loading="lazy" />
-        <p>الرجاء الإنتظار...</p>
-      </div>
+      <!--  <div class="loading" id="loading-message">
+          <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
+          <p>الرجاء الإنتظار...</p>
+        </div> -->
     </div>
   </div>
 
@@ -141,8 +130,6 @@
         const username = user.email.split("@")[0];
         statusElement.innerText = `مرحبًا ${username} !`;
         fetchLocationUpdateRequests(); // Fetch the location update requests
-        checkPendingTrucks(); //Notifications <!--*************************************************************************************************************-->
-        setInterval(checkPendingTrucks, 300000); // Check every 5 minutes
       } else {
         statusElement.innerText = "لم يتم تسجيل الدخول";
         window.location.href = "WelcomePage.html";
@@ -161,177 +148,132 @@
       }
     });
 
-    // Pagination variables
-    let currentPage = 1;
-    const rowsPerPage = 6;
-    let allLocationRequests = [];
-
-
-    // Fetch location update requests from Firestore NEW ----------------------------------------------------------------------------------FASTER &Pagination
+    // Fetch location update requests from Firestore
     async function fetchLocationUpdateRequests() {
       try {
-        document.getElementById("loading-message").style.display = "flex";
+        console.log("Fetching location update requests...");
 
-        const [locationUpdatesSnapshot, ownersSnapshot, trucksSnapshot] = await Promise.all([
-          getDocs(collection(db, "Location_Update")),
-          getDocs(collection(db, "Truck_Owner")),
-          getDocs(collection(db, "Food_Truck"))
-        ]);
+        const querySnapshot = await getDocs(
+          collection(db, "Location_Update")
+        );
+        console.log("Location update requests:", querySnapshot);
 
-        // Create lookup maps
-        const ownersMap = {};
-        ownersSnapshot.forEach(doc => {
-          ownersMap[doc.id] = doc.data();
-        });
+        if (querySnapshot.empty) {
+          const locationUpdateTableBody = document.querySelector(
+            "#location-update-table tbody"
+          );
+          locationUpdateTableBody.innerHTML = "";
+          const noDataRow = document.createElement("tr");
+          noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد بيانات</td>`;
+          locationUpdateTableBody.appendChild(noDataRow);
+          return;
+        }
 
-        const trucksMap = {};
-        trucksSnapshot.forEach(doc => {
-          trucksMap[doc.data().ownerID] = {
-            id: doc.id,
-            ...doc.data()
-          };
-        });
-
-        // Process all requests
-        allLocationRequests = [];
-        const rows = await Promise.all(locationUpdatesSnapshot.docs.map(async (docSnapshot) => {
+        const allRows = [];
+        for (const docSnapshot of querySnapshot.docs) {
           const data = docSnapshot.data();
-          const ownerData = ownersMap[data.ownerID] || {
-            Name: "غير محدد",
-            Email: "غير محدد",
-            PhoneNum: "غير محدد"
-          };
+          console.log("Request data:", data);
 
-          const truckData = trucksMap[data.ownerID] || {
-            name: "غير محدد",
-            location: "0,0"
-          };
+          // Fetch owner details
+          const ownerID = data.ownerID;
+          const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+          const ownerDoc = await getDoc(ownerDocRef);
+          const ownerName = ownerDoc.exists()
+            ? ownerDoc.data().Name
+            : "غير محدد";
+          const ownerEmail = ownerDoc.exists()
+            ? ownerDoc.data().Email
+            : "غير محدد";
+          const ownerPhone = ownerDoc.exists()
+            ? ownerDoc.data().PhoneNum
+            : "غير محدد";
 
-          const [oldLatitude, oldLongitude] = truckData.location.split(",");
+          // Fetch old location
+          const foodTruckQuerySnapshot = await getDocs(
+            query(
+              collection(db, "Food_Truck"),
+              where("ownerID", "==", ownerID)
+            )
+          );
+          let oldLatitude, oldLongitude, foodTruckName = "غير محدد";
+          if (!foodTruckQuerySnapshot.empty) {
+            const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
+            const data = foodTruckDoc.data();
+            console.log("Food truck data:", data);
+
+            //Name 
+            foodTruckName = data.name || "غير محدد"; // Fallback if name doesn't exist
+
+            const oldLocation = data.location;
+            [oldLatitude, oldLongitude] = oldLocation.split(",");
+          }
+
+          // New location
           const newLatitude = data.latitude;
           const newLongitude = data.longitude;
+          const locationUpdateFile = data.locationUpdateFile;
 
+          // Google Maps Links
           const oldLocationMapUrl = `https://www.google.com/maps?q=${oldLatitude},${oldLongitude}`;
           const newLocationMapUrl = `https://www.google.com/maps?q=${newLatitude},${newLongitude}`;
 
+          // Owner details HTML
+          const ownerDetails = `
+          <div class="owner-details">
+            <p><strong>الاسم:</strong> ${ownerName}</p>
+            <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
+            <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
+          </div>
+        `;
           const statusTranslations = {
             pending: "قيد الانتظار",
             accepted: "مقبول",
             rejected: "مرفوض",
           };
+
           const statusText = statusTranslations[data.status] || "غير محددة";
 
+          // Create table row
           const row = document.createElement("tr");
           row.innerHTML = `
-        <td>${truckData.name}</td>
-        <td>
-          <div class="owner-details">
-            <p><strong>الاسم:</strong> ${ownerData.Name}</p>
-            <p><strong>البريد الإلكتروني:</strong> ${ownerData.Email}</p>
-            <p><strong>رقم الهاتف:</strong> ${ownerData.PhoneNum}</p>
-          </div>
-        </td>
-        <td><a href="${oldLocationMapUrl}" target="_blank">عرض</a></td>
-        <td><a href="${newLocationMapUrl}" target="_blank">عرض</a></td>
-        <td><a href="${data.locationUpdateFile}" target="_blank">عرض</a></td>
-        <td>${statusText}</td>
-        <td>
-          ${data.status === "pending" ? `
-            <button class="accept-btn" data-id="${docSnapshot.id}" data-owner="${ownerData.Email}" 
-              data-truck="${truckData.id}" data-lat="${newLatitude}" data-long="${newLongitude}">
-              <i class="fas fa-check-circle"></i>
-            </button>
-            <button class="reject-btn" data-id="${docSnapshot.id}" data-owner="${ownerData.Email}" 
-              data-truck="${truckData.id}">
-              <i class="fas fa-times-circle"></i>
-            </button>
-          ` : data.status === "accepted" ? `
-            <span>مقبول</span>
-          ` : `
-            <span>مرفوض بسبب: ${data.rejectionReason || "لا يوجد سبب"}</span>
-          `}
-        </td>
-      `;
+          <td>${foodTruckName}</td>
+          <td>${ownerDetails}</td>
+          <td><a href="${oldLocationMapUrl}" target="_blank">عرض الموقع القديم على الخريطة</a></td>
+          <td><a href="${newLocationMapUrl}" target="_blank">عرض الموقع الجديد على الخريطة</a></td>
+          <td><a href="${locationUpdateFile}" target="_blank">عرض الملف</a></td>
+          <td>${statusText}</td>
+          <td>
+${data.status === "pending" ? `
+<!-- Accept button with icon -->
+<button class="accept-btn" data-id="${docSnapshot.id}" data-owner="${ownerEmail}" data-truck="${ownerID}" data-lat="${newLatitude}" data-long="${newLongitude}">
+  <i class="fas fa-check-circle"></i>
+</button>
 
-          return row;
-        }));
+<!-- Reject button with icon -->
+<button class="reject-btn" data-id="${docSnapshot.id}" data-owner="${ownerEmail}" data-truck="${ownerID}">
+  <i class="fas fa-times-circle"></i>
+</button>
 
-        allLocationRequests = rows.filter(row => row);
-        displayPage(currentPage);
-        document.getElementById("loading-message").style.display = "none";
+` : data.status === "accepted" ? `
+  <span>مقبول </span>
+` : data.status === "rejected" ? `
+  <span>مرفوض بسبب: ${data.rejectionReason || "لا يوجد سبب"}</span>
+` : ""}
+</td>
 
-      } catch (error) {
-        console.error("Error:", error);
-        document.getElementById("loading-message").innerText = "حدث خطأ أثناء تحميل البيانات";
-        const tableBody = document.querySelector("#location-update-table tbody");
-        tableBody.innerHTML = `
-      <tr>
-        <td colspan="7" style="text-align: center; color: red;">
-          حدث خطأ أثناء تحميل البيانات. يرجى المحاولة مرة أخرى لاحقًا
-        </td>
-      </tr>
-    `;
-      }
-    }
+        `;
 
-    //Pagination functions -----------------------------------------------------------------------
-    function displayPage(page) {
-      const tableBody = document.querySelector("#location-update-table tbody");
-      tableBody.innerHTML = "";
-
-      const start = (page - 1) * rowsPerPage;
-      const end = start + rowsPerPage;
-      const rowsToDisplay = allLocationRequests.slice(start, end);
-
-      rowsToDisplay.forEach((row) => tableBody.appendChild(row));
-      updatePaginationControls();
-    }
-
-    function updatePaginationControls() {
-      const paginationContainer = document.getElementById("pagination-controls");
-      paginationContainer.innerHTML = "";
-
-      const totalPages = Math.ceil(allLocationRequests.length / rowsPerPage);
-
-      const prevLink = document.createElement("span");
-      prevLink.textContent = "<";
-      prevLink.classList.add("pagination-link");
-      if (currentPage === 1) {
-        prevLink.classList.add("disabled");
-      } else {
-        prevLink.addEventListener("click", () => {
-          currentPage--;
-          displayPage(currentPage);
-        });
-      }
-      paginationContainer.appendChild(prevLink);
-
-      for (let i = 1; i <= totalPages; i++) {
-        const pageLink = document.createElement("span");
-        pageLink.textContent = i;
-        pageLink.classList.add("pagination-link");
-        if (i === currentPage) {
-          pageLink.classList.add("active-page");
+          allRows.push(row);
         }
-        pageLink.addEventListener("click", () => {
-          currentPage = i;
-          displayPage(currentPage);
-        });
-        paginationContainer.appendChild(pageLink);
-      }
 
-      const nextLink = document.createElement("span");
-      nextLink.textContent = ">";
-      nextLink.classList.add("pagination-link");
-      if (currentPage === totalPages) {
-        nextLink.classList.add("disabled");
-      } else {
-        nextLink.addEventListener("click", () => {
-          currentPage++;
-          displayPage(currentPage);
-        });
+        // Append rows to the table
+        const locationUpdateTableBody = document.querySelector(
+          "#location-update-table tbody"
+        );
+        allRows.forEach((row) => locationUpdateTableBody.appendChild(row));
+      } catch (error) {
+        console.error("Error fetching location update requests:", error);
       }
-      paginationContainer.appendChild(nextLink);
     }
 
     // Handle accept/reject actions
@@ -482,69 +424,5 @@
         alert("حدث خطأ أثناء إرسال البريد الإلكتروني.");
       }
     }
-
-    // Notification Functions<!--*************************************************************************************************************-->
-    async function checkPendingTrucks() {
-      try {
-        const trucksSnapshot = await getDocs(collection(db, "Food_Truck"));
-        const requestsSnapshot = await getDocs(collection(db, "Request"));
-
-        const requestStatusMap = {};
-        requestsSnapshot.forEach(doc => {
-          requestStatusMap[doc.id] = doc.data().status;
-        });
-
-        let pendingCount = 0;
-        trucksSnapshot.forEach(doc => {
-          const statusId = doc.data().statusId;
-          if (statusId && requestStatusMap[statusId] === "pending") {
-            pendingCount++;
-          }
-        });
-
-        const badge = document.getElementById("notification-badge");
-        const icon = document.getElementById("notification-icon");
-
-        if (pendingCount > 0) {
-          badge.textContent = pendingCount;
-          badge.classList.remove("hidden");
-          badge.classList.add("has-notifications");
-          icon.style.color = "#7A557A"; // Change icon color
-        } else {
-          badge.classList.add("hidden");
-          badge.classList.remove("has-notifications");
-          icon.style.color = ""; // Reset icon color
-        }
-      } catch (error) {
-        console.error("Error checking pending trucks:", error);
-      }
-    }
-
-    // Add click handler for notification icon
-    // Notification click handler
-    document.getElementById("notification-trigger").addEventListener("click", function (e) {
-      e.stopPropagation();
-      const badge = document.getElementById("notification-badge");
-      const popup = document.getElementById("notification-popup");
-      const message = document.getElementById("notification-message");
-
-      if (!badge.classList.contains("hidden")) {
-        const count = badge.textContent;
-        message.textContent = `لديك ${count} عربات قيد الانتظار!`;
-        popup.classList.toggle("hidden");
-      }
-    });
-
-    // Confirm button handler
-    document.getElementById("notification-confirm").addEventListener("click", function () {
-      window.location.href = "WaitingTrucks.html";
-    });
-
-    // Close when clicking elsewhere
-    document.addEventListener("click", function () {
-      document.getElementById("notification-popup").classList.add("hidden");
-    });
   </script>
 </body>
-
-</html>
