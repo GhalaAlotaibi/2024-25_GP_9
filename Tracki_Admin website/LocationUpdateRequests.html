@@ -98,6 +98,7 @@
       doc,
       getDoc,
       updateDoc,
+      setDoc,
       addDoc,
       query,
       where,
@@ -336,11 +337,11 @@ ${data.status === "pending" ? `
             });
 
             // NOTIFICATION RELATED!!************************************************************************************
-            const NotifiRef = collection(db, "Notification");
-            await addDoc(NotifiRef, {
+            const NotifiRef = doc(db, "Notification", foodTruckDoc.id); // Use foodTruckDoc.id as the document ID
+            await setDoc(NotifiRef, {
               Title: '📍 تحديث موقع',
               Msg: `!!🎉🚚انتقلت إلى موقع جديد ${foodTruckDoc.data().name} عربة`,
-              TruckId: `${foodTruckDoc.id}`,
+              TruckId: foodTruckDoc.id, // You can still keep this field if needed
               isRead: false,
               Time: new Date(),
             });

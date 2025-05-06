@@ -176,15 +176,52 @@ class _FavoritesPageState extends State<FavoritesPage> {
     );
   }
 
+//Updated(delete), -Buth --------------------------------------------------------------
   Future<void> _removeFavorite(String truckId) async {
     final user = _auth.currentUser;
-    if (user != null) {
-      await _firestore
+    if (user == null) return;
+
+    try {
+      // Create a batch to perform both deletions atomically
+      final batch = _firestore.batch();
+
+      // 1. Reference to the favorite in main collection
+      final favRef = _firestore
           .collection('Favorite')
           .doc(user.uid)
           .collection('favorites')
-          .doc(truckId)
-          .delete();
+          .doc(truckId);
+
+      // 2. Reference to the favorite in notification collection
+      final favNotifRef = _firestore
+          .collection('Favorite_Notif')
+          .doc(user.uid)
+          .collection('favorited_trucks')
+          .doc(truckId);
+
+      // Add both deletions to the batch
+      batch.delete(favRef);
+      batch.delete(favNotifRef);
+
+      // Execute the batch
+      await batch.commit();
+
+      // Optional: Check if any favorites remain and clean up parent doc if empty
+      final remainingFavorites = await _firestore
+          .collection('Favorite_Notif')
+          .doc(user.uid)
+          .collection('favorited_trucks')
+          .get();
+
+      if (remainingFavorites.docs.isEmpty) {
+        await _firestore.collection('Favorite_Notif').doc(user.uid).delete();
+      }
+    } catch (e) {
+      print('Error removing favorite: $e');
+      // Optionally show error to user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to remove favorite: ${e.toString()}')),
+      );
     }
   }
 }
