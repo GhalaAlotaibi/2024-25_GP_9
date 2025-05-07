@@ -15,22 +15,23 @@ from math import radians, sin, cos, sqrt, atan2
 # Change number 3 => I added the following lines: 
 #--------------From here---------------
 
-import json
 import os
+import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Replace this line:
-# cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
-# With the new way to load credentials from Render secrets:
+# Try to get credentials from environment variable
+if "FIREBASE_CREDENTIALS" in os.environ:
+    cred_data = json.loads(os.environ["FIREBASE_CREDENTIALS"])
+    cred = credentials.Certificate(cred_data)
+else:
+    # Fallback for local testing
+    cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
 
-cred_data = json.loads(os.environ["FIREBASE_CREDENTIALS"])
-cred = credentials.Certificate(cred_data)
+# Initialize Firebase
+if not firebase_admin._apps:
+    firebase_admin.initialize_app(cred)
 
-# Initialize Firebase app
-firebase_admin.initialize_app(cred)
-
-# Create Firestore client
 db = firestore.client()
 
 

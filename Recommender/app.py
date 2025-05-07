@@ -1,5 +1,5 @@
 from flask import Flask, request, jsonify
-from Recommender.recTest import recommend_food_trucks
+from recTest import recommend_food_trucks
 #change number 1 => was :from recTest import recommend_food_trucks
  
 
@@ -17,6 +17,13 @@ def recommend():
 
     # Return the recommended food truck IDs as JSON
     return jsonify({"recommended_food_trucks": recommended_ids})
+#change 4=> commented the two lines below
+#if __name__ == "__main__":
+ #   app.run(host="0.0.0.0", port=5000)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+#nd added these lines 
+import os
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 10000))
+    app.run(host='0.0.0.0', port=port)
