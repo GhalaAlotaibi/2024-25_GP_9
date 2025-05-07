@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from Recommender.recTest import recommend_food_trucks
 
 app = Flask(__name__)
-
+ 
 # Define the home route for the root URL
 @app.route("/", methods=['GET'])
 def home():

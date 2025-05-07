@@ -14,8 +14,10 @@ class _ChatbotUIState extends State<ChatbotUI> {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
-  final String _apiUrl = "http://10.0.2.2:5000/chat"; // Android emulator
-  // final String _apiUrl = "https://your-deployed-api.com/chat"; // Production
+  //final String _apiUrl = "http://10.0.2.2:5000/chat"; <- I commented this
+
+// and added this:
+  final String _apiUrl = "https://chatbot-service-api.onrender.com/chat";
 
   @override
   void dispose() {

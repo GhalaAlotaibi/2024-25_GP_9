@@ -8,11 +8,11 @@ import chromadb
 from chromadb.config import Settings
 import requests
 import json
-
+ 
 # ===== Configuration =====
 PDF_FOLDER = "./cooking_books"  # Place your PDFs here
 CHROMA_DB_PATH = "./chroma_db"
-QWEN_API_KEY = ""  # Replace with your actual key
+QWEN_API_KEY = os.getenv('QWEN_API_KEY') # nothing much here i just used the render secret variable to store the API 
 OPENAI_API_BASE = "https://openrouter.ai/api/v1"
 
 # ===== Initialize Components =====
