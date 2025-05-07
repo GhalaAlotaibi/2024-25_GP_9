@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول - تراكي</title>
+    <link rel="stylesheet" href="Styles/WelcomePage.css">
+    <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet">
+    <style>
+        .btn {
+            font-family: 'Zain', sans-serif;
+        }
+
+        input::placeholder {
+            font-family: 'Zain', sans-serif;
+            opacity: 0.7;
+        }
+
+        input {
+            font-family: 'Zain', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <header class="logo-container">
+        <img src="images/TrackiLogo.png" alt="تراكي" class="logo">
+    </header>
+    <div class="content">
+
+        <div class="image-container">
+            <img src="images/pic4_transparent.png" alt="صورة">
+        </div>
+
+        <div class="login-container">
+            <h1>تسجيل الدخول</h1>
+            <form id="login-form">
+                <div class="input-group">
+                    <label for="email">البريد الإلكتروني</label>
+                    <input type="email" id="email" name="email" placeholder="أدخل بريدك الإلكتروني" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">كلمة المرور</label>
+                    <input type="password" id="password" name="password" placeholder="أدخل كلمة المرور" required>
+                </div>
+                <button type="submit" class="btn">تسجيل الدخول</button>
+                <p class="register-link">
+                    نسيت كلمة المرور؟ <a href="#" id="forgot-password-link">إستعادة</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase functionality -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+            authDomain: "trucki-database.firebaseapp.com",
+            projectId: "trucki-database",
+            storageBucket: "trucki-database.appspot.com",
+            messagingSenderId: "283818817351",
+            appId: "1:283818817351:web:bfa138d68f42dfc64c3e62"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // Login function
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            try {
+                const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                const user = userCredential.user;
+
+                // Check if the user exists in the Admin collection
+                const adminDocRef = doc(db, "Admin", user.uid);
+                const adminDoc = await getDoc(adminDocRef);
+
+                if (adminDoc.exists()) {
+                    window.location.href = "MainPage.html"; // Redirect to admin dashboard
+                } else {
+                    auth.signOut();
+                    alert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+                }
+            } catch (error) {
+                alert("البريد الإلكتروني أو كلمة المرور غير صحيحة.");
+            }
+        });
+
+        // Forgot Password function
+        document.getElementById('forgot-password-link').addEventListener('click', async function (e) {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+
+            if (email) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    alert(`تم إرسال بريد إلى "${email}" لإعادة تعيين كلمة المرور! تحقق من صندوق الوارد.`);
+                } catch (error) {
+                    alert("فشل إرسال بريد إعادة تعيين كلمة المرور: " + error.message);
+                }
+            } else {
+                alert("يرجى إدخال عنوان البريد الإلكتروني أولاً.");
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -18,11 +18,11 @@ class _ProfileMapState extends State<ProfileMap> {
   @override
   void initState() {
     super.initState();
-    _setInitialPosition(); // Set the initial position based on the location
+    _setInitialPosition();  
   }
 
   void _setInitialPosition() {
-    // Split the location string and parse latitude and longitude
+ 
     List<String> latLng = widget.location.split(',');
     if (latLng.length == 2) {
       double? latitude = double.tryParse(latLng[0]);

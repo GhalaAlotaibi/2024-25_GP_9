@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tracki/Utils/constants.dart';
+import 'package:tracki/screens/customer_reviews.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
 import 'package:url_launcher/url_launcher.dart'; // Add this import
 
@@ -52,8 +53,7 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
   LatLng? _userLocation;
   LatLng? _destinationLocation;
 
-  final String apiKey =
-      'AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA'; // Add your Google Maps API key here
+  final String apiKey = 'AIzaSyAyphWWTQc9W3Z4gWYNkP86WOeswd7mcgA';
 
   @override
   void initState() {
@@ -61,7 +61,6 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
     _getUserLocation();
   }
 
-  // Add this new method to launch Google Maps with navigation
   Future<void> _launchGoogleMapsNavigation() async {
     if (_userLocation == null || _destinationLocation == null) return;
 
@@ -141,155 +140,400 @@ class _EmbeddedMapState extends State<EmbeddedMap> {
   }
 
   Future<void> _showComplaintDialog() async {
-    final TextEditingController _otherIssueController = TextEditingController();
-    bool isTruckFound = false; // Default assumption is the truck isn't found.
+    // Step 1: Initial truck found confirmation
+    final foundTruck = await _showSimpleDialog(
+      title: 'هل عثرت على عربة الطعام؟',
+      options: ['نعم', 'لا'],
+    );
 
-    // Show dialog to ask the user if the truck was found
-    await showDialog(
+    if (foundTruck == 'لا') {
+      // Step 2: Location complaint flow
+      final fileComplaint = await _showSimpleDialog(
+        title: 'هل تريد رفع شكوى عن الموقع؟',
+        options: ['لا', 'نعم'],
+      );
+
+      if (fileComplaint == 'نعم') {
+        await _submitComplaint('العربة غير موجودة في الموقع المحدد');
+        await _showSuccessDialog('تم إرسال الشكوى بنجاح');
+      }
+      return;
+    }
+
+    if (foundTruck == 'نعم') {
+      // Step 3: Experience feedback flow
+      final actionChoice = await _showSecondialog(
+        title: 'كيف كانت تجربتك؟',
+        options: ['تقييم التجربة', 'لدي شكوى', 'تخطي'],
+      );
+
+      if (actionChoice == 'تقييم التجربة') {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CustomerReviews(
+              truckID: widget.documentID,
+              customerID: widget.customerID,
+            ),
+          ),
+        );
+      } else if (actionChoice == 'لدي شكوى') {
+        await _showDetailedComplaintDialog();
+      }
+    }
+  }
+
+  Future<String?> _showSimpleDialog({
+    required String title,
+    required List<String> options,
+  }) async {
+    return await showDialog<String>(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          // Use StatefulBuilder to manage dialog state
-          builder: (context, setState) {
-            return AlertDialog(
-              title: const Text(
-                'تقديم شكوى',
-                textAlign: TextAlign.right,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
               ),
-              content: SingleChildScrollView(
-                child: Align(
-                  // Align everything to the right
-                  alignment: Alignment.centerRight,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.only(bottom: 10),
-                        child: Text(
-                          'هل عثرت على عربة الطعام؟',
-                          textAlign: TextAlign.right,
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  // No button (left)
+                  if (options.contains('لا'))
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: OutlinedButton(
+                          onPressed: () => Navigator.pop(context, 'لا'),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: kBannerColor),
+                            foregroundColor: kBannerColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: const Text(
+                            'لا',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+
+                  // Yes button (right)
+                  if (options.contains('نعم'))
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8),
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context, 'نعم'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: kBannerColor,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
+                          ),
+                          child: const Text(
+                            'نعم',
+                            style: TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showDetailedComplaintDialog() async {
+    final complaintController = TextEditingController();
+
+    final submitted = await showDialog<bool>(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Text(
+                'تفاصيل الشكوى',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                controller: complaintController,
+                maxLines: 4,
+                decoration: InputDecoration(
+                  hintText: 'صف مشكلتك بالتفصيل...',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: Colors.grey),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: kBannerColor),
+                  ),
+                  contentPadding: const EdgeInsets.all(16),
+                ),
+                textAlign: TextAlign.right,
+              ),
+              const SizedBox(height: 24),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Navigator.pop(context, false),
+                      style: OutlinedButton.styleFrom(
+                        side: BorderSide(color: kBannerColor),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text(
+                        'إلغاء',
+                        style: TextStyle(color: kBannerColor),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: kBannerColor,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                      child: const Text('إرسال'),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    if (submitted == true && complaintController.text.isNotEmpty) {
+      await _submitComplaint(complaintController.text);
+      await _showSuccessDialog('تم إرسال الشكوى بنجاح');
+    }
+  }
+
+  Future<String?> _showSecondialog({
+    required String title,
+    required List<String> options,
+  }) async {
+    return await showDialog<String>(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.fromLTRB(24, 24, 24, 5),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Text(
+                title,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Main action buttons row
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // تقييم التجربة button
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ElevatedButton(
+                        onPressed: () =>
+                            Navigator.pop(context, 'تقييم التجربة'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kBannerColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        child: const Text(
+                          'تقييم التجربة',
                           style: TextStyle(fontSize: 16),
                         ),
                       ),
-                      // Bullet Points for Yes/No using Radio Buttons
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Row(
-                            children: [
-                              const Text(
-                                'نعم',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Radio<bool>(
-                                value: true,
-                                groupValue: isTruckFound,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isTruckFound =
-                                        true; // Set truck found to true
-                                  });
-                                },
-                              ),
-                            ],
+                    ),
+                  ),
+
+                  // لدي شكوى button
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ElevatedButton(
+                        onPressed: () => Navigator.pop(context, 'لدي شكوى'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: kBannerColor,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
-                          const SizedBox(width: 20),
-                          Row(
-                            children: [
-                              const Text(
-                                'لا',
-                                style: TextStyle(fontSize: 16),
-                              ),
-                              Radio<bool>(
-                                value: false,
-                                groupValue: isTruckFound,
-                                onChanged: (value) {
-                                  setState(() {
-                                    isTruckFound = false; // Set truck not found
-                                  });
-                                },
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 15),
-                      // Additional Issue Text Field
-                      const Text(
-                        'صف المشكلة الأخرى (مثل الجودة أو الخدمة)',
-                        textAlign: TextAlign.right,
-                        style: TextStyle(fontSize: 16),
-                      ),
-                      TextField(
-                        controller: _otherIssueController,
-                        maxLines: 3,
-                        decoration: const InputDecoration(
-                          labelText: 'تفاصيل المشكلة الأخرى',
-                          labelStyle: TextStyle(fontSize: 14),
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 10),
+                          padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        textAlign: TextAlign.right,
+                        child: const Text(
+                          'لدي شكوى',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+
+              const SizedBox(height: 2),
+
+              // Skip option row
+              Center(
+                child: TextButton(
+                  onPressed: () => Navigator.pop(context, 'تخطي'),
+                  style: TextButton.styleFrom(
+                    foregroundColor: const Color.fromARGB(255, 91, 91, 91),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        'تخطي',
+                        style: TextStyle(fontSize: 14),
                       ),
                     ],
                   ),
                 ),
               ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    Navigator.of(context).pop(); // Close the dialog
-                  },
-                  child: const Text(
-                    'إلغاء',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-                ElevatedButton(
-                  onPressed: () {
-                    String complaintMessage = '';
-
-                    // If the truck is not found, start with the "truck not found" message
-                    if (!isTruckFound) {
-                      complaintMessage = 'الشاحنة ليست في الموقع المحدد.';
-                    }
-
-                    // If the user provided another issue, append it to the complaint message
-                    String otherDescription = _otherIssueController.text.trim();
-                    if (otherDescription.isNotEmpty) {
-                      if (complaintMessage.isNotEmpty) {
-                        // Combine both complaints in one message
-                        complaintMessage += ' - مشكلة أخرى: $otherDescription';
-                      } else {
-                        // Only other issue provided
-                        complaintMessage = 'مشكلة أخرى: $otherDescription';
-                      }
-                    }
-
-                    // Submit the combined complaint if there's any content
-                    if (complaintMessage.isNotEmpty) {
-                      _submitComplaint(complaintMessage);
-                    }
-
-                    Navigator.of(context).pop();
-                  },
-                  child: const Text(
-                    'إرسال',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ],
-            );
-          },
-        );
-      },
+            ],
+          ),
+        ),
+      ),
     );
   }
 
-// Submit complaint to Firestore
+  Future<void> _showSuccessDialog(String message) async {
+    await showDialog(
+      context: context,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+        elevation: 0,
+        backgroundColor: Colors.transparent,
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.check_circle,
+                color: Colors.green,
+                size: 48,
+              ),
+              const SizedBox(height: 16),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                ),
+              ),
+              const SizedBox(height: 24),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: kBannerColor,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                  ),
+                  child: const Text('حسناً'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _submitComplaint(String description) async {
     try {
       if (description.isNotEmpty) {

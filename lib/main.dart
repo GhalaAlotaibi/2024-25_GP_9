@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        // Apply the font family globally
+ 
         fontFamily:
             GoogleFonts.tajawal().fontFamily,  
         textTheme: GoogleFonts.tajawalTextTheme(
@@ -26,7 +26,8 @@ class MyApp extends StatelessWidget {
         ),
      
         colorScheme: ColorScheme.fromSeed(
-          seedColor: kBannerColor, // Use your constant color
+          seedColor: kBannerColor,  
+          
           primary: kBannerColor,
           secondary: Colors.white,
         ),
