@@ -5,10 +5,10 @@ from Recommender.recTest import recommend_food_trucks
 
 app = Flask(__name__)
 
-#@app.route('/recommend', methods=['GET']) change 5 i commented this and added the 3 lines below
+@app.route('/recommend', methods=['GET'])  
 @app.route("/")
 def home():
-    return "Service is running"
+    return "hello world :)"
 
 def recommend():
     # Get the user_id from the query parameters
@@ -31,4 +31,4 @@ import os
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 10000))
     app.run(host='0.0.0.0', port=port)
-#flutter run -d 95d3370f
+#flutter run -d 95d3370af

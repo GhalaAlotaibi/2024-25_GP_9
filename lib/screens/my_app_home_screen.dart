@@ -892,7 +892,7 @@ Future<List<DocumentSnapshot>> _getAcceptedTrucks(
 Future<List<String>> fetchRecommendedFoodTrucks(
     String userId, double lat, double lon) async {
   final Uri url = Uri.parse(
-      'http://10.0.2.2:5000/recommend?user_id=$userId&lat=$lat&lon=$lon');
+      'https://tracki-api.onrender.com/user_id=$userId&lat=$lat&lon=$lon');
 
   try {
     final response = await http.get(url);
