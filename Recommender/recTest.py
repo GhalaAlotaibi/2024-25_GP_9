@@ -6,11 +6,35 @@ from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 from math import radians, sin, cos, sqrt, atan2
 
-# Step 1: Firebase Initialization
-cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
+# Step 1: Firebase Initialization 
+# Change number 2 => I commented the following 3 lines 
+#cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
+#firebase_admin.initialize_app(cred)
+#db = firestore.client()
+
+# Change number 3 => I added the following lines: 
+#--------------From here---------------
+
+import json
+import os
+import firebase_admin
+from firebase_admin import credentials, firestore
+
+# Replace this line:
+# cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
+# With the new way to load credentials from Render secrets:
+
+cred_data = json.loads(os.environ["FIREBASE_CREDENTIALS"])
+cred = credentials.Certificate(cred_data)
+
+# Initialize Firebase app
 firebase_admin.initialize_app(cred)
+
+# Create Firestore client
 db = firestore.client()
 
+
+#--------------To here---------------
 # Step 2: Fetch Data from Firestore
 def fetch_food_trucks():
     """Fetch only food trucks that have been accepted."""
