@@ -4,7 +4,7 @@ flask-cors==4.0.0
 
 # LangChain Imports
 langchain==0.1.16
-langchain-community==0.0.29  # Required for PyPDFLoader
+langchain-community>=0.0.32,<0.1
 pypdf==3.17.0
 
 # Sentence Transformers
