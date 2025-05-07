@@ -1,5 +1,5 @@
 # Core Dependencies
-flask==3.0.2
+flask 
 flask-cors==4.0.0
 
 # LangChain Imports
@@ -24,3 +24,5 @@ googletrans==4.0.0-rc1
 requests==2.31.0
 urllib3==2.2.1
 python-dotenv==1.0.1
+
+gunicorn
