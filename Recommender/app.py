@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
-from recTest import recommend_food_trucks  # Import the recommendation function
+from Recommender.recTest import recommend_food_trucks
+#change number 1 => was :from recTest import recommend_food_trucks
  
 
 app = Flask(__name__)
