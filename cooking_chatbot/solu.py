@@ -1,6 +1,6 @@
 # solu.py - Complete Local Version
 import os
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyMuPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
 from deep_translator import GoogleTranslator
@@ -8,11 +8,11 @@ import chromadb
 from chromadb.config import Settings
 import requests
 import json
- 
+
 # ===== Configuration =====
-PDF_FOLDER = "cooking_chatbot/cooking_books"  # Place your PDFs here
+PDF_FOLDER = "cooking_chatbot//cooking_books"  # Place your PDFs here
 CHROMA_DB_PATH = "./chroma_db"
-QWEN_API_KEY = os.getenv('QWEN_API_KEY') # nothing much here i just used the render secret variable to store the API 
+QWEN_API_KEY = os.getenv('QWEN_API_KEY') # Replace with your actual key
 OPENAI_API_BASE = "https://openrouter.ai/api/v1"
 
 # ===== Initialize Components =====
@@ -31,7 +31,7 @@ def initialize_database():
         for pdf_file in os.listdir(PDF_FOLDER):
             if pdf_file.endswith(".pdf"):
                 try:
-                    loader = PyPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
+                    loader = PyMuPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
                     pages = loader.load_and_split()
                     all_pages.extend(pages)
                     print(f"Loaded {pdf_file}")
