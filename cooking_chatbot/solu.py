@@ -21,38 +21,52 @@ translator_ar = GoogleTranslator(source='auto', target='ar')
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 
-# ===== Core Functions =====
+# ===== Core Functions ===== 
 def initialize_database():
     """Load PDFs and create embeddings"""
     collection = client.get_or_create_collection(name="recipes")
     
-    if len(collection.get()['ids']) == 0:  # Only load if empty
-        all_pages = []
-        for pdf_file in os.listdir(PDF_FOLDER):
-            if pdf_file.endswith(".pdf"):
-                try:
-                    loader = PyMuPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
-                    pages = loader.load_and_split()
-                    all_pages.extend(pages)
-                    print(f"Loaded {pdf_file}")
-                except Exception as e:
-                    print(f"Error loading {pdf_file}: {e}")
-
-        # Split and embed text
-        text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=512, chunk_overlap=24)
-        chunks = text_splitter.split_documents(all_pages)
-        texts = [chunk.page_content for chunk in chunks]
-        embeddings = [embedding_model.encode(text).tolist() for text in texts]
+    # Skip loading if collection already has data
+    if len(collection.get()['ids']) > 0:
+        return collection
         
-        # Store in ChromaDB
-        collection.add(
-            ids=[f"doc_{i}" for i in range(len(texts))],
-            documents=texts,
-            embeddings=embeddings
-        )
-    return collection
+    all_pages = []
+    pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.endswith(".pdf")]
+    
+    if not pdf_files:
+        print("Warning: No PDF files found in cooking_books directory")
+        return collection  # Return empty collection
+    
+    for pdf_file in pdf_files:
+        try:
+            loader = PyMuPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
+            pages = loader.load_and_split()
+            all_pages.extend(pages)
+            print(f"Loaded {pdf_file}")
+        except Exception as e:
+            print(f"Error loading {pdf_file}: {e}")
+            continue  # Skip failed files
 
+    if not all_pages:  # If no pages were loaded
+        return collection
+
+    # Rest of your processing code...
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=512, chunk_overlap=24)
+    chunks = text_splitter.split_documents(all_pages)
+    texts = [chunk.page_content for chunk in chunks]
+    
+    if not texts:  # If no texts after splitting
+        return collection
+        
+    embeddings = [embedding_model.encode(text).tolist() for text in texts]
+    
+    collection.add(
+        ids=[f"doc_{i}" for i in range(len(texts))],
+        documents=texts,
+        embeddings=embeddings
+    )
+    return collection
 collection = initialize_database()
 
 def translate_with_gpt(text: str, target_lang: str = "English") -> str:
