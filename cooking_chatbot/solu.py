@@ -25,7 +25,10 @@ client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 def initialize_database():
     """Load PDFs and create embeddings"""
     collection = client.get_or_create_collection(name="recipes")
-    
+    print("📥 Loading PDFs...")
+    print("🧠 Creating embeddings...")
+    print("✅ Database initialized.")
+
     # Skip loading if collection already has data
     if len(collection.get()['ids']) > 0:
         return collection
@@ -47,10 +50,10 @@ def initialize_database():
             print(f"Error loading {pdf_file}: {e}")
             continue  # Skip failed files
 
-    if not all_pages:  # If no pages were loaded
+    if not all_pages:  
         return collection
-    
-    # Rest of your processing code...
+
+ 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=512, chunk_overlap=24)
     chunks = text_splitter.split_documents(all_pages)
@@ -67,7 +70,14 @@ def initialize_database():
         embeddings=embeddings
     )
     return collection
-collection = initialize_database()
+collection = None
+
+def ensure_collection_initialized():
+    global collection
+    if collection is None:
+        print("⚙️ Initializing collection...")
+        collection = initialize_database()
+
 
 def translate_with_gpt(text: str, target_lang: str = "English") -> str:
     """Advanced translation using GPT"""
@@ -179,6 +189,7 @@ def generate_response(query: str, context: str) -> str:
 def get_answer(query: str) -> str:
     """Full query processing pipeline"""
     try:
+        ensure_collection_initialized()  # 👈 initialize on demand
         # Step 1: Translate query to English
         english_query = translate_with_gpt(query, "English")
         

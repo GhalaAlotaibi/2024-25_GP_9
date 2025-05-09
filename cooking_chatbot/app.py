@@ -1,21 +1,22 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from cooking_chatbot.solu import get_answer
+try:
+    from cooking_chatbot.solu import get_answer
+except Exception as e:
+    print(f"❌ Failed to import get_answer: {e}")
+
 import os
 
 app = Flask(__name__)
 # Replace CORS(app) with this:
-CORS(app, resources={
-    r"/chat": {
-        "origins": ["*"],  # Allow all origins (adjust for production)
-        "methods": ["POST"],
-        "allow_headers": ["Content-Type"]
-    }
-})
-@app.route("/", methods=['POST'])
+ 
+@app.route('/', methods=['GET'])
 def home():
-    return "hello world :)"
-
+    return jsonify({
+        "status": "running",
+        "usage": "Send POST requests to /chat",
+        "example": {"query": "Your cooking question in Arabic"}
+    })
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -25,6 +26,6 @@ def chat():
     return jsonify({"response": response})
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
+    port = int(os.environ.get('PORT', 10000))
     print(f"🔵 Flask server running on port {port}")  
     app.run(host="0.0.0.0", port=port)
