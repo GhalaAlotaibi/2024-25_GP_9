@@ -41,9 +41,28 @@ https://github.com/GhalaAlotaibi/2024-25_GP_9.git
 - Python
 - Android Studio emulator or a physical device :iphone:
 
-**3. Run the application :arrow_forward:**
+**3. Run the application components in order:  :arrow_forward:**
 
+1. First: Run the Recommender System (Python)
+Navigate to the recommender system folder and run the Python script.
+
+```bash
+cd Recommender
+pip install -r recommednerReqs.txt
+python app.py
+```
+2. Second: Run the Chatbot
+
+```bash
+cd cooking_chatbot
+pip install -r requirements.txt
+python app.py
+```
+3. Finally: Run the Mobile Application
+
+```bash
 cd your-project-folder
 flutter pub get
 flutter run
+```
 
