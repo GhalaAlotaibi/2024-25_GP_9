@@ -10,17 +10,26 @@
 
 The Tracki application is developed using:
 
-- **Programming Language:** Dart ,Python
+- **Programming Language:** Dart, Python
 - **Framework:** Flutter
 - **Development Tools:** Visual Studio Code, Figma
-- **Chatbot:** Dialogflow
-- **Database:** Firebase
+- **Database & Authentication:** Firebase (Firestore, Firebase Auth, Storage)
+- **API Integration:** Google Maps API
 - **Project Management:** Jira
-- **API:** Google map API
+
+## Features :sparkles:
+
+- Food truck location tracking with Google Maps
+- Admin dashboard for food truck approval
+- Owner dashboard to manage trucks and menus
+- Customer-side discovery, reviews, and favorites
+- Secure authentication and real-time updates
+- Chatbot to assist food truck owners in coming up with new recipes
+- Recommender system to suggest food trucks to customers based on their favorites, location, and highest ratings
 
 ## Launching Instructions :rocket:
 
-**1. Clone the repository :** :paperclips:
+**1. Clone the repository:** :paperclips:
 
 ```bash
 https://github.com/GhalaAlotaibi/2024-25_GP_9.git
@@ -29,7 +38,12 @@ https://github.com/GhalaAlotaibi/2024-25_GP_9.git
 **2. Make sure to have the following installed:** :wrench:
 
 - Flutter
-- Dart
-- Android Studio or a physical device :iphone:
+- Python
+- Android Studio emulator or a physical device :iphone:
 
 **3. Run the application :arrow_forward:**
+
+cd your-project-folder
+flutter pub get
+flutter run
+
