@@ -70,7 +70,9 @@ def initialize_database():
     if not texts:  # If no texts after splitting
         return collection
         
-    embeddings = [get_embedding_model().encode(text).tolist() for text in texts]
+    embedding_model = get_embedding_model()
+    embeddings = embedding_model.encode(texts, batch_size=8, show_progress_bar=True)
+
 
 
     
