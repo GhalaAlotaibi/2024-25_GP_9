@@ -70,7 +70,9 @@ def initialize_database():
     if not texts:  # If no texts after splitting
         return collection
         
-    embeddings = [embedding_model.encode(text).tolist() for text in texts]
+    embeddings = [get_embedding_model().encode(text).tolist() for text in texts]
+
+
     
     collection.add(
         ids=[f"doc_{i}" for i in range(len(texts))],
@@ -126,7 +128,7 @@ Preserve the meaning and context. Do not explain or comment — return only the 
 
 def query_chroma(query: str, top_k: int = 3) -> list:
     """Search the knowledge base"""
-    query_embedding = embedding_model.encode(query).tolist()
+    query_embedding = get_embedding_model().encode(query).tolist()
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k
