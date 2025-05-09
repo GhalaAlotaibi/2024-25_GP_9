@@ -74,12 +74,10 @@ def initialize_database():
     embeddings = embedding_model.encode(texts, batch_size=8, show_progress_bar=True)
 
 
-
-    
     collection.add(
         ids=[f"doc_{i}" for i in range(len(texts))],
         documents=texts,
-        embeddings=embeddings
+        embeddings=[embedding.tolist() for embedding in embeddings]
     )
     return collection
 collection = None
