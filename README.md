@@ -53,6 +53,8 @@ pip install -r recommednerReqs.txt
 python app.py
 ```
 2. Second: Run the Chatbot
+   
+Navigate to the cooking_chatbot folder and run the Python script.
 
 ```bash
 cd cooking_chatbot
@@ -65,7 +67,7 @@ python app.py
 Open a new terminal window and run the following commands:
 
 ```bash
-cd your-project-folder
+
 flutter pub get
 flutter run
 ```
