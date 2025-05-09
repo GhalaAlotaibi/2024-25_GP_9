@@ -49,7 +49,7 @@ def initialize_database():
 
     if not all_pages:  # If no pages were loaded
         return collection
-
+    
     # Rest of your processing code...
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=512, chunk_overlap=24)

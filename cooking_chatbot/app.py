@@ -4,7 +4,18 @@ from cooking_chatbot.solu import get_answer
 import os
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for Flutter app
+# Replace CORS(app) with this:
+CORS(app, resources={
+    r"/chat": {
+        "origins": ["*"],  # Allow all origins (adjust for production)
+        "methods": ["POST"],
+        "allow_headers": ["Content-Type"]
+    }
+})
+@app.route("/", methods=['POST'])
+def home():
+    return "hello world :)"
+
 
 @app.route('/chat', methods=['POST'])
 def chat():
@@ -13,7 +24,6 @@ def chat():
     response = get_answer(query)
     return jsonify({"response": response})
 
-# Only run the dev server if this script is run directly (i.e. not with gunicorn)
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
