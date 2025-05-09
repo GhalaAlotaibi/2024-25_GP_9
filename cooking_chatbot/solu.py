@@ -8,6 +8,7 @@ import chromadb
 from chromadb.config import Settings
 import requests
 import json
+print(f"🔑 QWEN_API_KEY is {'set' if QWEN_API_KEY else 'MISSING'}")
 
 # ===== Configuration =====
 PDF_FOLDER = "cooking_chatbot//cooking_books"  # Place your PDFs here
@@ -91,6 +92,7 @@ def ensure_collection_initialized():
 
 def translate_with_gpt(text: str, target_lang: str = "English") -> str:
     """Advanced translation using GPT"""
+    print(f"🌐 Translating to {target_lang}: {text[:60]}...")
     headers = {
         "Authorization": f"Bearer {QWEN_API_KEY}",
         "Content-Type": "application/json"
@@ -121,8 +123,12 @@ Preserve the meaning and context. Do not explain or comment — return only the 
             headers=headers,
             json=payload
         )
+        print("✅ Translation API response received.")
+        print(response.json())  # See full structure
         return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
+        print("✅ Translation API response received.")
+        print(response.json())  # See full structure
         print(f"Translation error: {e}")
         return text
 
