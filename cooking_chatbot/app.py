@@ -20,10 +20,14 @@ def home():
 
 @app.route('/chat', methods=['POST'])
 def chat():
-    data = request.get_json()
-    query = data.get('query', '')
-    response = get_answer(query)
-    return jsonify({"response": response})
+    try:
+        data = request.get_json()
+        query = data.get('query', '')
+        response = get_answer(query)
+        return jsonify({"response": response})
+    except Exception as e:
+        print(f"🔥 ERROR in /chat route: {e}")
+        return jsonify({"error": "Internal Server Error"}), 500
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 10000))

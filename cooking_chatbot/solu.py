@@ -195,26 +195,31 @@ def generate_response(query: str, context: str) -> str:
         print(f"GPT error: {e}")
         return "حدث خطأ في المعالجة"
 
-# ===== Main Function =====
+# ===== Main Function ===== 
 def get_answer(query: str) -> str:
     """Full query processing pipeline"""
     try:
-        ensure_collection_initialized()  # 👈 initialize on demand
-        # Step 1: Translate query to English
+        print(f"💬 Incoming query: {query}")
+        ensure_collection_initialized()
+
         english_query = translate_with_gpt(query, "English")
-        
-        # Step 2: Search knowledge base
+        print(f"🌍 Translated to English: {english_query}")
+
         context_chunks = query_chroma(english_query)
         context = "\n".join(context_chunks) if context_chunks else ""
-        
-        # Step 3: Generate response
+        print(f"📚 Retrieved {len(context_chunks)} context chunks")
+
         english_response = generate_response(english_query, context)
-        
-        # Step 4: Translate back to Arabic
-        return translate_with_gpt(english_response, "Arabic")
-        
+        print(f"🧠 GPT response (EN): {english_response[:80]}...")
+
+        final_response = translate_with_gpt(english_response, "Arabic")
+        print(f"🗣️ Translated back to Arabic: {final_response[:80]}...")
+
+        return final_response
+
     except Exception as e:
-        return f"Error: {str(e)}"
+        print(f"🔥 ERROR in get_answer(): {e}")
+        return "حدث خطأ في المعالجة"
 
 # Test (run only once)
 if __name__ == "__main__":
