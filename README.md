@@ -43,7 +43,8 @@ https://github.com/GhalaAlotaibi/2024-25_GP_9.git
 
 **3. Run the application components in order:  :arrow_forward:**
 
-1. First: Run the Recommender System (Python)
+1. First: Run the Recommender System
+
 Navigate to the recommender system folder and run the Python script.
 
 ```bash
@@ -59,6 +60,9 @@ pip install -r requirements.txt
 python app.py
 ```
 3. Finally: Run the Mobile Application
+
+
+Open a new terminal window and run the following commands:
 
 ```bash
 cd your-project-folder
