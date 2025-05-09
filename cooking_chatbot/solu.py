@@ -18,7 +18,15 @@ OPENAI_API_BASE = "https://openrouter.ai/api/v1"
 # ===== Initialize Components =====
 translator = GoogleTranslator(source='auto', target='en')
 translator_ar = GoogleTranslator(source='auto', target='ar')
-embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+embedding_model = None
+
+def get_embedding_model():
+    global embedding_model
+    if embedding_model is None:
+        print("🔍 Loading embedding model...")
+        embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
+    return embedding_model
+
 client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 
 # ===== Core Functions ===== 
