@@ -74,18 +74,14 @@ class _UpdatePasswordState extends State<UpdatePassword> {
         backgroundColor: kbackgroundColor,
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: Row(
-          children: [
-            const SizedBox(width: 110),
-            const Text(
-              "تحديث الرمز السري",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ],
+        centerTitle: true, // Ensures center alignment
+        title: const Text(
+          "تحديث الرمز السري",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         actions: [
           MyIconButton(

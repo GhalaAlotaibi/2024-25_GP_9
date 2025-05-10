@@ -115,7 +115,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                       Hero(
                         tag: widget.documentSnapshot['truckImage'],
                         child: Container(
-                          height: MediaQuery.of(context).size.height / 2.1,
+                          height: MediaQuery.of(context).size.height * 0.4,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               fit: BoxFit.cover,
@@ -129,10 +129,11 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                       Positioned(
                         left: 0,
                         right: 0,
-                        top: 380,
+                        top: MediaQuery.of(context).size.height * 0.38,
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.05),
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 252, 252, 253),
                             borderRadius: BorderRadius.circular(20),
@@ -160,8 +161,9 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                         Row(
                           children: [
                             Container(
-                              width: 70,
-                              height: 70,
+                              width: MediaQuery.of(context).size.width *
+                                  0.18, // 18% of screen width
+                              height: MediaQuery.of(context).size.width * 0.18,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
@@ -172,12 +174,15 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.03),
                             Expanded(
                               child: Text(
                                 widget.documentSnapshot['name'],
-                                style: const TextStyle(
-                                  fontSize: 24,
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -330,6 +335,10 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 8),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline
+                                          .alphabetic, // Required for Baseline
                                       children: [
                                         Text(
                                           (widget.documentSnapshot[
@@ -415,51 +424,109 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
     }
   }
 
+//Updated(add), -Buth ----------------------------------------------------------------
   Future<void> _checkIfFavorite() async {
     final user = _auth.currentUser;
     if (user != null) {
-      final favDoc = await _firestore
-          .collection('Favorite')
-          .doc(user.uid)
-          .collection('favorites')
-          .doc(widget.documentSnapshot.id)
-          .get();
-      setState(() {
-        isFavorite = favDoc.exists;
-      });
+      try {
+        // Check if the truck is in the user's favorites
+        final favDoc = await _firestore
+            .collection('Favorite')
+            .doc(user.uid)
+            .collection('favorites')
+            .doc(widget.documentSnapshot.id)
+            .get();
+
+        if (mounted) {
+          setState(() {
+            isFavorite = favDoc.exists;
+          });
+        }
+
+        // 🔥 NEW: Sync to Favorite_Notif subcollection if favorited
+        final favNotifRef = _firestore
+            .collection('Favorite_Notif')
+            .doc(user.uid)
+            .collection('favorited_trucks')
+            .doc(widget.documentSnapshot.id);
+
+        if (favDoc.exists) {
+          // Add/update the truck in Favorite_Notif
+          await favNotifRef.set({
+            'truckId': widget.documentSnapshot.id,
+            'location': widget.documentSnapshot['location'],
+            'timestamp':
+                FieldValue.serverTimestamp(), // Optional: track when favorited
+          });
+        } else {
+          // If un-favorited, remove from Favorite_Notif
+          await favNotifRef.delete();
+        }
+      } catch (e) {
+        print('Error checking favorite status: $e');
+      }
     }
   }
 
+//Updated(delete), -Buth --------------------------------------------------------------
   Future<void> _toggleFavorite() async {
     final user = _auth.currentUser;
-    if (user != null) {
+    if (user == null) return;
+
+    try {
+      final truckId = widget.documentSnapshot.id;
+      final truckData =
+          widget.documentSnapshot.data() as Map<String, dynamic>? ?? {};
+
+      // 1. Reference both Firestore paths
       final favRef = _firestore
           .collection('Favorite')
           .doc(user.uid)
           .collection('favorites')
-          .doc(widget.documentSnapshot.id);
+          .doc(truckId);
 
+      final favNotifRef = _firestore
+          .collection('Favorite_Notif')
+          .doc(user.uid)
+          .collection('favorited_trucks')
+          .doc(truckId);
+
+      // 2. Toggle favorite status
       if (isFavorite) {
-        // Remove from favorites
-        await favRef.delete();
+        // Remove from BOTH collections
+        await Future.wait([
+          favRef.delete(),
+          favNotifRef.delete(),
+        ]);
       } else {
-        // Add to favorites
-        await favRef.set({
-          'truckId': widget.documentSnapshot.id,
-          'truckName': widget.documentSnapshot['name'],
-          'truckImage': widget.documentSnapshot['truckImage'],
-          'businessLogo': widget.documentSnapshot['businessLogo'],
+        // Add to BOTH collections
+        final truckDetails = {
+          'truckId': truckId,
+          'truckName': truckData['name'] ?? 'No name',
+          'truckImage': truckData['truckImage'] ?? '',
+          'businessLogo': truckData['businessLogo'] ?? '',
           'category': categoryName,
-          'operatingHours': widget.documentSnapshot['operatingHours'],
-          'location':
-              widget.documentSnapshot.data().toString().contains('location')
-                  ? widget.documentSnapshot['location']
-                  : null,
-        });
+          'operatingHours': truckData['operatingHours'] ?? 'Not specified',
+          'location': truckData['location'] ?? null,
+          'timestamp': FieldValue.serverTimestamp(), // Track when favorited
+        };
+
+        await Future.wait([
+          favRef.set(truckDetails),
+          favNotifRef.set(truckDetails),
+        ]);
       }
-      setState(() {
-        isFavorite = !isFavorite;
-      });
+
+      // 3. Update UI
+      if (mounted) {
+        setState(() => isFavorite = !isFavorite);
+      }
+    } catch (e) {
+      print('Error toggling favorite: $e');
+      // Optional: Revert UI state or show error
+      if (mounted) {
+        setState(() => isFavorite = isFavorite); // Revert if failed
+      }
     }
   }
 

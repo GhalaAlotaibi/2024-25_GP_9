@@ -1,27 +1,22 @@
-# solu.py - Complete Local Version
 import os
 from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
-from deep_translator import GoogleTranslator
 import chromadb
 from chromadb.config import Settings
 import requests
 import json
 
-# ===== Configuration =====
-PDF_FOLDER = "./cooking_books"  # Place your PDFs here
+PDF_FOLDER = "./cooking_books" 
 CHROMA_DB_PATH = "./chroma_db"
-QWEN_API_KEY = ""  # Replace with your actual key
+OPENAI_API_KEY = "" # PUT THE API KEY HERE
 OPENAI_API_BASE = "https://openrouter.ai/api/v1"
 
-# ===== Initialize Components =====
-translator = GoogleTranslator(source='auto', target='en')
-translator_ar = GoogleTranslator(source='auto', target='ar')
+
 embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 
-# ===== Core Functions =====
+#  Core Functions 
 def initialize_database():
     """Load PDFs and create embeddings"""
     collection = client.get_or_create_collection(name="recipes")
@@ -37,14 +32,12 @@ def initialize_database():
                     print(f"Loaded {pdf_file}")
                 except Exception as e:
                     print(f"Error loading {pdf_file}: {e}")
-
         # Split and embed text
         text_splitter = RecursiveCharacterTextSplitter(
             chunk_size=512, chunk_overlap=24)
         chunks = text_splitter.split_documents(all_pages)
         texts = [chunk.page_content for chunk in chunks]
-        embeddings = [embedding_model.encode(text).tolist() for text in texts]
-        
+        embeddings = [embedding_model.encode(text).tolist() for text in texts] 
         # Store in ChromaDB
         collection.add(
             ids=[f"doc_{i}" for i in range(len(texts))],
@@ -58,10 +51,9 @@ collection = initialize_database()
 def translate_with_gpt(text: str, target_lang: str = "English") -> str:
     """Advanced translation using GPT"""
     headers = {
-        "Authorization": f"Bearer {QWEN_API_KEY}",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
     }
-    
     payload = {
         "model": "gpt-3.5-turbo", 
         "messages": [
@@ -80,7 +72,6 @@ Preserve the meaning and context. Do not explain or comment — return only the 
         ],
         "temperature": 0.3
     }
-    
     try:
         response = requests.post(
             f"{OPENAI_API_BASE}/chat/completions",
@@ -104,10 +95,9 @@ def query_chroma(query: str, top_k: int = 3) -> list:
 def generate_response(query: str, context: str) -> str:
     """Generate answer using GPT"""
     headers = {
-        "Authorization": f"Bearer {QWEN_API_KEY}",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
-    }
-    
+    } 
     payload = {
         "model": "gpt-3.5-turbo",
         "messages": [
@@ -161,7 +151,7 @@ def generate_response(query: str, context: str) -> str:
         print(f"GPT error: {e}")
         return "حدث خطأ في المعالجة"
 
-# ===== Main Function =====
+
 def get_answer(query: str) -> str:
     """Full query processing pipeline"""
     try:

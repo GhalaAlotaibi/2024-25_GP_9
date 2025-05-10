@@ -1,4 +1,6 @@
- flask
+flask
 firebase-admin
 pandas
 scikit-learn
+gunicorn
+                                                                                   

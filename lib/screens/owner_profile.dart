@@ -6,7 +6,7 @@ import 'package:tracki/screens/menu_update.dart';
 import 'package:tracki/screens/owner_home_screen.dart';
 import 'package:tracki/screens/owner_main_screen.dart';
 import 'package:tracki/screens/truck_details_update.dart';
-  
+
 import 'package:tracki/widgets/my_icon_button.dart';
 
 class OwnerProfile extends StatefulWidget {
@@ -419,20 +419,27 @@ class _OwnerProfileState extends State<OwnerProfile> {
                                 ),
                                 Row(
                                   mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.baseline,
+                                  textBaseline: TextBaseline
+                                      .alphabetic, // Required when using baseline alignment
                                   children: [
-                                    Image.asset(
-                                      'assets/images/Riyal.png',
-                                      width: 16, // Adjust size as needed
-                                      height: 16, // Adjust size as needed
+                                    Baseline(
+                                      baseline:
+                                          16, // This should match the font size or be visually adjusted
+                                      baselineType: TextBaseline.alphabetic,
+                                      child: Image.asset(
+                                        'assets/images/Riyal.png',
+                                        width: 16,
+                                        height: 16,
+                                      ),
                                     ),
-                                    SizedBox(
-                                      width: 3,
-                                    ),
+                                    SizedBox(width: 3),
                                     Text(
-                                      '$itemPrice ',
+                                      '$itemPrice',
                                       style: const TextStyle(
                                         fontSize: 16,
-                                        fontWeight: FontWeight.w400,
+                                        fontWeight: FontWeight.bold,
                                         color: Colors.black,
                                       ),
                                     ),

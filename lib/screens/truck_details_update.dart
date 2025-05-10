@@ -349,9 +349,8 @@ class _TruckDetailsUpdateState extends State<TruckDetailsUpdate> {
                               backgroundColor: kBannerColor,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 13, horizontal: 20),
-                              textStyle: const TextStyle(fontSize: 16),
                             ),
-                            child: const Text(
+                            child: Text(
                               "حـفظ التغييرات",
                               style: TextStyle(
                                 color: Colors.white,

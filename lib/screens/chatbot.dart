@@ -14,8 +14,7 @@ class _ChatbotUIState extends State<ChatbotUI> {
   final TextEditingController _controller = TextEditingController();
   final List<ChatMessage> _messages = [];
   bool _isLoading = false;
-  final String _apiUrl = "http://10.0.2.2:5000/chat"; // Android emulator
-  // final String _apiUrl = "https://your-deployed-api.com/chat"; // Production
+  final String _apiUrl = "http://10.0.2.2:5000/chat";
 
   @override
   void dispose() {
@@ -214,11 +213,9 @@ class _ChatbotUIState extends State<ChatbotUI> {
       child: Row(
         mainAxisAlignment:
             message.isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
-        crossAxisAlignment:
-            CrossAxisAlignment.end, // Align avatars with message bottom
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: message.isUser
             ? [
-                // User message layout (right side)
                 Flexible(
                   child: Container(
                     padding: EdgeInsets.symmetric(
@@ -247,7 +244,6 @@ class _ChatbotUIState extends State<ChatbotUI> {
                 SizedBox(width: 8),
               ]
             : [
-                // Bot message layout (left side)
                 CircleAvatar(
                   radius: 21,
                   backgroundImage: AssetImage('assets/images/chatbotChef.png'),

@@ -12,7 +12,7 @@ import 'package:tracki/user_auth/firebase_auth_services.dart';
 import 'package:tracki/widgets/banner.dart';
 import 'package:tracki/widgets/items_display.dart';
 import 'package:tracki/widgets/my_icon_button.dart';
- 
+
 import 'package:flutter/gestures.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
@@ -892,7 +892,7 @@ Future<List<DocumentSnapshot>> _getAcceptedTrucks(
 Future<List<String>> fetchRecommendedFoodTrucks(
     String userId, double lat, double lon) async {
   final Uri url = Uri.parse(
-      'http://10.0.2.2:5000/recommend?user_id=$userId&lat=$lat&lon=$lon');
+      'https://tracki-api.onrender.com/recommend?user_id=$userId&lat=$lat&lon=$lon');
 
   try {
     final response = await http.get(url);
@@ -909,3 +909,4 @@ Future<List<String>> fetchRecommendedFoodTrucks(
   }
 }
 //24.7082, 46.5989
+//flutter run -d 95d3370f

@@ -140,18 +140,14 @@ class _UpdateEmailState extends State<UpdateEmail> {
         backgroundColor: kbackgroundColor,
         automaticallyImplyLeading: false,
         elevation: 0,
-        title: Row(
-          children: [
-            const SizedBox(width: 85),
-            const Text(
-              "تحديث البريد الإلكتروني",
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                color: Colors.black,
-              ),
-            ),
-          ],
+        centerTitle: true, // Ensures center alignment
+        title: const Text(
+          "تحديث البريد الإلكتروني",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.black,
+          ),
         ),
         actions: [
           MyIconButton(

@@ -28,11 +28,12 @@ class _AppMainScreenState extends State<AppMainScreen> {
   int selectedIndex = 0;
   late final List<Widget> page;
 
-  // أضف هذه المتغيرات للإشعارات
+  // Notifications ---------------------------------------------------------------------------
   final FlutterLocalNotificationsPlugin _notifications =
       FlutterLocalNotificationsPlugin();
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  // Notifications ---------------------------------------------------------------------------
 
   @override
   void initState() {
@@ -44,13 +45,13 @@ class _AppMainScreenState extends State<AppMainScreen> {
       CustomerSettings(customerID: widget.customerID),
     ];
 
-    // تهيئة الإشعارات عند بدء الصفحة
+    // Notifications ---------------------------------------------------------------------------
     _initNotifications();
     _setupFCM();
     _startFirestoreListener();
   }
 
-  // ------ [أكواد الإشعارات] ------ //
+  // Notifications codes start ----------------------------------------------------------------
   Future<void> _initNotifications() async {
     const AndroidInitializationSettings androidSettings =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -85,56 +86,121 @@ class _AppMainScreenState extends State<AppMainScreen> {
     }
   }
 
-  void _setupFCM() {
-    _firebaseMessaging.getToken().then((token) {
-      print("FCM Token: $token");
-    });
-
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Foreground message: ${message.notification?.title}');
-      _showNotification(
-        message.notification?.title ?? 'New Message',
-        message.notification?.body ?? '',
-      );
-    });
-
-    FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
-    FirebaseMessaging.instance
-        .getInitialMessage()
-        .then(_handleNotificationClick);
+//helper method -testinggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg
+  Future<bool> _isTruckFavorited(String customerId, String truckId) async {
+    try {
+      final doc = await _firestore
+          .collection('Favorite_Notif')
+          .doc(customerId)
+          .collection('favorited_trucks')
+          .doc(truckId)
+          .get();
+      return doc.exists;
+    } catch (e) {
+      print('Error checking favorite status: $e');
+      return false;
+    }
   }
 
-  void _startFirestoreListener() {
-    String? _lastProcessedDocId;
+//testinggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg logic -1
+  void _setupFCM() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+      final truckId = message.data['truckId'];
+      if (truckId == null) return;
 
-    _firestore
-        .collection('Notification')
-        .orderBy('Time', descending: true)
-        .snapshots()
-        .listen((snapshot) {
-      if (snapshot.docs.isNotEmpty) {
-        for (final doc in snapshot.docs) {
-          if (_lastProcessedDocId != doc.id) {
-            final data = doc.data();
-            _showNotification(
-              data['Title'] ?? 'إشعار جديد',
-              data['Msg'] ?? 'لديك تحديث مهم',
-            );
-          }
+      // Check if favorited and notification is unread
+      final notificationDoc =
+          await _firestore.collection('Notification').doc(truckId).get();
+
+      if (notificationDoc.exists) {
+        final isFavorited = await _firestore
+            .collection('Favorite_Notif')
+            .doc(widget.customerID)
+            .collection('favorited_trucks')
+            .doc(truckId)
+            .get()
+            .then((doc) => doc.exists);
+
+        final isRead = notificationDoc.data()?['isRead'] ??
+            true; // Default to true if missing
+
+        if (isFavorited && !isRead) {
+          _showNotification(
+            message.notification?.title ?? 'New Message',
+            message.notification?.body ?? '',
+          );
+
+          // Mark as read after showing
+          await notificationDoc.reference.update({'isRead': true});
         }
-        _lastProcessedDocId = snapshot.docs.first.id;
       }
     });
   }
 
-//Handle notifications clicks
+//testinggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg logic -2
+
+  final Set<String> _processedNotifications = {}; // Moved outside the method
+  List<String> _favoriteTruckIds = []; // Moved outside the method
+
+  void _startFirestoreListener() {
+    // 1. Listen to favorite trucks (unchanged)
+    _firestore
+        .collection('Favorite_Notif')
+        .doc(widget.customerID)
+        .collection('favorited_trucks')
+        .snapshots()
+        .listen((favSnapshot) {
+      _favoriteTruckIds = favSnapshot.docs.map((doc) => doc.id).toList();
+      print('⭐ Favorite Truck IDs: $_favoriteTruckIds');
+    });
+
+  // 2. Listen to notifications
+  _firestore
+      .collection('Notification')
+      .orderBy('Time', descending: true)
+      .snapshots()
+      .listen((snapshot) async { // Changed to async
+    if (snapshot.docs.isEmpty || _favoriteTruckIds.isEmpty) return;
+
+    for (final doc in snapshot.docs) {
+      final truckId = doc.id;
+      final data = doc.data() as Map<String, dynamic>;
+      final isRead = data['isRead'] ?? false; // Default to false if missing
+
+      if (_favoriteTruckIds.contains(truckId) &&
+          !_processedNotifications.contains(doc.id) &&
+          !isRead) { // Added isRead check
+          
+        print('🚨 Showing unread notification for truck: $truckId');
+        _showNotification(
+          data['Title']?.toString() ?? 'إشعار جديد',
+          data['Msg']?.toString() ?? 'لديك تحديث مهم',
+        );
+        
+        // Mark as read
+        await doc.reference.update({'isRead': true});
+        _processedNotifications.add(doc.id);
+      }
+    }
+  });
+}
+
+//Handle notifications clicks------------------------------------------
   void _handleNotificationClick(RemoteMessage? message) {
     if (message != null) {
       print('Notification clicked: ${message.notification?.title}');
+
+      // Redirect to MyAppHomeScreen
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(
+          builder: (context) => MyAppHomeScreen(customerID: widget.customerID),
+        ),
+        (Route<dynamic> route) => false, // Remove all previous routes
+      );
     }
   }
 
-  // ------ [نهاية أكواد الإشعارات] ------ //
+  // Notifications codes ends ----------------------------------------------------------------
 
   @override
   Widget build(BuildContext context) {
