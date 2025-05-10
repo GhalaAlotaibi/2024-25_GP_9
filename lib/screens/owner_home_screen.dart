@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:iconsax/iconsax.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tracki/Utils/constants.dart';
-
 import 'package:tracki/screens/chatbot.dart';
+import 'package:tracki/screens/menu_update.dart';
 import 'package:tracki/screens/owner_profile.dart';
 import 'package:tracki/screens/owner_reviews.dart';
 import 'package:tracki/widgets/banner2.dart';
@@ -14,7 +14,7 @@ import '../user_auth/firebase_auth_services.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class OwnerHomeScreen extends StatefulWidget {
-  final String ownerID; //the doc id not the ownerID !! its food truck doc id
+  final String ownerID; //the doc id not the ownerID !!
   const OwnerHomeScreen({Key? key, required this.ownerID}) : super(key: key);
   @override
   _OwnerHomeScreenState createState() => _OwnerHomeScreenState();
@@ -323,10 +323,17 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
               },
             ),
             buildServiceCard(
-              icon: Iconsax.location,
-              title: 'تحديث الموقع ',
+              icon: Iconsax.menu,
+              title: 'قائمة الطعام ',
               color: kBannerColor,
-              onTap: () {},
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => MenuUpdate(ownerID: widget.ownerID),
+                  ),
+                );
+              },
             ),
           ],
         ),
@@ -356,7 +363,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(45)),
         child: Container(
-          width: 185,
+          width: 170,
           height: 160,
           padding: const EdgeInsets.all(3.4),
           child: Stack(
@@ -414,7 +421,7 @@ class _OwnerHomeScreenState extends State<OwnerHomeScreen> {
         elevation: 5,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(50)),
         child: Container(
-          width: 185,
+          width: 177,
           height: 160,
           padding: const EdgeInsets.all(3),
           child: Column(

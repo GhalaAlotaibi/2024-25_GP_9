@@ -1,104 +1,59 @@
-# solu.py - Complete Local Version
 import os
-from langchain_community.document_loaders import PyMuPDFLoader
+from langchain_community.document_loaders import PyPDFLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from sentence_transformers import SentenceTransformer
-from deep_translator import GoogleTranslator
 import chromadb
 from chromadb.config import Settings
 import requests
 import json
-QWEN_API_KEY = os.getenv('QWEN_API_KEY')
-print(f"🔑 QWEN_API_KEY is {'set' if QWEN_API_KEY else 'MISSING'}")
 
-# ===== Configuration =====
-PDF_FOLDER = "cooking_chatbot//cooking_books"  # Place your PDFs here
+PDF_FOLDER = "./cooking_books" 
 CHROMA_DB_PATH = "./chroma_db"
-  # Replace with your actual key
+OPENAI_API_KEY = "" # PUT THE API KEY HERE
 OPENAI_API_BASE = "https://openrouter.ai/api/v1"
 
-# ===== Initialize Components =====
-translator = GoogleTranslator(source='auto', target='en')
-translator_ar = GoogleTranslator(source='auto', target='ar')
-embedding_model = None
 
-def get_embedding_model():
-    global embedding_model
-    if embedding_model is None:
-        print("🔍 Loading embedding model...")
-        embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-    return embedding_model
-
+embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 client = chromadb.PersistentClient(path=CHROMA_DB_PATH)
 
-# ===== Core Functions ===== 
+#  Core Functions 
 def initialize_database():
     """Load PDFs and create embeddings"""
     collection = client.get_or_create_collection(name="recipes")
-    print("📥 Loading PDFs...")
-    print("🧠 Creating embeddings...")
-    print("✅ Database initialized.")
-
-    # Skip loading if collection already has data
-    if len(collection.get()['ids']) > 0:
-        return collection
-        
-    all_pages = []
-    pdf_files = [f for f in os.listdir(PDF_FOLDER) if f.endswith(".pdf")]
     
-    if not pdf_files:
-        print("Warning: No PDF files found in cooking_books directory")
-        return collection  # Return empty collection
-    
-    for pdf_file in pdf_files:
-        try:
-            loader = PyMuPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
-            pages = loader.load_and_split()
-            all_pages.extend(pages)
-            print(f"Loaded {pdf_file}")
-        except Exception as e:
-            print(f"Error loading {pdf_file}: {e}")
-            continue  # Skip failed files
-
-    if not all_pages:  
-        return collection
-
- 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=512, chunk_overlap=24)
-    chunks = text_splitter.split_documents(all_pages)
-    texts = [chunk.page_content for chunk in chunks]
-    
-    if not texts:  # If no texts after splitting
-        return collection
-        
-    embedding_model = get_embedding_model()
-    embeddings = embedding_model.encode(texts, batch_size=8, show_progress_bar=True)
-
-
-    collection.add(
-        ids=[f"doc_{i}" for i in range(len(texts))],
-        documents=texts,
-        embeddings=[embedding.tolist() for embedding in embeddings]
-    )
+    if len(collection.get()['ids']) == 0:  # Only load if empty
+        all_pages = []
+        for pdf_file in os.listdir(PDF_FOLDER):
+            if pdf_file.endswith(".pdf"):
+                try:
+                    loader = PyPDFLoader(os.path.join(PDF_FOLDER, pdf_file))
+                    pages = loader.load_and_split()
+                    all_pages.extend(pages)
+                    print(f"Loaded {pdf_file}")
+                except Exception as e:
+                    print(f"Error loading {pdf_file}: {e}")
+        # Split and embed text
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=512, chunk_overlap=24)
+        chunks = text_splitter.split_documents(all_pages)
+        texts = [chunk.page_content for chunk in chunks]
+        embeddings = [embedding_model.encode(text).tolist() for text in texts] 
+        # Store in ChromaDB
+        collection.add(
+            ids=[f"doc_{i}" for i in range(len(texts))],
+            documents=texts,
+            embeddings=embeddings
+        )
     return collection
-collection = None
 
-def ensure_collection_initialized():
-    global collection
-    if collection is None:
-        print("⚙️ Initializing collection...")
-        collection = initialize_database()
-
+collection = initialize_database()
 
 def translate_with_gpt(text: str, target_lang: str = "English") -> str:
     """Advanced translation using GPT"""
-    print(f"🌐 Translating to {target_lang}: {text[:60]}...")
     headers = {
-        "Authorization": f"Bearer {QWEN_API_KEY}",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
     }
-    
     payload = {
         "model": "gpt-3.5-turbo", 
         "messages": [
@@ -117,25 +72,20 @@ Preserve the meaning and context. Do not explain or comment — return only the 
         ],
         "temperature": 0.3
     }
-    
     try:
         response = requests.post(
             f"{OPENAI_API_BASE}/chat/completions",
             headers=headers,
             json=payload
         )
-        print("✅ Translation API response received.")
-        print(response.json())  # See full structure
         return response.json()["choices"][0]["message"]["content"]
     except Exception as e:
-        print("✅ Translation API response received.")
-        print(response.json())  # See full structure
         print(f"Translation error: {e}")
         return text
 
 def query_chroma(query: str, top_k: int = 3) -> list:
     """Search the knowledge base"""
-    query_embedding = get_embedding_model().encode(query).tolist()
+    query_embedding = embedding_model.encode(query).tolist()
     results = collection.query(
         query_embeddings=[query_embedding],
         n_results=top_k
@@ -145,10 +95,9 @@ def query_chroma(query: str, top_k: int = 3) -> list:
 def generate_response(query: str, context: str) -> str:
     """Generate answer using GPT"""
     headers = {
-        "Authorization": f"Bearer {QWEN_API_KEY}",
+        "Authorization": f"Bearer {OPENAI_API_KEY}",
         "Content-Type": "application/json"
-    }
-    
+    } 
     payload = {
         "model": "gpt-3.5-turbo",
         "messages": [
@@ -202,31 +151,25 @@ def generate_response(query: str, context: str) -> str:
         print(f"GPT error: {e}")
         return "حدث خطأ في المعالجة"
 
-# ===== Main Function ===== 
+
 def get_answer(query: str) -> str:
     """Full query processing pipeline"""
     try:
-        print(f"💬 Incoming query: {query}")
-        ensure_collection_initialized()
-
+        # Step 1: Translate query to English
         english_query = translate_with_gpt(query, "English")
-        print(f"🌍 Translated to English: {english_query}")
-
+        
+        # Step 2: Search knowledge base
         context_chunks = query_chroma(english_query)
         context = "\n".join(context_chunks) if context_chunks else ""
-        print(f"📚 Retrieved {len(context_chunks)} context chunks")
-
+        
+        # Step 3: Generate response
         english_response = generate_response(english_query, context)
-        print(f"🧠 GPT response (EN): {english_response[:80]}...")
-
-        final_response = translate_with_gpt(english_response, "Arabic")
-        print(f"🗣️ Translated back to Arabic: {final_response[:80]}...")
-
-        return final_response
-
+        
+        # Step 4: Translate back to Arabic
+        return translate_with_gpt(english_response, "Arabic")
+        
     except Exception as e:
-        print(f"🔥 ERROR in get_answer(): {e}")
-        return "حدث خطأ في المعالجة"
+        return f"Error: {str(e)}"
 
 # Test (run only once)
 if __name__ == "__main__":

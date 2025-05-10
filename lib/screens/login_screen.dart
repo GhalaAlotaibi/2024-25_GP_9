@@ -158,7 +158,10 @@ class _LogInScreenState extends State<LogInScreen> {
                 );
               },
             ),
-            const SizedBox(width: 333),
+            SizedBox(
+              width: MediaQuery.of(context).size.width *
+                  0.83, // ~85% of screen width
+            ),
           ],
         ),
         body: Column(

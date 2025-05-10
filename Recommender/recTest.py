@@ -20,23 +20,21 @@ import json
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-# Try to get credentials from environment variable
+ 
 if "FIREBASE_CREDENTIALS" in os.environ:
     cred_data = json.loads(os.environ["FIREBASE_CREDENTIALS"])
     cred = credentials.Certificate(cred_data)
 else:
-    # Fallback for local testing
+ 
     cred = credentials.Certificate("cred/trucki-database-firebase-adminsdk-9gf4r-697466e790.json")
 
-# Initialize Firebase
+ 
 if not firebase_admin._apps:
     firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
 
-#--------------To here---------------
-# Step 2: Fetch Data from Firestore
 def fetch_food_trucks():
     """Fetch only food trucks that have been accepted."""
     food_trucks = db.collection('Food_Truck').stream()
@@ -46,17 +44,17 @@ def fetch_food_trucks():
         truck_data = truck.to_dict()
         truck_data['foodTruckId'] = truck.id  
 
-        # Ensure the truck has a statusId field
+ 
         if 'statusId' in truck_data:
             status_doc = db.collection('Request').document(truck_data['statusId']).get()
 
             if status_doc.exists and status_doc.to_dict().get('status') == "accepted":
-                # Only add trucks where the status is "accepted"
+    
                 location = list(map(float, truck_data['location'].split(',')))
                 truck_data['location'] = location
                 accepted_trucks.append(truck_data)
 
-    return pd.DataFrame(accepted_trucks)  # Convert the accepted trucks to DataFrame
+    return pd.DataFrame(accepted_trucks)   
 
 
 def fetch_user_favorites(user_id):
@@ -75,12 +73,13 @@ def fetch_reviews():
         review_data['rating'] = float(review_data['rating'])
         data.append(review_data)
     reviews_df = pd.DataFrame(data)
-    # Calculate average rating and count of reviews for each food truck
     rating_summary = reviews_df.groupby('foodTruckId').agg(
         avg_rating=('rating', 'mean'),
         ratings_count=('rating', 'count')
     ).reset_index()
     return rating_summary
+
+
 
 # (Optional) Verify data fetching
 if __name__ == "__main__":
@@ -116,20 +115,20 @@ def haversine(lat1, lon1, lat2, lon2):
     return R * c
 
 # Step 5: Generate Recommendations  
+
+
 def recommend_food_trucks(user_id, user_location, top_n=10):
-    """Generate recommendations for a user and return only food truck IDs.
-       Also print the scoring breakdown for each recommended truck.
-    """
-    # Print the user's location to verify it's being passed correctly
     print(f"User Location (Lat, Lon): {user_location}")
 
     # Step 1: Fetch and preprocess data
     food_trucks_df, user_favorites = preprocess_data(user_id)
 
-    # Step 2: Calculate similarity scores using TF-IDF and cosine similarity
+    # Step 2: Calculate similarity scores 
     tfidf = TfidfVectorizer()
     tfidf_matrix = tfidf.fit_transform(food_trucks_df['combined_text'])
     similarity_matrix = cosine_similarity(tfidf_matrix, tfidf_matrix)
+
+
 
     # Step 3: Get indices of user's favorite food trucks
     favorite_indices = food_trucks_df[food_trucks_df['foodTruckId'].isin(user_favorites)].index
@@ -191,8 +190,8 @@ def recommend_food_trucks(user_id, user_location, top_n=10):
             food_trucks_df['rating_component'] +
             food_trucks_df['proximity_component']
         )
-    # Step 11: Ensure diversity in recommendations
-    # Step 11: Ensure category diversity
+    # Step 11: diversity in recommendations
+
     recommendations = (
         food_trucks_df.groupby("categoryId")
         .apply(lambda x: x.nlargest(max(1, min(3, len(x))), "final_score"))  # At least 1, max 3 per category

@@ -115,7 +115,7 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                       Hero(
                         tag: widget.documentSnapshot['truckImage'],
                         child: Container(
-                          height: MediaQuery.of(context).size.height / 2.1,
+                          height: MediaQuery.of(context).size.height * 0.4,
                           decoration: BoxDecoration(
                             image: DecorationImage(
                               fit: BoxFit.cover,
@@ -129,10 +129,11 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                       Positioned(
                         left: 0,
                         right: 0,
-                        top: 380,
+                        top: MediaQuery.of(context).size.height * 0.38,
                         child: Container(
                           width: double.infinity,
-                          padding: const EdgeInsets.all(20),
+                          padding: EdgeInsets.all(
+                              MediaQuery.of(context).size.width * 0.05),
                           decoration: BoxDecoration(
                             color: const Color.fromARGB(255, 252, 252, 253),
                             borderRadius: BorderRadius.circular(20),
@@ -160,8 +161,9 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                         Row(
                           children: [
                             Container(
-                              width: 70,
-                              height: 70,
+                              width: MediaQuery.of(context).size.width *
+                                  0.18, // 18% of screen width
+                              height: MediaQuery.of(context).size.width * 0.18,
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 image: DecorationImage(
@@ -172,12 +174,15 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 10),
+                            SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 0.03),
                             Expanded(
                               child: Text(
                                 widget.documentSnapshot['name'],
-                                style: const TextStyle(
-                                  fontSize: 24,
+                                style: TextStyle(
+                                  fontSize:
+                                      MediaQuery.of(context).size.width * 0.06,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -330,6 +335,10 @@ class _FoodTruckProfileDisplayState extends State<FoodTruckProfileDisplay> {
                                   Padding(
                                     padding: const EdgeInsets.only(left: 8),
                                     child: Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.baseline,
+                                      textBaseline: TextBaseline
+                                          .alphabetic, // Required for Baseline
                                       children: [
                                         Text(
                                           (widget.documentSnapshot[

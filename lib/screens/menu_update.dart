@@ -315,19 +315,29 @@ class _MenuUpdateState extends State<MenuUpdate> {
                                         textAlign: TextAlign.right,
                                       ),
                                       Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.baseline,
+                                        textBaseline: TextBaseline
+                                            .alphabetic, // Required when using baseline alignment
                                         children: [
-                                          Image.asset(
-                                            'assets/images/Riyal.png',
-                                            width: 16,
-                                            height: 16,
+                                          Baseline(
+                                            baseline:
+                                                15, // This should match the font size or be visually adjusted
+                                            baselineType:
+                                                TextBaseline.alphabetic,
+                                            child: Image.asset(
+                                              'assets/images/Riyal.png',
+                                              width: 15,
+                                              height: 15,
+                                            ),
                                           ),
+                                          SizedBox(width: 3),
                                           Text(
                                             "${truckData['item_prices_list'][index]} ",
-                                            textAlign: TextAlign.right,
                                             style: const TextStyle(
-                                              fontSize: 14,
+                                              fontSize: 15,
+                                              fontWeight: FontWeight.bold,
                                               color: Colors.black,
                                             ),
                                           ),

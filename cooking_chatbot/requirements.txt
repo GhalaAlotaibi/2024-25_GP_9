@@ -1,10 +1,10 @@
 # Core Dependencies
-flask 
+flask==3.0.2
 flask-cors==4.0.0
 
 # LangChain Imports
 langchain==0.1.16
-langchain-community>=0.0.32,<0.1
+langchain-community==0.0.29  # Required for PyPDFLoader
 pypdf==3.17.0
 
 # Sentence Transformers
@@ -17,13 +17,10 @@ chromadb==0.4.24
 hnswlib==0.7.0  # Required for vector indexing
 
 # Translation
-deep-translator==1.11.4
-googletrans==4.0.0-rc1
+//deep-translator==1.11.4
+//googletrans==4.0.0-rc1
 
 # HTTP/Utilities
 requests==2.31.0
 urllib3==2.2.1
-python-dotenv==1.0.1
-
-gunicorn
-pymupdf
+//python-dotenv==1.0.1
