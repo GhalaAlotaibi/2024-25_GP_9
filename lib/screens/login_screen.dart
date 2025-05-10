@@ -298,7 +298,9 @@ class _LogInScreenState extends State<LogInScreen> {
                                 ? null
                                 : signIn, // Disable button if loading
                             style: ElevatedButton.styleFrom(
-                                backgroundColor: kBannerColor),
+                                backgroundColor: kBannerColor,
+                                 elevation: 5.0,//updated for shadow
+                            ), 
                             child: isLoading
                                 ? const CircularProgressIndicator(
                                     valueColor: AlwaysStoppedAnimation<Color>(

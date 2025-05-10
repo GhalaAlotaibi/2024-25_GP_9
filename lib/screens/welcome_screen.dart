@@ -92,6 +92,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.white,
+                         elevation: 5.0,//added shadow 
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                           side: const BorderSide(
@@ -124,6 +125,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color.fromARGB(255, 76, 58, 91),
+                        elevation: 5.0,//added shadow 
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
