@@ -908,5 +908,4 @@ Future<List<String>> fetchRecommendedFoodTrucks(
     return [];
   }
 }
-//24.7082, 46.5989
-//flutter run -d 95d3370f
+ 

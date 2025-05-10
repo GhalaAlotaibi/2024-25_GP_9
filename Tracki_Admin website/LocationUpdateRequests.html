@@ -1,242 +1,289 @@
 <!DOCTYPE html>
 <html lang="en" dir="rtl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Tracki - طلبات تحديث الموقع</title>
+    <link rel="stylesheet" href="Styles/Style.css" />
+    <link rel="stylesheet" href="Styles/AllTrucks.css" />
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tracki - طلبات تحديث الموقع</title>
-  <link rel="stylesheet" href="Styles/Style.css" />
-  <link rel="stylesheet" href="Styles/AllTrucks.css" />
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet" />
-  <link href="https://fonts.googleapis.com/css2?family=Zain:wght@400&display=swap" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
-</head>
+  <body>
+    <div class="main-container">
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Header Section -->
+        <div class="headerOfBar">
+          <img src="images/TrackiLogo.png" alt="Logo" />
+          <h1>Tracki</h1>
+        </div>
 
-<body>
-  <div class="main-container">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <!-- Header Section -->
-      <div class="headerOfBar">
-        <img src="images/TrackiLogo.png" alt="Logo" />
-        <h1>Tracki</h1>
+        <!-- Navigation Links -->
+        <ul style="list-style: none; padding: 0; margin: 20px 0">
+          <li>
+            <a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a>
+          </li>
+          <li>
+            <a href="WaitingTrucks.html"
+              ><i class="fas fa-truck-loading"></i> قيد الإنتظار</a
+            >
+          </li>
+          <li>
+            <a href="AllTrucks.html"
+              ><i class="fas fa-truck"></i> جميع العربات</a
+            >
+          </li>
+          <li>
+            <a
+              href="LocationUpdateRequests.html"
+              style="
+                background-color: #7a557a;
+                color: #faf3f0;
+                font-weight: bold;
+                border-radius: 8px;
+              "
+              ><i class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a
+            >
+          </li>
+          <li>
+            <a href="History.html"
+              ><i class="fas fa-history"></i> سجل العمليات</a
+            >
+          </li>
+          <li>
+            <a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a>
+          </li>
+          <li>
+            <a href="Complaints.html"
+              ><i class="fas fa-exclamation-circle"></i> الشكاوى</a
+            >
+          </li>
+        </ul>
       </div>
 
-      <!-- Navigation Links -->
-      <ul style="list-style: none; padding: 0; margin: 20px 0">
-        <li><a href="MainPage.html"><i class="fas fa-home"></i> الرئيسية</a></li>
-        <li><a href="WaitingTrucks.html"><i class="fas fa-truck-loading"></i> قيد الإنتظار</a></li>
-        <li><a href="AllTrucks.html"><i class="fas fa-truck"></i> جميع العربات</a></li>
-        <li><a href="LocationUpdateRequests.html"
-            style="background-color: #7a557a; color: #faf3f0; font-weight: bold; border-radius: 8px;"><i
-              class="fas fa-map-marker-alt"></i> طلبات تحديث الموقع</a></li>
-        <li><a href="History.html"><i class="fas fa-history"></i> سجل العمليات</a></li>
-        <li><a href="Reviews.html"><i class="fas fa-star"></i> التقييمات</a></li>
-        <li><a href="Complaints.html"><i class="fas fa-exclamation-circle"></i> الشكاوى</a></li>
-      </ul>
-    </div>
+      <section class="status-section">
+        <div class="left-actions">
+          <p id="status">مرحبًا!</p>
+        </div>
+        <div class="right-actions">
+          <i
+            id="notification-icon"
+            class="fas fa-bell notification-icon"
+            title="الإشعارات"
+          ></i>
+          <i
+            id="logout-icon"
+            class="fas fa-sign-out-alt logout-icon"
+            title="تسجيل الخروج"
+          ></i>
+        </div>
+      </section>
 
-    <section class="status-section">
-      <div class="left-actions">
-        <p id="status">مرحبًا!</p>
-      </div>
-      <div class="right-actions">
-        <i id="notification-icon" class="fas fa-bell notification-icon" title="الإشعارات"></i>
-        <i id="logout-icon" class="fas fa-sign-out-alt logout-icon" title="تسجيل الخروج"></i>
-      </div>
-    </section>
+      <!-- Main Content -->
+      <div class="content">
+        <h2>طلبات تحديث الموقع</h2>
+        <p style="margin: 20px 0"></p>
+        <div class="table-container">
+          <table id="location-update-table">
+            <thead>
+              <tr>
+                <th>العربة</th>
+                <th>المالك</th>
+                <th>موقع قديم على الخريطة</th>
+                <th>موقع جديد على الخريطة</th>
+                <th>ملف التحديث</th>
+                <th>الحالة</th>
+                <th>قبول/رفض</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Location update request rows will be added here dynamically -->
+            </tbody>
+          </table>
 
-    <!-- Main Content -->
-    <div class="content">
-      <h2>طلبات تحديث الموقع</h2>
-      <p style="margin: 20px 0"></p>
-      <div class="table-container">
-        <table id="location-update-table">
-          <thead>
-            <tr>
-              <th>العربة</th>
-              <th>المالك</th>
-              <th>موقع قديم على الخريطة</th>
-              <th>موقع جديد على الخريطة</th>
-              <th>ملف التحديث</th>
-              <th>الحالة</th>
-              <th>قبول/رفض</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Location update request rows will be added here dynamically -->
-          </tbody>
-        </table>
-
-        <div id="pagination-controls" style="text-align: center; margin-top: 20px"></div>
-      </div>
-      <!--  <div class="loading" id="loading-message">
+          <div
+            id="pagination-controls"
+            style="text-align: center; margin-top: 20px"
+          ></div>
+        </div>
+        <!--  <div class="loading" id="loading-message">
           <img src="images/WaitingTruck2.png" alt="Loading Food Truck" />
           <p>الرجاء الإنتظار...</p>
         </div> -->
+      </div>
     </div>
-  </div>
 
-  <!-- Footer -->
-  <div class="footer">
-    <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
-  </div>
+    <!-- Footer -->
+    <div class="footer">
+      <p>تراكي 2025 ©. جميع الحقوق محفوظة - جامعة الملك سعود</p>
+    </div>
 
-  <!-- Firebase Script -->
-  <!-- Firebase Script -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
-    import {
-      getAuth,
-      onAuthStateChanged,
-      signOut,
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
-    import {
-      getFirestore,
-      collection,
-      getDocs,
-      doc,
-      getDoc,
-      updateDoc,
-      setDoc,
-      addDoc,
-      query,
-      where,
-    } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
+    <!-- Firebase Script -->
+    <!-- Firebase Script -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-app.js";
+      import {
+        getAuth,
+        onAuthStateChanged,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-auth.js";
+      import {
+        getFirestore,
+        collection,
+        getDocs,
+        doc,
+        getDoc,
+        updateDoc,
+        setDoc,
+        addDoc,
+        query,
+        where,
+      } from "https://www.gstatic.com/firebasejs/11.0.1/firebase-firestore.js";
 
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
-      authDomain: "trucki-database.firebaseapp.com",
-      projectId: "trucki-database",
-      storageBucket: "trucki-database.appspot.com",
-      messagingSenderId: "283818817351",
-      appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
-    };
+      // Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyBL6Y2okjMbi3EcqrBnaE-ky-KvOF7hVA8",
+        authDomain: "trucki-database.firebaseapp.com",
+        projectId: "trucki-database",
+        storageBucket: "trucki-database.appspot.com",
+        messagingSenderId: "283818817351",
+        appId: "1:283818817351:web:bfa138d68f42dfc64c3e62",
+      };
 
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const db = getFirestore(app);
 
-    // EmailJS Initialization
-    (function () {
-      emailjs.init("aSjH9uTGS9FjbZvje"); // Public key for EmailJS
-    })();
+      // EmailJS Initialization
+      (function () {
+        emailjs.init("aSjH9uTGS9FjbZvje"); // Public key for EmailJS
+      })();
 
-    // Auth state change listener
-    onAuthStateChanged(auth, (user) => {
-      const statusElement = document.getElementById("status");
-      if (user) {
-        const username = user.email.split("@")[0];
-        statusElement.innerText = `مرحبًا ${username} !`;
-        fetchLocationUpdateRequests(); // Fetch the location update requests
-      } else {
-        statusElement.innerText = "لم يتم تسجيل الدخول";
-        window.location.href = "WelcomePage.html";
-      }
-    });
-
-    // Logout handler
-    const logoutIcon = document.getElementById("logout-icon");
-    logoutIcon.addEventListener("click", async () => {
-      try {
-        await signOut(auth);
-        alert("تم تسجيل الخروج بنجاح!");
-        window.location.href = "WelcomePage.html";
-      } catch (error) {
-        alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
-      }
-    });
-
-    // Fetch location update requests from Firestore
-    async function fetchLocationUpdateRequests() {
-      try {
-        console.log("Fetching location update requests...");
-
-        const querySnapshot = await getDocs(
-          collection(db, "Location_Update")
-        );
-        console.log("Location update requests:", querySnapshot);
-
-        if (querySnapshot.empty) {
-          const locationUpdateTableBody = document.querySelector(
-            "#location-update-table tbody"
-          );
-          locationUpdateTableBody.innerHTML = "";
-          const noDataRow = document.createElement("tr");
-          noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد بيانات</td>`;
-          locationUpdateTableBody.appendChild(noDataRow);
-          return;
+      // Auth state change listener
+      onAuthStateChanged(auth, (user) => {
+        const statusElement = document.getElementById("status");
+        if (user) {
+          const username = user.email.split("@")[0];
+          statusElement.innerText = `مرحبًا ${username} !`;
+          fetchLocationUpdateRequests(); // Fetch the location update requests
+        } else {
+          statusElement.innerText = "لم يتم تسجيل الدخول";
+          window.location.href = "WelcomePage.html";
         }
+      });
 
-        const allRows = [];
-        for (const docSnapshot of querySnapshot.docs) {
-          const data = docSnapshot.data();
-          console.log("Request data:", data);
+      // Logout handler
+      const logoutIcon = document.getElementById("logout-icon");
+      logoutIcon.addEventListener("click", async () => {
+        try {
+          await signOut(auth);
+          alert("تم تسجيل الخروج بنجاح!");
+          window.location.href = "WelcomePage.html";
+        } catch (error) {
+          alert("حدث خطأ أثناء تسجيل الخروج: " + error.message);
+        }
+      });
 
-          // Fetch owner details
-          const ownerID = data.ownerID;
-          const ownerDocRef = doc(db, "Truck_Owner", ownerID);
-          const ownerDoc = await getDoc(ownerDocRef);
-          const ownerName = ownerDoc.exists()
-            ? ownerDoc.data().Name
-            : "غير محدد";
-          const ownerEmail = ownerDoc.exists()
-            ? ownerDoc.data().Email
-            : "غير محدد";
-          const ownerPhone = ownerDoc.exists()
-            ? ownerDoc.data().PhoneNum
-            : "غير محدد";
+      // Fetch location update requests from Firestore
+      async function fetchLocationUpdateRequests() {
+        try {
+          console.log("Fetching location update requests...");
 
-          // Fetch old location
-          const foodTruckQuerySnapshot = await getDocs(
-            query(
-              collection(db, "Food_Truck"),
-              where("ownerID", "==", ownerID)
-            )
+          const querySnapshot = await getDocs(
+            collection(db, "Location_Update")
           );
-          let oldLatitude, oldLongitude, foodTruckName = "غير محدد";
-          if (!foodTruckQuerySnapshot.empty) {
-            const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
-            const data = foodTruckDoc.data();
-            console.log("Food truck data:", data);
+          console.log("Location update requests:", querySnapshot);
 
-            //Name 
-            foodTruckName = data.name || "غير محدد"; // Fallback if name doesn't exist
-
-            const oldLocation = data.location;
-            [oldLatitude, oldLongitude] = oldLocation.split(",");
+          if (querySnapshot.empty) {
+            const locationUpdateTableBody = document.querySelector(
+              "#location-update-table tbody"
+            );
+            locationUpdateTableBody.innerHTML = "";
+            const noDataRow = document.createElement("tr");
+            noDataRow.innerHTML = `<td colspan="6" style="text-align: center;">لا توجد بيانات</td>`;
+            locationUpdateTableBody.appendChild(noDataRow);
+            return;
           }
 
-          // New location
-          const newLatitude = data.latitude;
-          const newLongitude = data.longitude;
-          const locationUpdateFile = data.locationUpdateFile;
+          const allRows = [];
+          for (const docSnapshot of querySnapshot.docs) {
+            const data = docSnapshot.data();
+            console.log("Request data:", data);
 
-          // Google Maps Links
-          const oldLocationMapUrl = `https://www.google.com/maps?q=${oldLatitude},${oldLongitude}`;
-          const newLocationMapUrl = `https://www.google.com/maps?q=${newLatitude},${newLongitude}`;
+            // Fetch owner details
+            const ownerID = data.ownerID;
+            const ownerDocRef = doc(db, "Truck_Owner", ownerID);
+            const ownerDoc = await getDoc(ownerDocRef);
+            const ownerName = ownerDoc.exists()
+              ? ownerDoc.data().Name
+              : "غير محدد";
+            const ownerEmail = ownerDoc.exists()
+              ? ownerDoc.data().Email
+              : "غير محدد";
+            const ownerPhone = ownerDoc.exists()
+              ? ownerDoc.data().PhoneNum
+              : "غير محدد";
 
-          // Owner details HTML
-          const ownerDetails = `
+            // Fetch old location
+            const foodTruckQuerySnapshot = await getDocs(
+              query(
+                collection(db, "Food_Truck"),
+                where("ownerID", "==", ownerID)
+              )
+            );
+            let oldLatitude,
+              oldLongitude,
+              foodTruckName = "غير محدد";
+            if (!foodTruckQuerySnapshot.empty) {
+              const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
+              const data = foodTruckDoc.data();
+              console.log("Food truck data:", data);
+
+              //Name
+              foodTruckName = data.name || "غير محدد"; // Fallback if name doesn't exist
+
+              const oldLocation = data.location;
+              [oldLatitude, oldLongitude] = oldLocation.split(",");
+            }
+
+            // New location
+            const newLatitude = data.latitude;
+            const newLongitude = data.longitude;
+            const locationUpdateFile = data.locationUpdateFile;
+
+            // Google Maps Links
+            const oldLocationMapUrl = `https://www.google.com/maps?q=${oldLatitude},${oldLongitude}`;
+            const newLocationMapUrl = `https://www.google.com/maps?q=${newLatitude},${newLongitude}`;
+
+            // Owner details HTML
+            const ownerDetails = `
           <div class="owner-details">
             <p><strong>الاسم:</strong> ${ownerName}</p>
             <p><strong>البريد الإلكتروني:</strong> ${ownerEmail}</p>
             <p><strong>رقم الهاتف:</strong> ${ownerPhone}</p>
           </div>
         `;
-          const statusTranslations = {
-            pending: "قيد الانتظار",
-            accepted: "مقبول",
-            rejected: "مرفوض",
-          };
+            const statusTranslations = {
+              pending: "قيد الانتظار",
+              accepted: "مقبول",
+              rejected: "مرفوض",
+            };
 
-          const statusText = statusTranslations[data.status] || "غير محددة";
+            const statusText = statusTranslations[data.status] || "غير محددة";
 
-          // Create table row
-          const row = document.createElement("tr");
-          row.innerHTML = `
+            // Create table row
+            const row = document.createElement("tr");
+            row.innerHTML = `
           <td>${foodTruckName}</td>
           <td>${ownerDetails}</td>
           <td><a href="${oldLocationMapUrl}" target="_blank">عرض الموقع القديم على الخريطة</a></td>
@@ -244,7 +291,9 @@
           <td><a href="${locationUpdateFile}" target="_blank">عرض الملف</a></td>
           <td>${statusText}</td>
           <td>
-${data.status === "pending" ? `
+${
+  data.status === "pending"
+    ? `
 <!-- Accept button with icon -->
 <button class="accept-btn" data-id="${docSnapshot.id}" data-owner="${ownerEmail}" data-truck="${ownerID}" data-lat="${newLatitude}" data-long="${newLongitude}">
   <i class="fas fa-check-circle"></i>
@@ -255,175 +304,186 @@ ${data.status === "pending" ? `
   <i class="fas fa-times-circle"></i>
 </button>
 
-` : data.status === "accepted" ? `
+`
+    : data.status === "accepted"
+    ? `
   <span>مقبول </span>
-` : data.status === "rejected" ? `
+`
+    : data.status === "rejected"
+    ? `
   <span>مرفوض بسبب: ${data.rejectionReason || "لا يوجد سبب"}</span>
-` : ""}
+`
+    : ""
+}
 </td>
 
         `;
 
-          allRows.push(row);
-        }
-
-        // Append rows to the table
-        const locationUpdateTableBody = document.querySelector(
-          "#location-update-table tbody"
-        );
-        allRows.forEach((row) => locationUpdateTableBody.appendChild(row));
-      } catch (error) {
-        console.error("Error fetching location update requests:", error);
-      }
-    }
-
-    // Handle accept/reject actions
-    document.addEventListener("click", async (event) => {
-      // Check if the clicked element is either accept or reject button
-      const acceptBtn = event.target.closest(".accept-btn");
-      const rejectBtn = event.target.closest(".reject-btn");
-
-      if (acceptBtn || rejectBtn) {
-        // Get the data from the clicked element (either accept or reject)
-        const requestId = (acceptBtn || rejectBtn).dataset.id;
-        const ownerEmail = (acceptBtn || rejectBtn).dataset.owner;
-        const ownerID2 = (acceptBtn || rejectBtn).dataset.truck;
-        const newLat = (acceptBtn || rejectBtn).dataset.lat;
-        const newLong = (acceptBtn || rejectBtn).dataset.long;
-
-        try {
-          // Accept Action
-          if (acceptBtn) { //******************************************ACCEPT********************************************
-            await updateDoc(doc(db, "Location_Update", requestId), {
-              status: "accepted",
-            });
-
-            // Fetch the Food_Truck document using ownerID
-            const foodTruckQuerySnapshot = await getDocs(
-              query(
-                collection(db, "Food_Truck"),
-                where("ownerID", "==", ownerID2)
-              )
-            );
-
-            if (foodTruckQuerySnapshot.empty) {
-              console.error("Food truck not found for owner:", ownerEmail);
-              return;
-            }
-
-            const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
-            const foodTruckDocRef = foodTruckDoc.ref;
-
-            // Update the food truck's location
-            await updateDoc(foodTruckDocRef, {
-              location: `${newLat},${newLong}`,
-            });
-
-            // Send email notification to the owner
-            await sendEmail(
-              ownerEmail,
-              "تم قبول طلب تحديث الموقع 🚚",
-              `تم قبول طلب تحديث موقع عربتك! موقعك الجديد: https://www.google.com/maps?q=${newLat},${newLong}`
-            );
-
-            alert("تم قبول الطلب وإرسال بريد إلكتروني للمالك!");
-
-            // HISTORY RELATED!!
-            const historyRef = collection(db, "History");
-            await addDoc(historyRef, {
-              docType: "Location Change Acceptance",
-              Details: `قبول طلب تحديث موقع عربة ${foodTruckDoc.data().name} برقم المعرف ${foodTruckDoc.id}`,
-              timestamp: new Date(),
-            });
-
-            // NOTIFICATION RELATED!!************************************************************************************
-            const NotifiRef = doc(db, "Notification", foodTruckDoc.id); // Use foodTruckDoc.id as the document ID
-            await setDoc(NotifiRef, {
-              Title: '📍 تحديث موقع',
-              Msg: `!!🎉🚚انتقلت إلى موقع جديد ${foodTruckDoc.data().name} عربة`,
-              TruckId: foodTruckDoc.id, // You can still keep this field if needed
-              isRead: false,
-              Time: new Date(),
-            });
-
+            allRows.push(row);
           }
 
-          //******************************************ACCEPT*************************************************************
-          // Reject Action
-          if (rejectBtn) {
-            const reason = prompt("يرجى إدخال سبب الرفض:");
-            if (!reason) {
-              alert("يجب إدخال سبب الرفض.");
-              return;
-            }
-
-            await updateDoc(doc(db, "Location_Update", requestId), {
-              status: "rejected",
-              rejectionReason: reason,
-            });
-
-            // Fetch the Food_Truck document using ownerID
-            const foodTruckQuerySnapshot = await getDocs(
-              query(
-                collection(db, "Food_Truck"),
-                where("ownerID", "==", ownerID2)
-              )
-            );
-
-            if (foodTruckQuerySnapshot.empty) {
-              console.error("Food truck not found for owner:", ownerEmail);
-              return;
-            }
-
-            const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
-            const foodTruckDocRef = foodTruckDoc.ref;
-
-            // Send email notification to the owner
-            await sendEmail(
-              ownerEmail,
-              "تم رفض طلب تحديث الموقع ❌",
-              `نأسف، تم رفض طلب تحديث موقع عربتك. السبب: ${reason}`
-            );
-
-            alert("تم رفض الطلب وإرسال بريد إلكتروني للمالك!");
-
-            // HISTORY RELATED!!
-            const historyRef = collection(db, "History");
-            await addDoc(historyRef, {
-              docType: "Location Change Rejection",
-              Details: `رفض طلب تحديث موقع عربة ${foodTruckDoc.data().name} برقم المعرف ${foodTruckDoc.id}. السبب: ${reason}`,
-              timestamp: new Date(),
-            });
-          }
-
-          // Reload the page to reflect the changes
-          window.location.reload();
+          // Append rows to the table
+          const locationUpdateTableBody = document.querySelector(
+            "#location-update-table tbody"
+          );
+          allRows.forEach((row) => locationUpdateTableBody.appendChild(row));
         } catch (error) {
-          console.error("Error handling request:", error);
-          alert("حدث خطأ أثناء معالجة الطلب.");
+          console.error("Error fetching location update requests:", error);
         }
       }
-    });
 
+      // Handle accept/reject actions
+      document.addEventListener("click", async (event) => {
+        // Check if the clicked element is either accept or reject button
+        const acceptBtn = event.target.closest(".accept-btn");
+        const rejectBtn = event.target.closest(".reject-btn");
 
+        if (acceptBtn || rejectBtn) {
+          // Get the data from the clicked element (either accept or reject)
+          const requestId = (acceptBtn || rejectBtn).dataset.id;
+          const ownerEmail = (acceptBtn || rejectBtn).dataset.owner;
+          const ownerID2 = (acceptBtn || rejectBtn).dataset.truck;
+          const newLat = (acceptBtn || rejectBtn).dataset.lat;
+          const newLong = (acceptBtn || rejectBtn).dataset.long;
 
-    // Function to send email via EmailJS
-    async function sendEmail(toEmail, subject, message) {
-      try {
-        const response = await emailjs.send(
-          "service_wsy344n",
-          "template_oh87x8s",
-          {
-            to_email: toEmail,
-            subject: subject,
-            message: message,
+          try {
+            // Accept Action
+            if (acceptBtn) {
+              //******************************************ACCEPT********************************************
+              await updateDoc(doc(db, "Location_Update", requestId), {
+                status: "accepted",
+              });
+
+              // Fetch the Food_Truck document using ownerID
+              const foodTruckQuerySnapshot = await getDocs(
+                query(
+                  collection(db, "Food_Truck"),
+                  where("ownerID", "==", ownerID2)
+                )
+              );
+
+              if (foodTruckQuerySnapshot.empty) {
+                console.error("Food truck not found for owner:", ownerEmail);
+                return;
+              }
+
+              const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
+              const foodTruckDocRef = foodTruckDoc.ref;
+
+              // Update the food truck's location
+              await updateDoc(foodTruckDocRef, {
+                location: `${newLat},${newLong}`,
+              });
+
+              // Send email notification to the owner
+              await sendEmail(
+                ownerEmail,
+                "تم قبول طلب تحديث الموقع 🚚",
+                `تم قبول طلب تحديث موقع عربتك! موقعك الجديد: https://www.google.com/maps?q=${newLat},${newLong}`
+              );
+
+              alert("تم قبول الطلب وإرسال بريد إلكتروني للمالك!");
+
+              // HISTORY RELATED!!
+              const historyRef = collection(db, "History");
+              await addDoc(historyRef, {
+                docType: "Location Change Acceptance",
+                Details: `قبول طلب تحديث موقع عربة ${
+                  foodTruckDoc.data().name
+                } برقم المعرف ${foodTruckDoc.id}`,
+                timestamp: new Date(),
+              });
+
+              // NOTIFICATION RELATED!!************************************************************************************
+              const NotifiRef = doc(db, "Notification", foodTruckDoc.id); // Use foodTruckDoc.id as the document ID
+              await setDoc(NotifiRef, {
+                Title: "📍 تحديث موقع",
+                Msg: `!!🎉🚚انتقلت إلى موقع جديد ${
+                  foodTruckDoc.data().name
+                } عربة`,
+                TruckId: foodTruckDoc.id, // You can still keep this field if needed
+                isRead: false,
+                Time: new Date(),
+              });
+            }
+
+            //******************************************ACCEPT*************************************************************
+            // Reject Action
+            if (rejectBtn) {
+              const reason = prompt("يرجى إدخال سبب الرفض:");
+              if (!reason) {
+                alert("يجب إدخال سبب الرفض.");
+                return;
+              }
+
+              await updateDoc(doc(db, "Location_Update", requestId), {
+                status: "rejected",
+                rejectionReason: reason,
+              });
+
+              // Fetch the Food_Truck document using ownerID
+              const foodTruckQuerySnapshot = await getDocs(
+                query(
+                  collection(db, "Food_Truck"),
+                  where("ownerID", "==", ownerID2)
+                )
+              );
+
+              if (foodTruckQuerySnapshot.empty) {
+                console.error("Food truck not found for owner:", ownerEmail);
+                return;
+              }
+
+              const foodTruckDoc = foodTruckQuerySnapshot.docs[0];
+              const foodTruckDocRef = foodTruckDoc.ref;
+
+              // Send email notification to the owner
+              await sendEmail(
+                ownerEmail,
+                "تم رفض طلب تحديث الموقع ❌",
+                `نأسف، تم رفض طلب تحديث موقع عربتك. السبب: ${reason}`
+              );
+
+              alert("تم رفض الطلب وإرسال بريد إلكتروني للمالك!");
+
+              // HISTORY RELATED!!
+              const historyRef = collection(db, "History");
+              await addDoc(historyRef, {
+                docType: "Location Change Rejection",
+                Details: `رفض طلب تحديث موقع عربة ${
+                  foodTruckDoc.data().name
+                } برقم المعرف ${foodTruckDoc.id}. السبب: ${reason}`,
+                timestamp: new Date(),
+              });
+            }
+
+            // Reload the page to reflect the changes
+            window.location.reload();
+          } catch (error) {
+            console.error("Error handling request:", error);
+            alert("حدث خطأ أثناء معالجة الطلب.");
           }
-        );
-        console.log("Email sent successfully:", response);
-      } catch (error) {
-        console.error("Error sending email:", error);
-        alert("حدث خطأ أثناء إرسال البريد الإلكتروني.");
+        }
+      });
+
+      // Function to send email via EmailJS
+      async function sendEmail(toEmail, subject, message) {
+        try {
+          const response = await emailjs.send(
+            "service_wsy344n",
+            "template_oh87x8s",
+            {
+              to_email: toEmail,
+              subject: subject,
+              message: message,
+            }
+          );
+          console.log("Email sent successfully:", response);
+        } catch (error) {
+          console.error("Error sending email:", error);
+          alert("حدث خطأ أثناء إرسال البريد الإلكتروني.");
+        }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
+</html>

@@ -57,7 +57,6 @@ class UserTypeSelectionPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kBannerColor,
                   foregroundColor: Colors.white,
-                  textStyle: const TextStyle(fontSize: 20),
                 ),
                 child: const Text('عميل'),
               ),
@@ -78,7 +77,6 @@ class UserTypeSelectionPage extends StatelessWidget {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: kBannerColor,
                   foregroundColor: Colors.white,
-                  textStyle: const TextStyle(fontSize: 20),
                 ),
                 child: const Text('صاحب عربة'),
               ),

@@ -154,36 +154,38 @@ class _AppMainScreenState extends State<AppMainScreen> {
       print('⭐ Favorite Truck IDs: $_favoriteTruckIds');
     });
 
-  // 2. Listen to notifications
-  _firestore
-      .collection('Notification')
-      .orderBy('Time', descending: true)
-      .snapshots()
-      .listen((snapshot) async { // Changed to async
-    if (snapshot.docs.isEmpty || _favoriteTruckIds.isEmpty) return;
+    // 2. Listen to notifications
+    _firestore
+        .collection('Notification')
+        .orderBy('Time', descending: true)
+        .snapshots()
+        .listen((snapshot) async {
+      // Changed to async
+      if (snapshot.docs.isEmpty || _favoriteTruckIds.isEmpty) return;
 
-    for (final doc in snapshot.docs) {
-      final truckId = doc.id;
-      final data = doc.data() as Map<String, dynamic>;
-      final isRead = data['isRead'] ?? false; // Default to false if missing
+      for (final doc in snapshot.docs) {
+        final truckId = doc.id;
+        final data = doc.data() as Map<String, dynamic>;
+        final isRead = data['isRead'] ?? false; // Default to false if missing
 
-      if (_favoriteTruckIds.contains(truckId) &&
-          !_processedNotifications.contains(doc.id) &&
-          !isRead) { // Added isRead check
-          
-        print('🚨 Showing unread notification for truck: $truckId');
-        _showNotification(
-          data['Title']?.toString() ?? 'إشعار جديد',
-          data['Msg']?.toString() ?? 'لديك تحديث مهم',
-        );
-        
-        // Mark as read
-        await doc.reference.update({'isRead': true});
-        _processedNotifications.add(doc.id);
+        if (_favoriteTruckIds.contains(truckId) &&
+            !_processedNotifications.contains(doc.id) &&
+            !isRead) {
+          // Added isRead check
+
+          print('🚨 Showing unread notification for truck: $truckId');
+          _showNotification(
+            data['Title']?.toString() ?? 'إشعار جديد',
+            data['Msg']?.toString() ?? 'لديك تحديث مهم',
+          );
+
+          // Mark as read
+          await doc.reference.update({'isRead': true});
+          _processedNotifications.add(doc.id);
+        }
       }
-    }
-  });
-}
+    });
+  }
 
 //Handle notifications clicks------------------------------------------
   void _handleNotificationClick(RemoteMessage? message) {

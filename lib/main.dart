@@ -18,16 +18,13 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
- 
-        fontFamily:
-            GoogleFonts.tajawal().fontFamily,  
+        fontFamily: GoogleFonts.tajawal().fontFamily,
         textTheme: GoogleFonts.tajawalTextTheme(
           Theme.of(context).textTheme,
         ),
-     
+
         colorScheme: ColorScheme.fromSeed(
-          seedColor: kBannerColor,  
-          
+          seedColor: kBannerColor,
           primary: kBannerColor,
           secondary: Colors.white,
         ),
